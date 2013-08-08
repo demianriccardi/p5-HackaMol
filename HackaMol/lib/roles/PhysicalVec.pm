@@ -48,6 +48,18 @@ has 'xyzfree' => (
                   lazy    => 1,
                  );
 
+do need buildargs
+
+
+sub charge {
+  my $self = shift;
+  if (@_){
+    $self->set_charges($self->t,$_[0]);
+  }
+  else {
+    return ($self->get_charges($self->t);
+  }
+}
 1;
 
 

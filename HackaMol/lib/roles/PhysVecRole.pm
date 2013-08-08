@@ -4,7 +4,7 @@ use Moose::Role;
 use Carp;
 
 
-has 'name'   ,    is => 'ro', isa => 'Str' ;
+has 'name'   ,    is => 'rw', isa => 'Str' ;
 
 has 'mass'   ,    is => 'rw', isa => 'Num' , lazy=>1, default => 0;  
 
@@ -65,10 +65,34 @@ sub _build_charge {
 1;
 
 __END__
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+The PhysVecRole provides the core attributes and methods shared between Atom and 
+Molecule classes.
+Consuming this role gives Classes a place to store coordinates, forces, and 
+charges, perhaps, over the course of a simulation or for a collection 
+configurations for
+which all other object meta-data (name, mass, etc) remains fixed. As such, the
+'t' attribute, described below, is important to understand. As of Version
+0.001, the PhysVecRole is very flexible. Several attribute types are left 
+agnostic and rw so that they may be filled with whatever the user defines them to be... on the fly.  This seems most intuitive from the perspective of carrying 
+out computational work on molecules. 
+One example that could take advantage of the flexibility: A molecule consumes 
+PhysVecRole so 
+it has an array of coordinates for itself that is likely to remain empty 
+(because the atoms that Molecule contains have the more useful coordinates).  
+For much larger systems, the atoms may be ignored while the Molecule t-dependent 
+coordinate array could be filled with PDLs from Perl Data Language for much 
+faster analyses. Future version may tighten the API and perhaps fork off new 
+roles that are more specific to the scale of the problem. 
+
 =attribute
 name
 
-isa Str that is ro. Convenience attribute for bookkeeping.
+isa Str that is rw. useful for labeling, bookkeeping...
 
 =attribute
 t
@@ -100,7 +124,8 @@ isa Num that is rw and lazy with a default of 0
 =attribute
 xyzfree
 
-lazy, default value [1,1,1]
+isa ArrayRef that is rw and lazy with a default value [1,1,1]. Using this array
+allows the object to be fixed for calculations that support it.  To fix X, $
 
 =attribute
 charge
@@ -138,12 +163,16 @@ be filled with PDLs from Perl Data Language.
 
 
 =array_method
-                                                 Array traits
-add_charges    add_coords    add_forces       => push 
-get_charges    get_coords    get_forces       => get  
-set_charges    set_coords    set_forces       => set
-all_charges    all_coords    all_forces       => elements
-count_charges  count_coords  count_forces     => count
+
+=over 4       
+
+ add_charges    add_coords    add_forces       => push 
+ get_charges    get_coords    get_forces       => get  
+ set_charges    set_coords    set_forces       => set
+ all_charges    all_coords    all_forces       => elements
+ count_charges  count_coords  count_forces     => count
+
+=back 
 
 examples: 
 add_charges(-0.1)

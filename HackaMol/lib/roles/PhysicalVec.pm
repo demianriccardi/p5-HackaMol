@@ -6,6 +6,7 @@ my @t_dep = qw(coords forces charges);
 
 has 'name'   ,    is => 'ro', isa => 'Str' ;
 has 'mass'   ,    is => 'rw', isa => 'Num' ;  
+
 # t ScalarRef allows one to set everything to the same t... but that would be 
 # more useful if there was a fast function that would return the value
 # regardless of whether it was a Scalar or ScalarRef
@@ -41,6 +42,9 @@ has "_t$_"  => (
                ) for @t_dep;
 
 has 'units'  ,    is => 'rw', isa => 'Str'  ; #flag for future use [SI]
+=attribute_
+cxyzfree'
+=cut
 has 'xyzfree' => (  
                   is      => 'rw', 
                   isa     => 'ArrayRef[Int]', 
@@ -48,18 +52,38 @@ has 'xyzfree' => (
                   lazy    => 1,
                  );
 
-do need buildargs
+=attribute
+charge
 
+As decribed above, atoms and molecules have t-dependent arrays of charges
+for the purpose of analysis.  e.g. one could store and analyze atomic charges 
+from a quantum mechanical molecule in several intramolecular configurations 
+or under varying environmental influences.  
 
-sub charge {
+Often thinking in terms of a given atom/molecule having a "charge" is more
+intuitive and convenient.  The default value of the "charge" attribute is 
+the t index of "charges" or 0.0 if "charges" have been cleared. 
+
+=cut
+
+has 'charge' => (
+     is         => 'rw',
+     isa        => 'Num',
+     builder    => '_build_charge',
+     lazy       => 1,
+                ); 
+
+sub _build_charge {
   my $self = shift;
-  if (@_){
-    $self->set_charges($self->t,$_[0]);
+  if ($self->count_charges){
+    return ( $self->get_charges($self->t) );
   }
   else {
-    return ($self->get_charges($self->t);
+    return (0);
   }
 }
+
+
 1;
 
 

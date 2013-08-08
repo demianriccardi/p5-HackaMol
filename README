@@ -1,3 +1,5 @@
+we be using Dist::Zilla and git
+
 ~/project $ git init
 ~/project $ git add .
 ~/project $ git commit -m "first commit"

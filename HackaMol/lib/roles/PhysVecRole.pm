@@ -1,8 +1,7 @@
 package PhysVecRole;
-# ABSTRACT: Role for a physical object that  varies in space or time. 
+# ABSTRACT: Provides the core of HackaMol Atom and Molecule classes. 
 use Moose::Role;
 use Carp;
-
 
 has 'name'   ,    is => 'rw', isa => 'Str' ;
 
@@ -66,35 +65,67 @@ sub _build_charge {
 
 __END__
 
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+PhysVecRole - Provides the core of HackaMol Atom and Molecule classes. 
+
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
-The PhysVecRole provides the core attributes and methods shared between Atom and 
-Molecule classes.
-Consuming this role gives Classes a place to store coordinates, forces, and 
-charges, perhaps, over the course of a simulation or for a collection 
-configurations for
-which all other object meta-data (name, mass, etc) remains fixed. As such, the
-'t' attribute, described below, is important to understand. As of Version
-0.001, the PhysVecRole is very flexible. Several attribute types are left 
-agnostic and rw so that they may be filled with whatever the user defines them to be... on the fly.  This seems most intuitive from the perspective of carrying 
-out computational work on molecules. 
-One example that could take advantage of the flexibility: A molecule consumes 
-PhysVecRole so 
-it has an array of coordinates for itself that is likely to remain empty 
-(because the atoms that Molecule contains have the more useful coordinates).  
-For much larger systems, the atoms may be ignored while the Molecule t-dependent 
-coordinate array could be filled with PDLs from Perl Data Language for much 
-faster analyses. Future version may tighten the API and perhaps fork off new 
-roles that are more specific to the scale of the problem. 
+The PhysVecRole provides the core attributes and methods shared between Atom 
+and Molecule classes. Consuming this role gives Classes a place to store 
+coordinates, forces, and charges, perhaps, over the course of a simulation 
+or for a collection 
+configurations for which all other object meta-data (name, mass, etc) remains 
+fixed. As such, the 't' attribute, described below, is important to understand. 
+The PhysVecRole is very flexible. Several attribute types are left agnostic and all
+are rw so that they may be filled with whatever the user defines them to be... on 
+the fly.  This seems most intuitive from the perspective of carrying out computational 
+work on molecules.  Thus, HackaMol bravely ignores Moose recommendations to use mostly
+'ro' attributes and to generate objects on the fly.  HackaMol may be coerced to be more
+rigid in future releases.    
 
-=attribute
+Comparing the PhysVecRole within Atom and Molecule may be helpful. For both, the PhysVecRol 
+generates a little meta-data (mass and name) and an array of coordinates, forces, and 
+charges.  For an atom, the array of coordinates gives an atom (with fixed meta data) the ability 
+to store multiple [x,y,z] positions (as a function of time, symmetry, distribution, etc.). What 
+is the array of coordinates for Molecule? Usually, the coordinates for a molecule will likely 
+remain empty (because the atoms that Molecule contains have the more useful coordinates), but we
+can imagine using the coordinates array to track the center of mass of the molecule if needed. 
+But for much larger systems, the atoms may be ignored while the Molecule coordinates array could 
+be filled with PDLs from Perl Data Language for much faster analyses. I.e. flexible arrays of
+coordinates are incredibly powerful. 
+
+=head1 ARRAY METHODS
+
+=head2
+
+=over 4       
+
+ add_charges    add_coords    add_forces       => push 
+ get_charges    get_coords    get_forces       => get  
+ set_charges    set_coords    set_forces       => set
+ all_charges    all_coords    all_forces       => elements
+ count_charges  count_coords  count_forces     => count
+
+=back
+
+examples: 
+add_charges(-0.1)
+
+=head1 ATTRIBUTES
+
+=head2 
 name
 
 isa Str that is rw. useful for labeling, bookkeeping...
 
-=attribute
+=head2 
 t
 
 isa Int or ScalarRef that is rw with default of 0
@@ -116,22 +147,22 @@ sure yet if it is a good or bad idea to do so.
     $_->t($rt) for (@objects);
     $t = 1; # change t for all objects.
 
-=attribute
+=head2 
 mass 
 
 isa Num that is rw and lazy with a default of 0
 
-=attribute
+=head2 
 xyzfree
 
 isa ArrayRef that is rw and lazy with a default value [1,1,1]. Using this array
 allows the object to be fixed for calculations that support it.  To fix X, $
 
-=attribute
+=head2 
 charge
 
 lazy, default: (build from t-dependent charges) or 0
- 
+
 As decribed in ARRAY_ATTRIBUTES, atoms and molecules have t-dependent arrays 
 of charges for the purpose of analysis.  e.g. one could store and analyze 
 atomic charges 
@@ -142,11 +173,13 @@ Often thinking in terms of a given atom/molecule having a "charge" is more
 intuitive and convenient.  The default value of the "charge" attribute is 
 the t index of "charges" or 0.0 if "charges" have been cleared. 
 
-=private_attribute
+=head1 PRIVATE_ATTRIBUTES
+
+=head2 
 _tcharges _tcoords _tforces
 
 isa ArrayRef that is lazy with public ARRAY traits described in ARRAY_METHODS
- 
+
 Gives atoms and molecules t-dependent arrays of charges, coordinates, and forces,
 for the purpose of analysis.  e.g. store and analyze atomic charges from a 
 quantum mechanical molecule in several intramolecular configurations or a fixed 
@@ -159,20 +192,5 @@ of coordinates for itself that is likely to remain empty (because the atoms that
 Molecule contains have the more useful coordinates).  For much larger systems, 
 the atoms may be ignored while the Molecule t-dependent coordinate array could 
 be filled with PDLs from Perl Data Language.  
+
 =cut
-
-
-=array_method
-
-=over 4       
-
- add_charges    add_coords    add_forces       => push 
- get_charges    get_coords    get_forces       => get  
- set_charges    set_coords    set_forces       => set
- all_charges    all_coords    all_forces       => elements
- count_charges  count_coords  count_forces     => count
-
-=back 
-
-examples: 
-add_charges(-0.1)

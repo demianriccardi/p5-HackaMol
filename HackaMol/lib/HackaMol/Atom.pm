@@ -1,5 +1,10 @@
 package Atom;
 use Moose;
+use lib 'roles'; 
+use MooseX::Storage;
+with Storage('io' => 'StorableFile');
+
+with 'PhysVecRole';
 
 1;
 

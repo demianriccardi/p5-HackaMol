@@ -1,6 +1,6 @@
 package Atom;
 use Moose;
-use lib 'roles'; 
+use lib 'lib/roles'; 
 use MooseX::Storage;
 with Storage('io' => 'StorableFile');
 

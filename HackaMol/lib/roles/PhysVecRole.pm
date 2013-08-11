@@ -20,7 +20,7 @@ has "_t$_"  => (
                 default  => sub { [] },
                 handles  =>
                 {
-                  "add_$_"   => 'push'    ,
+                  "push_$_"   => 'push'    ,
                   "get_$_"   => 'get'     ,
                   "set_$_"   => 'set'     ,
                   "all_$_"   => 'elements',
@@ -64,6 +64,38 @@ sub _build_charge {
   }
 }
 
+has 'distance_coderef' => (
+     is           => 'rw',
+     isa          => 'CodeRef',
+     builder      => '_build_distance_coderef',
+     lazy         => 1,
+                  );
+
+sub _build_distance_coderef {
+  my $self = shift;
+  my $sub  = sub{
+                 my $self = shift;
+                 my $pvec = shift;
+                 my $tself = $self->t;
+                 my $tpvec = $pvec->t;
+                 if ($tself != $tpvec){
+                  carp "you are comparing the distance between objects with different times";
+                 }
+                 my $vec1 = $self->get_coords($tself);
+                 my $vec2 = $pvec->get_coords($tpvec);
+                 my $dist = 0;
+                 $dist += ($vec1->[$_]-$vec2->[$_])**2 foreach 0 .. 2;
+                 return (sqrt($dist));
+                };
+   return ($sub);
+}
+
+sub distance {
+  my $self = shift;
+  my $pvec = shift or croak "need to pass another obj that does PhysVecRole" ;
+  my $dist = &{$self->distance_coderef}($self,$pvec);
+  return ($dist);
+}
 
 1;
 
@@ -81,7 +113,7 @@ my $obj = Class_with_PhysVecRole->new( name => 'foo', t => 0 );
 
 # add some charges
 
-$obj->add_charges($_) foreach ( 0.3, 0.2, 0.1, -0.1, -0.2, -0.36 );
+$obj->push_charges($_) foreach ( 0.3, 0.2, 0.1, -0.1, -0.2, -0.36 );
 
 my $sum_charges = 0;
 
@@ -100,11 +132,11 @@ print $_ foreach $obj->all_charges;
 
 # add some coordinates
 
-$obj->add_coords($_) foreach ( [0,0,0], [1,1,1], [-1.0,2.0,-4.0] );
+$obj->push_coords($_) foreach ( [0,0,0], [1,1,1], [-1.0,2.0,-4.0] );
 
-#example of flexibility: 
+#Example of flexibility: 
 
-#Inplace conversion of coordinates to Math::VectorReal objects
+#Inplace conversion of coordinates to L<Math::VectorReal> objects
 
 use Math::VectorReal; # exports 'vector' method
 
@@ -146,16 +178,16 @@ But for much larger systems, the atoms may be ignored while the Molecule coordin
 be filled with PDLs from Perl Data Language for much faster analyses. I.e. flexible arrays of
 coordinates are incredibly powerful. 
 
-=array_method add_$_, all_$_, get_$_, set_$_, count_$_, clear_$_ foreach qw(charges coords forces)
+=array_method push_$_, all_$_, get_$_, set_$_, count_$_, clear_$_ foreach qw(charges coords forces)
 
   ARRAY traits, respectively: push, get, set, all, elements, clear
   Descriptions for charges and coords follows.  forces analogous to coords.
   
-=array_method add_charges
+=array_method push_charges
 
   push value on to _tcharges array
 
-  $obj->add_charges($_) foreach (0.15, 0.17, 0.14, 0.13);
+  $obj->push_charges($_) foreach (0.15, 0.17, 0.14, 0.13);
 
 =array_method all_charges
 
@@ -190,11 +222,11 @@ coordinates are incredibly powerful.
     print $_ . " " foreach $obj->all_charges; # does nothing 
     print $obj->count_charges; # prints 0
 
-=array_method add_coords
+=array_method push_coords
 
   push value on to _tcoords array
 
-  $obj->add_coords($_) foreach ([0,0,0],[1,1,1],[-1.0,2.0,-4.0], [3,3,3]);
+  $obj->push_coords($_) foreach ([0,0,0],[1,1,1],[-1.0,2.0,-4.0], [3,3,3]);
 
 =array_method all_coords
 

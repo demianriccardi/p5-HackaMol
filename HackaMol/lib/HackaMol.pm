@@ -1,6 +1,6 @@
 package HackaMol;
 # ABSTRACT: object-oriented library for multi-scale molecular hacking 
-
+use lib 'lib';
 use HackaMol::Atom;
 use HackaMol::Molecule;
 use HackaMol::Bond;

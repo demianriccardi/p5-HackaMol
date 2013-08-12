@@ -47,12 +47,21 @@ has 'xyzfree' => (
                   lazy    => 1,
                  );
 
-has 'charge' => (
+has $_ => (
      is         => 'rw',
      isa        => 'Num',
-     builder    => '_build_charge',
+     builder    => "_build_$_",
      lazy       => 1,
-                ); 
+     predicate  => "has_$_",
+                ) foreach qw(charge); 
+
+has $_ => (
+     is         => 'rw',
+     isa        => 'ArrayRef',
+     builder    => "_build_$_",
+     lazy       => 1,
+     predicate  => "has_$_",
+                ) foreach qw(coord force); 
 
 sub _build_charge {
   my $self = shift;
@@ -63,6 +72,27 @@ sub _build_charge {
     return (0);
   }
 }
+
+sub _build_coord {
+  my $self = shift;
+  if ($self->count_coords){
+    return ( $self->get_coords($self->t) );
+  }
+  else {
+    return ([0,0,0]);
+  }
+}
+
+sub _build_forces {
+  my $self = shift;
+  if ($self->count_forces){
+    return ( $self->get_forces($self->t) );
+  }
+  else {
+    return ([0,0,0]);
+  }
+}
+
 
 has "$_\_coderef" => (
      is           => 'rw',

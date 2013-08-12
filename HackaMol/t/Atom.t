@@ -4,16 +4,18 @@ use Test::More;
 use Time::HiRes qw(time);
 use Atom;
 
-my $atom1 = Atom->new(name=>'shit', coord =>[1,0,0], Z=>6);
-
-$atom1->push_coords([1,1,1]);
+#my $atom1 = Atom->new(name=>'shit', charges => [1], Z=>6);
+my $atom1 = Atom->new(name=>'shit', charges=> [1,2], coords =>[[1,0,0],[2,0,0]], Z=>6);
+my $atom2 = Atom->new(name=>'shit', charges=> [3,4], coords =>[[4,0,0],[9,0,0]], Z=>6);
+$atom1->t(1);
+$atom2->t(1);
+say $atom1->distance($atom2);
+exit;
 
 print $atom1->dump;
 say $atom1->symbol;
 print $atom1->dump;
-
-my $atom2 = Atom->new(name=>'shit', coord =>[1,0,0], symbol=>"HG");
-
+exit;
 print $atom2->dump;
 say $atom2->Z;
 print $atom2->dump;

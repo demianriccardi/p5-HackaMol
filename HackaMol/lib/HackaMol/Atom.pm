@@ -1,4 +1,5 @@
 package Atom;
+#ABSTRACT: HackaMol Atom Class
 use Moose;
 use namespace::autoclean;
 use lib 'lib/roles', 'lib/HackaMol/lib'; 
@@ -82,10 +83,9 @@ sub BUILD {
     croak "Either Z or Symbol must be set when calling Atom->new()"; 
   }
 
-  $self->push_charges($self->charge) if $self->has_charge;
-  $self->push_coords($self->coord)   if $self->has_coord;
-  $self->push_forces($self->force)   if $self->has_force;
-  $self->push_forces($self->force)   if $self->has_force;
+  #$self->push_charges($self->charge) if $self->has_charge;
+  #$self->push_coords($self->coord)   if $self->has_coord;
+  #$self->push_forces($self->force)   if $self->has_force;
   $self->symbol(  _fix_symbol($self->symbol) ) if ($self->has_symbol);
 }
 

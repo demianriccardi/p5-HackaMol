@@ -64,25 +64,98 @@ sub _build_charge {
   }
 }
 
+has "$_\_coderef" => (
+     is           => 'rw',
+     isa          => 'CodeRef',
+     builder      => "_build_$_\_coderef",
+     lazy         => 1,
+                     ) foreach qw (delta_charges delta_coords delta_forces);
+
+
+
+sub _build_delta_charges_coderef {
+  my $self = shift;
+  my $sub  = sub{
+                 my $self = shift;
+                 my $ti   = shift;
+                 my $tf   = shift;
+                 my $dq   = $self->get_charges($tf) - $self->get_charges($ti);
+                 return ($dq);
+                };
+   return ($sub);
+}
+
+
+sub _build_delta_coords_coderef {
+  my $self = shift;
+  my $sub  = sub{
+                 my $self = shift;
+                 my $ti   = shift;
+                 my $tf   = shift;
+                 my $vi   = $self->get_coords($ti);
+                 my $vf   = $self->get_coords($tf);
+                 return ([map{$vf->[$_]- $vi->[$_]} 0 .. 2]);
+                };
+   return ($sub);
+}
+
+sub delta_charges {
+  my $self = shift;
+  croak "delta_charges> pass initial and final time" unless (@_ == 2);
+  my $ti = shift;
+  my $tf = shift;
+  &{$self->delta_charges_coderef}($self,$ti,$tf);  
+}
+
+sub delta_coords {
+  my $self = shift;
+  croak "delta_coords> pass initial and final time" unless (@_ == 2);
+  my $ti = shift;
+  my $tf = shift;
+  &{$self->delta_coords_coderef}($self,$ti,$tf); 
+}
+
+sub _build_delta_forces_coderef {
+  my $self = shift;
+  my $sub  = sub{
+                 my $self = shift;
+                 my $ti   = shift;
+                 my $tf   = shift;
+                 my $vi   = $self->get_forces($ti);
+                 my $vf   = $self->get_forces($tf);
+                 return ([map{$vf->[$_]- $vi->[$_]} 0 .. 2]);
+                };
+   return ($sub);
+}
+
+sub delta_forces {
+  my $self = shift;
+  croak "delta_forces> pass initial and final time" unless (@_ == 2);
+  my $ti = shift;
+  my $tf = shift;
+  &{$self->delta_forces_coderef}($self,$ti,$tf); 
+}
+
+
 has 'distance_coderef' => (
      is           => 'rw',
      isa          => 'CodeRef',
      builder      => '_build_distance_coderef',
      lazy         => 1,
-                  );
+                          );
 
 sub _build_distance_coderef {
   my $self = shift;
   my $sub  = sub{
-                 my $self = shift;
-                 my $pvec = shift;
-                 my $tself = $self->t;
-                 my $tpvec = $pvec->t;
-                 if ($tself != $tpvec){
+                 my $obj1  = shift;
+                 my $obj2  = shift;
+                 my $tobj1 = $obj1->t;
+                 my $tobj2 = $obj2->t;
+                 if ($tobj1 != $tobj2){
                   carp "you are comparing the distance between objects with different times";
                  }
-                 my $vec1 = $self->get_coords($tself);
-                 my $vec2 = $pvec->get_coords($tpvec);
+                 my $vec1 = $obj1->get_coords($tobj1);
+                 my $vec2 = $obj2->get_coords($tobj2);
                  my $dist = 0;
                  $dist += ($vec1->[$_]-$vec2->[$_])**2 foreach 0 .. 2;
                  return (sqrt($dist));
@@ -92,8 +165,8 @@ sub _build_distance_coderef {
 
 sub distance {
   my $self = shift;
-  my $pvec = shift or croak "need to pass another obj that does PhysVecRole" ;
-  my $dist = &{$self->distance_coderef}($self,$pvec);
+  my $obj2 = shift or croak "need to pass another obj that does PhysVecRole" ;
+  my $dist = &{$self->distance_coderef}($self,$obj2);
   return ($dist);
 }
 
@@ -391,7 +464,7 @@ method.
                           my $tpvec = $pvec->t;
                           if ($tself != $tpvec){
       
- carp ing the distance between objects with different times";
+  carp "you are comparing the distance between objects with different times";
       
                           }
                           my $vec1 = $self->get_coords($tself);
@@ -403,5 +476,98 @@ method.
            return ($subref);
   }
 
+=attr delta_charges_coderef
+
+isa CodeRef that is rw and lazy with default provided by
+_builder_delta_charges_coderef. Default takes three arguments:
+
+  &{$self->delta_charges_coderef}($self,$ti,$tf);
+
+The delta_charges_coderef, delta_coords_coderef, and delta_forces_coderef are
+all analogous (they can probably be abstracted into other roles), 
+and are similar to distance_coderef.  In contrast to distance_coderef, which
+compares takes two objects as arguments, delta_charges_coderef subtracts the initial
+_tcharges at $ti from that at the final $tf.  Wrapped in "delta_charges" method
+for a cleaner interface. The delta_charges_coderef default behaviour is built
+from _build_charges_coderef, and it can be adjusted on the fly
+to redefine "delta_charges".  You are free to define new Charge classes and work
+them into your objects. 
+
+=private_attr _build_delta_charges_coderef
+
+builds the default delta_charges_coderef attribute that is wrapped in the
+delta_charges method
+
+  sub _build_delta_charges_coderef {
+    my $self   = shift;
+    my $subref = sub{
+                   my $self = shift;
+                   my $ti   = shift;
+                   my $tf   = shift;
+                   my $dq   = $self->get_charges($tf) - $self->get_charges($ti);
+                   return ($dq);
+                  };
+    return ($subref);
+  }
+
+=method delta_charges 
+
+Takes initial t ($ti) and final t ($tf) arguments, and passes $self,
+$ti, $tf to the delta_charges_coderef. I.e.:
+
+  $obj1->delta_charges($ti,$tf);
+
+  which does this inside: &{$self->delta_charges_coderef}($self,$ti,$tf)
+
+  see delta_charges_coderef and delta_distance_coderef and the builders for
+  further discussions
+
+=attr delta_coords_coderef delta_forces_coderef
+
+isa CodeRef that is rw and lazy with default provided by
+default behaviour of delta_coords_coderef and delta_forces_coderef are exactly
+the same.  Default takes three arguments:
+
+  &{$self->delta_coords_coderef}($self,$ti,$tf);
+  &{$self->delta_forces_coderef}($self,$ti,$tf);
+
+See delta_charges_coderef for additional, analogous discussions.
+_build_delta_coords_coderef and _build_delta_forces_coderef are default builders
+
+=private_attr _build_delta_coords_coderef _build_delta_forces_coderef
+
+builds the default delta_coords_coderef and delta_forces_coderef attribute that is wrapped in the
+delta_coords and delta_forces methods:
+
+sub _build_delta_forces_coderef {
+  my $self = shift;
+  my $sub  = sub{
+                 my $self = shift;
+                 my $ti   = shift;
+                 my $tf   = shift;
+                 my $vi   = $self->get_forces($ti);
+                 my $vf   = $self->get_forces($tf);
+                 return ([map{$vf->[$_]- $vi->[$_]} 0 .. 2]);
+                };
+   return ($sub);
+}
+
+_build_delta_coords is the same with s/forces/coords/ .
+
+=method delta_coords delta_forces 
+
+Takes initial t ($ti) and final t ($tf) arguments, and passes $self,
+$ti, $tf to the delta_charges_coderef. I.e.:
+
+  $obj1->delta_coords($ti,$tf);
+  
+  which does this inside: &{$self->delta_coords_coderef}($self,$ti,$tf)
+
+  $obj1->delta_forces($ti,$tf);
+
+  which does this inside: &{$self->delta_forces_coderef}($self,$ti,$tf)
+
+  see delta_charges_coderef, delta_coords_coderef and delta_distance_coderef and the builders for
+  further discussions.
 
 =cut

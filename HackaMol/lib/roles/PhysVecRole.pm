@@ -335,4 +335,73 @@ Molecule contains have the more useful coordinates).  For much larger systems,
 the atoms may be ignored while the Molecule t-dependent coordinate array could 
 be filled with PDLs from Perl Data Language.  
 
+=attr distance_coderef
+
+isa CodeRef that is rw and lazy with default provided by
+_builder_distance_coderef. Default takes two arguments:
+
+  &{$self->distance_coderef}($obj1,$obj2);
+
+Wrapped in the method "distance" for cleaner interface. As an example, let's
+change $distance_coderef to use Math::VectorReal.  Assuming all _tcoords for
+obj1 and obj2 have been set to Math::VectorReal objects (See Synopsis!):
+
+$obj1->distance_coderef(
+                         sub {
+                              my $obj1  = shift;
+                              my $obj2  = shift;
+                              my $tobj1 = $obj1->t;
+                              my $tobj2 = $obj2->t;
+                              if ($tself != $tpvec){
+
+  carp "you are comparing the distance between objects with different times";
+
+                              }
+                              my $vec1  = $obj1->get_coords($tobj1);
+                              my $vec2  = $obj2->get_coords($tobj2);
+                              my $dist  = ($vec1-$vec2)->length;
+                              return ($dist);
+                         }
+                       );
+
+see _build_distance_coderef that is default
+
+=method distance
+
+Takes one argument ($obj) and passes $self and 
+$obj to the "distance_coderef". I.e.:
+
+  $obj1->distance($obj2);
+
+  which does this inside: &{$self->distance_coderef}($self,$obj2)
+
+define distance_coderef as you wish.  See default generated from _build_distance_coderef for an example.
+
+=private_attr _build_distance_coderef
+
+builds the default distance_coderef attribute that is wrapped in the distance
+method.
+
+  sub _build_distance_coderef {
+           my $self   = shift;
+           my $subref = sub{
+                          my $self = shift;
+                          my $pvec = shift;
+                          my $tself = $self->t;
+                          my $tpvec = $pvec->t;
+                          if ($tself != $tpvec){
+      
+ carp ing the distance between objects with different times";
+      
+                          }
+                          my $vec1 = $self->get_coords($tself);
+                          my $vec2 = $pvec->get_coords($tpvec);
+                          my $dist = 0;
+                          $dist += ($vec1->[$_]-$vec2->[$_])**2 foreach 0 .. 2;
+                          return (sqrt($dist));
+                         };
+           return ($subref);
+  }
+
+
 =cut

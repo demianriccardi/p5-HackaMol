@@ -176,6 +176,8 @@ sub inter_vector {
     return ($dvec);
 }
 
+no Moose::Role;
+
 1;
 
 __END__

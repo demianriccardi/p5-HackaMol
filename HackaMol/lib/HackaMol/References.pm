@@ -31,6 +31,7 @@ sub build_references{
                     publisher={Springer}
                    }'
                  );
+   $self->add_refs(
                   '@article{hanwell2012avogadro,
                     title={Avogadro: an advanced semantic chemical editor, visualization, and analysis platform},
                     author={Hanwell, Marcus D and Curtis, Donald E and Lonie, David C and Vandermeersch, Tim and Zurek, Eva and Hutchison, Geoffrey R},

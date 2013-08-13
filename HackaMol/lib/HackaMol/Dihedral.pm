@@ -1,4 +1,5 @@
 package Dihedral;
+#ABSTRACT: Dihedral class for HackaMol
 use Moose;
 
 1;

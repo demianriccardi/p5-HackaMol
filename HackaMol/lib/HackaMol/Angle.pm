@@ -1,4 +1,5 @@
 package Angle;
+#ABSTRACT: Angle Class for HackaMol
 use Moose;
 
 1;

@@ -1,4 +1,5 @@
 package Bond;
+#ABSTRACT: Bond class for HackaMol
 use Moose;
 
 1;

@@ -1,10 +1,10 @@
 package Molecule;
+#ABSTRACT: Molecule class for HackaMol
 use Moose;
 use lib 'lib/roles';
 use MooseX::Storage;
-with Storage('io' => 'StorableFile');
+with Storage('io' => 'StorableFile');#, 'PhysVecRole';
 
-with 'PhysVecRole';
 
 1;
 

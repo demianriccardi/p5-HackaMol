@@ -3,125 +3,159 @@ package Atom;
 use Moose;
 use namespace::autoclean;
 use lib 'lib/roles', 'lib/HackaMol/lib';
-use Carp; 
+use Carp;
 use MooseX::Storage;
-with Storage('io' => 'StorableFile'), 'PhysVecRole';
-use PeriodicTable qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
+with Storage( 'io' => 'StorableFile' ), 
+     'PhysVec', 'BondsAnglesDihedrals', 'PdbRole';
+use PeriodicTable
+  qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 
-has 'symbol'  => (
-                  is        => 'rw',
-                  isa       => 'Str',
-                  predicate => 'has_symbol',
-                  lazy      => 1,
-                  builder   => '_build_symbol',
-                 );
+my @delta_attrs = qw(Z symbol vdw_radius covalent_radius);
+
+has 'is_dirty' => (
+# when attributes change, the Atom gets dirty. change_symbol, change_Z
+# generally, classes that have Atom should decide whether to clean Atom
+  is      => 'rw',
+  isa     => 'Bool',
+  lazy    => 1,
+  default => 0, # anytime called, the atom becomes dirty forever!  
+);
+
+has 'symbol' => (
+    is        => 'rw',
+    isa       => 'Str',
+    predicate => 'has_symbol',
+    clearer   => 'clear_symbol',
+    lazy      => 1,
+    builder   => '_build_symbol',
+);
 
 sub _build_symbol {
-  # if we are building symbol, Z must exist.  BUILD croaks without one of them
-  my $self = shift;
-  $self->symbol( _Z_to_symbol($self->Z) );
+
+    # if we are building symbol, Z must exist.  BUILD croaks without one of them
+    my $self = shift;
+    $self->symbol( _Z_to_symbol( $self->Z ) );
 }
 
-has 'Z'       => (
-                  is        => 'rw',
-                  isa       => 'Int',
-                  predicate => 'has_Z',
-                  lazy      => 1,
-                  builder   => '_build_Z',
-                 );
+has 'Z' => (
+    is        => 'rw',
+    isa       => 'Int',
+    predicate => 'has_Z',
+    clearer   => 'clear_Z',
+    lazy      => 1,
+    builder   => '_build_Z',
+);
 
 sub _build_Z {
-  # if we are building Z, symbol must exist.  BUILD croaks without one of them
-  my $self = shift;
-  $self->Z( _symbol_to_Z($self->symbol) );
+
+    # if we are building Z, symbol must exist.  BUILD croaks without one of them
+    my $self = shift;
+    $self->Z( _symbol_to_Z( $self->symbol ) );
 }
 
-has $_        => (
-                  is        => 'rw',
-                  isa       => 'Num',
-                  predicate => "has_$_",
-                  lazy      => 1,
-                  builder   => "_build_$_",
-                 ) foreach (qw(covalent_radius vdw_radius));
+
+has $_ => (
+    is        => 'rw',
+    isa       => 'Num',
+    predicate => "has_$_",
+    clearer   => "clear_$_",
+    lazy      => 1,
+    builder   => "_build_$_",
+) foreach (qw(covalent_radius vdw_radius));
 
 sub _build_covalent_radius {
-  # if we are building symbol, Z must exist.  BUILD croaks without one of them
-  my $self = shift;
-  $self->covalent_radius( _Z_to_covalent_radius($self->Z) );
+
+    # if we are building symbol, Z must exist.  BUILD croaks without one of them
+    my $self = shift;
+    $self->covalent_radius( _Z_to_covalent_radius( $self->Z ) );
 }
 
 sub _build_vdw_radius {
-  # if we are building symbol, Z must exist.  BUILD croaks without one of them
-  my $self = shift;
-  $self->vdw_radius( _Z_to_vdw_radius($self->Z) );
+
+    # if we are building symbol, Z must exist.  BUILD croaks without one of them
+    my $self = shift;
+    $self->vdw_radius( _Z_to_vdw_radius( $self->Z ) );
 }
 
-has 'bonds' => (
-           traits    => [ 'Array' ],
-           is        => 'rw',
-           isa       => 'ArrayRef[Bond]',
-           default   => sub { [] },
-           lazy      => 1,
-           weak_ref  => 1,
-           handles   =>
-           {
-             "has_bonds" => 'count'   ,
-             "add_bonds" => 'push'    ,
-             "get_bonds" => 'get'     ,
-             "set_bonds" => 'set'     ,
-             "all_bonds" => 'elements',
-           "count_bonds" => 'count'   ,
-           "break_bonds" => 'delete'  ,
-           "clear_bonds" => 'clear'   ,
-           },
-);
+sub change_Z {
+    my $self = shift;
+    my $Z    = shift or croak "pass argument Z to change_Z method";
+    $self->_clean_atom;
+    $self->Z($Z);
+    $self->mass(_symbol_to_mass($self->symbol));
+}
+
+sub change_symbol{
+    my $self   = shift;
+    my $symbol = shift or croak "pass argument symbol to change_Z method";   
+    $self->_clean_atom;
+    $self->symbol(_fix_symbol($symbol));
+    $self->mass(_symbol_to_mass($self->symbol));
+}
+
+sub _clean_atom {
+    my $self = shift;
+    foreach my $clearthis (map {"clear_$_"} @delta_attrs) {
+      $self->$clearthis;
+    }
+    carp "cleaning atom attributes for in place change. setting atom->is_dirty";
+    $self->is_dirty(1); 
+}
 
 sub BUILD {
+    my $self = shift;
+
+    if ($self->has_symbol){
+      $self->symbol( _fix_symbol( $self->symbol ) ) ;
+      return;
+    }  
+
+    return if ($self->has_Z); 
+
+    unless ( $self->has_Z or $self->has_symbol ) {
+        croak "Either Z or Symbol must be set when calling Atom->new()";
+    }
+    return;
+}
+
+sub _build_mass {
   my $self = shift;
+  $self->mass(_symbol_to_mass($self->symbol));
+};
 
-  unless ($self->has_Z or $self->has_symbol){
-    croak "Either Z or Symbol must be set when calling Atom->new()"; 
-  }
-
-  #$self->push_charges($self->charge) if $self->has_charge;
-  #$self->push_coords($self->coord)   if $self->has_coord;
-  #$self->push_forces($self->force)   if $self->has_force;
-  $self->symbol(  _fix_symbol($self->symbol) ) if ($self->has_symbol);
+sub _symbol_to_Z {
+    use PeriodicTable qw(%ELEMENTS);
+    my $symbol = shift;
+    $symbol = ucfirst( lc($symbol) );
+    return $ELEMENTS{$symbol};
 }
 
-sub _symbol_to_Z{
-  use PeriodicTable qw(%ELEMENTS);
-  my $symbol = shift;
-  $symbol = ucfirst( lc($symbol) );
-  return $ELEMENTS{$symbol};
+sub _Z_to_symbol {
+    use PeriodicTable qw(@ELEMENTS);
+    my $Z = shift;
+    return $ELEMENTS[$Z];
 }
 
-sub _Z_to_symbol{
-  use PeriodicTable qw(@ELEMENTS);
-  my $Z = shift;
-  return $ELEMENTS[$Z];
+sub _symbol_to_mass {
+    use PeriodicTable qw(%ATOMIC_MASSES);
+    my $symbol = shift;
+    return $ATOMIC_MASSES{$symbol};
 }
 
-sub _symbol_to_mass{
-  use PeriodicTable qw(%ATOMIC_MASSES);
-  my $symbol = shift;
-  $symbol = ucfirst( lc($symbol) );
-  return $ATOMIC_MASSES{$symbol};
+sub _fix_symbol {
+    return ucfirst( lc(shift) );
 }
 
-sub _fix_symbol{
-  return ucfirst( lc( shift ) );
+sub _Z_to_covalent_radius {
+    my $Z = shift;
+
+    # index 1 for single bond length..
+    return $COVALENT_RADII[$Z][1] / 100;
 }
 
-sub _Z_to_covalent_radius{
-  my $Z = shift;
-  # index 1 for single bond length..
-  return $COVALENT_RADII[$Z][1]/100;
-}
-
-sub _Z_to_vdw_radius{
-  my $Z = shift;
-  return $VDW_RADII[$Z][1]/100;
+sub _Z_to_vdw_radius {
+    my $Z = shift;
+    return $VDW_RADII[$Z][1] / 100;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -130,10 +164,25 @@ __PACKAGE__->meta->make_immutable;
 
 __END__
 
-=pod
+=head1 SYNOPSIS
 
-=head1 NAME
+my $atom1 = Atom->new(
+    name    => 'C1',
+    charges => [-1.0],
+    coords  => [ [ 3.12618, -0.06060, 0.05453 ] ],
+    forces  => [ [ 0 , 0, 0 ] ],
+    Z       => 6
+);
 
-Atom
+my $atom2 = Atom->new(
+    name    => 'Hg1',
+    charges => [2.0],
+    coords  => [ [ 1.04508, -0.06088, 0.05456  ] ],
+    forces  => [ [ 0 , 0, 0 ] ],
+    symbol  => 'Hg'
+);
 
-=cut
+
+
+
+

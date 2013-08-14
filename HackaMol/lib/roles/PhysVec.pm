@@ -242,7 +242,7 @@ print $sum_vec / $obj->count_coords; # average x,y,z coordinates
 
 =head1 DESCRIPTION
 
-The PhysVec provides the core attributes and methods shared between Atom 
+PhysVec provides the core attributes and methods shared between Atom 
 and Molecule classes. Consuming this role gives Classes a place to store 
 coordinates, forces, and charges, perhaps, over the course of a simulation 
 or for a collection 

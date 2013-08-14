@@ -16,11 +16,37 @@ my @methods = qw(
   distance delta_coords delta_forces delta_charges
 );
 
-my @roles = qw(PdbRole PhysVec BondsAnglesDihedrals);
+my @pdb_attributes = qw(
+record_name
+serial    
+occ       
+bfact     
+resname   
+chain     
+altloc    
+resid     
+iatom     
+icode     
+pdbid     
+segid     
+);
+
+my @qm_attributes = qw(
+basis
+ecp
+multiplicity
+basis_geom
+dummy
+);
+#todo add tests for storage!
+
+my @roles = qw(PdbRole QmRole PhysVec BondsAnglesDihedrals);
 
 map has_attribute_ok( 'Atom', $_ ), @attributes;
 map can_ok( 'Atom', $_ ), @methods;
 map does_ok( 'Atom', $_ ), @roles;
+map has_attribute_ok( 'Atom', $_ ), @pdb_attributes;
+map has_attribute_ok( 'Atom', $_ ), @qm_attributes;
 
 my $atom1 = Atom->new(
     name    => 'C',

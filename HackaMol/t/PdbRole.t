@@ -4,7 +4,6 @@ use Test::Moose;
 use MooseX::ClassCompositor;    #use this for testing roles
 use lib 'lib/roles';
 use PdbRole;                # v0.001;#To test for version availability
-use Math::VectorReal;           # just for example test of swapping coderefs
 
 my @attributes = qw(
 record_name
@@ -18,11 +17,10 @@ resid
 iatom     
 icode     
 pdbid     
-segid     
+segid    
 );
 my @methods = qw(
 );
-my ( $obj1, $obj2, $obj3 );
 
 my $class = MooseX::ClassCompositor->new( { 
                                             class_basename => 'Test', 

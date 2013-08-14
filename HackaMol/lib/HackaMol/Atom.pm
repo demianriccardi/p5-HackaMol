@@ -6,7 +6,7 @@ use lib 'lib/roles', 'lib/HackaMol/lib';
 use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ), 
-     'PhysVec', 'BondsAnglesDihedrals', 'PdbRole';
+     'PhysVecMVR', 'BondsAnglesDihedrals', 'PdbRole', 'QmRole';
 use PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 

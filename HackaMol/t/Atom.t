@@ -13,9 +13,6 @@ my @attributes = qw( name t mass xyzfree is_fixed
 my @methods = qw(
   _build_mass _build_symbol _build_Z _build_covalent_radius _build_vdw_radius
   change_Z  change_symbol _clean_atom
-  push_charges get_charges set_charges all_charges clear_charges
-  push_coords get_coords set_coords all_coords clear_coords
-  push_forces get_forces set_forces all_forces clear_forces
   distance delta_coords delta_forces delta_charges
 );
 

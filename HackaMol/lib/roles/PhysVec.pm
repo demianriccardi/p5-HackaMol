@@ -3,7 +3,7 @@ package PhysVec;
 use Moose::Role;
 use Carp;
 
-#requires '_build_mass';
+requires '_build_mass';
 
 has 'name', is => 'rw', isa => 'Str';
 

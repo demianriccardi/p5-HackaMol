@@ -1,7 +1,24 @@
+{
+  # see node_id=1049328 on perlmonks. This hack allows the required subroutine
+  # to be included in the ClassCompositor
+  package MooseX::ClassCompositor::ReqRole;
+  use Moose;
+  extends qw( MooseX::ClassCompositor );
+  around class_for => sub {
+    my $orig = shift;
+    my $self = shift;
+    my @roles = map {
+      ref($_) eq q(HASH) ? 'Moose::Meta::Role'->create_anon_role(methods => $_)
+: $_
+    } @_;
+    $self->$orig(@roles);
+  };
+}
+
 use Test::Most;
 use Test::Warnings;
 use Test::Moose;
-use MooseX::ClassCompositor;    #use this for testing roles
+#use MooseX::ClassCompositor;    #use this for testing roles
 use lib 'lib/roles', 't/lib';
 use PhysVec;                # v0.001;#To test for version availability
 use Math::VectorReal;           # just for example test of swapping coderefs
@@ -16,11 +33,11 @@ my @methods = qw(
 );
 my ( $obj1, $obj2, $obj3 );
 
-my %methods = ('_build_mass' => sub{return 0});
+my %methods = ('_build_mass' => sub{return 0}); # this is from the above
 
-my $class = MooseX::ClassCompositor->new( { 
+my $class = MooseX::ClassCompositor::ReqRole->new( { 
                                             class_basename => 'Test', 
-                                          } )->class_for('PhysVec');
+                                          } )->class_for('PhysVec',\%methods);
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;

@@ -2,6 +2,7 @@ package AtomsGroup;
 use Moose::Role;
 use Carp;
 use MooseX::Storage;
+use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' );
 
 has 'atoms' => (
@@ -9,7 +10,7 @@ has 'atoms' => (
     isa     => 'ArrayRef[Atom]',
     default => sub { [] },
     handles => {
-        add_atoms    => 'push',
+        push_atoms    => 'push',
         get_atoms    => 'get',
         set_atoms    => 'set',
         delete_atoms => 'delete',
@@ -17,13 +18,24 @@ has 'atoms' => (
         count_atoms  => 'count',
         clear_atoms  => 'clear',
     },
+    lazy => 1,
 );
+
+has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0, trigger => \&_set_atoms_t;
+
+sub _set_atoms_t {
+    my ($self, $new_t, $old_t) = @_;
+    if(@_ > 2) { # if setting the group t to something new do for all atoms
+      $_->t($new_t) foreach $self->all_atoms;
+    }
+}
 
 has $_ => (
     is      => 'rw',
     isa     => 'Math::Vector::Real',
     builder => "_build_$_",
-    clearer => "_clear_$_",
+    clearer => "clear_$_",
+    lazy => 1,
 ) foreach (qw(dipole COM COZ));
 
 sub _build_dipole {
@@ -43,7 +55,7 @@ sub _build_COM {
     my @m_vectors = map { $_->mass * $_->get_coords( $_->t ) } @atoms;
     my $com       = V( 0, 0, 0 );
     $com += $_ foreach @m_vectors;
-    return ($com);
+    return ($com/$self->total_mass);
 }
 
 sub _build_COZ {
@@ -52,15 +64,29 @@ sub _build_COZ {
     my @z_vectors = map { $_->Z * $_->get_coords( $_->t ) } @atoms;
     my $coz       = V( 0, 0, 0 );
     $coz += $_ foreach @z_vectors;
-    return ($coz);
+    return ($coz/$self->total_Z);
+}
+
+sub Rg {
+ #radius of gyration.  no tensors yet.
+    my $self         = shift;
+    my @atoms        = $self->all_atoms;
+    my $com          = $self->com;
+    my $total_mass   = $self->total_mass;
+    my @masses = map { $_->mass} @atoms;
+    my @dvec2  = map{$_*$_} map { $_->get_coords($_->t) - $com } @atoms;
+    my $sum    = 0;
+    $sum      += $masses[$_]*$dvec2[$_] foreach 0 .. $#dvec2;
+    return( sqrt($sum/$total_mass) );
 }
 
 has $_ => (
     is      => 'rw',
     isa     => 'Num',
     builder => "_build_$_",
-    clearer => "_clear_$_",
-) foreach (qw(dipole_moment total_charge));
+    clearer => "clear_$_",
+    lazy => 1,
+) foreach (qw(dipole_moment total_charge total_mass total_Z));
 
 sub _build_total_charge {
     my $self    = shift;
@@ -71,16 +97,33 @@ sub _build_total_charge {
     return ($sum);
 }
 
+sub _build_total_mass {
+    my $self   = shift;
+    my @masses = map { $_->mass } $self->all_atoms;
+    my $sum    = 0;
+    $sum += $_ foreach @masses;
+    return ($sum);
+}
+
+sub _build_total_Z {
+    my $self = shift;
+    my @Zs   = map { $_->Z } $self->all_atoms;
+    my $sum  = 0;
+    $sum    += $_ foreach @Zs;
+    return ($sum);
+}
+
 sub _build_dipole_moment {
     my $self = shift;
     return ( abs( $self->dipole ) );
 }
 
+
 has 'atoms_bin' => (
     traits  => ['Hash'],
     isa     => 'HashRef[Str]',
     builder => '_build_atoms_bin',
-    clearer => 'clear_bin',
+    clearer => 'clear_atoms_bin',
     handles => {
         set_atoms_bin      => 'set',
         get_atoms_bin      => 'get',
@@ -89,6 +132,7 @@ has 'atoms_bin' => (
         all_unique_atoms   => 'keys',
         atom_counts        => 'kv',
     },
+    lazy => 1,
 );
 
 sub _build_atoms_bin {

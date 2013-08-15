@@ -5,6 +5,7 @@ use Test::Moose;
 use Test::More;
 use Math::Vector::Real;
 use lib 'lib/HackaMol';
+use Time::HiRes qw(time);
 use Atom;
 
 my @attributes = qw( name t mass xyzfree is_fixed
@@ -97,6 +98,41 @@ is( sprintf( "%.2f", $atom3->distance($atom4) ),
     1.81, 'MeHg+ : H to H distance' );
 is( sprintf( "%.2f", $atom3->distance($atom5) ),
     1.81, 'MeHg+ : H to H distance' );
+is( sprintf( "%.3f", $atom1->angle($atom2,$atom3)), 109.783, "angle atom2-atom1-atom3");
+is( sprintf( "%.3f", $atom1->angle($atom2,$atom4)), 109.789, "angle atom2-atom1-atom4");
+is( sprintf( "%.3f", $atom1->angle($atom2,$atom5)), '109.770', "angle atom2-atom1-atom5");
+is( sprintf( "%.3f", $atom2->angle($atom3,$atom5)), 39.665, "angle atom3-atom2-atom5");
+is( sprintf( "%.3f", $atom3->dihedral($atom2,$atom1,$atom4)),  120.018, "dihedral angle atom3-atom2-atom1-atom4");
+is( sprintf( "%.3f", $atom3->dihedral($atom1,$atom2,$atom4)), -120.018, "dihedral angle atom3-atom1-atom2-atom4");
+is( sprintf( "%.3f", $atom4->dihedral($atom1,$atom2,$atom3)),  120.018, "dihedral angle atom4-atom1-atom2-atom3");
+is( sprintf( "%.3f", $atom4->dihedral($atom2,$atom1,$atom3)), -120.018, "dihedral angle atom4-atom2-atom1-atom3");
+
+my $cnt = 1000;
+my $t1 = time;
+$atom1->distance($atom2) foreach 1 .. $cnt;
+my $t2 = time;
+
+my $tt1 = $cnt/($t2-$t1);
+cmp_ok( $tt1, '>', 1E4, "> 10000 distance calculations s^-1");
+
+
+$t1 = time;
+$atom1->angle($atom2,$atom3) foreach 1 .. $cnt;
+$t2 = time;
+
+my $tt2 = $cnt/($t2-$t1);
+#print "time ! $tt per s\n";
+cmp_ok( $tt2, '>', 1E4, "> 10000 angle calculations s^-1");
+
+$t1 = time;
+$atom3->dihedral($atom1,$atom2,$atom4) foreach 1 .. $cnt;
+$t2 = time;
+
+my $tt3 = $cnt/($t2-$t1);
+#print "time ! $tt per s\n";
+cmp_ok( $tt3, '>', 1E4, "> 10000 dihedral calculations s^-1");
+
+#print "distances: $tt1 angles: $tt2 dihedrals $tt3 per s\n"; exit;
 
 my ( $bin, $elname ) = bin_atoms( \@atoms );
 is( $elname, 'C1H3Hg1',
@@ -105,7 +141,7 @@ is( $elname, 'C1H3Hg1',
 
 my ( $prnts, $sum_mass ) = elemental_analysis( $bin, $elname );
 
-is( sprintf( "%.2f", $sum_mass ), 215.62, "mass of MeHg+ sums as expected" );
+is( sprintf( "%.2f", $sum_mass ), 215.63, "mass of MeHg+ sums as expected" );
 is(
     $prnts->[0],
     " H     1.0079     3   1.40\n",
@@ -118,7 +154,7 @@ is(
 );
 is(
     $prnts->[2],
-    "Hg   200.5900     1  93.03\n",
+    "Hg   200.5920     1  93.03\n",
     "Hg in elemental analysis as expected"
 );
 ok( !$atom2->is_dirty, "atom 2 is clean" );
@@ -126,6 +162,7 @@ warning_is { $atom2->change_Z(30) }
 "cleaning atom attributes for in place change. setting atom->is_dirty",
   "warning from changing Z";
 is( $atom2->symbol, 'Zn', "atom 2 changed from Hg to Zn" );
+is( sprintf("%.2f", $atom2->mass), 65.38 , "atom 2 mass changed from Hg to Zn" );
 ok( $atom2->is_dirty, "atom 2 is now dirty" );
 
 ( $bin, $elname ) = bin_atoms( \@atoms );
@@ -141,12 +178,12 @@ is(
 );
 is(
     $prnts->[1],
-    " C    12.0107     1  14.93\n",
+    " C    12.0107     1  14.94\n",
     "C  in elemental analysis as expected"
 );
 is(
     $prnts->[2],
-    "Zn    65.3900     1  81.31\n",
+    "Zn    65.3820     1  81.30\n",
     "Zn in elemental analysis as expected"
 );
 

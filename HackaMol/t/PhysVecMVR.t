@@ -120,14 +120,6 @@ my $dq = $obj1->get_charges(1) - $obj1->get_charges(0);
 cmp_ok( $obj1->intra_dcharges( 0, 1 ),
     '==', $dq, "change in charges between t = 0 and t = 1: $dq" );
 
-my $t1 = time;
-$obj2->distance($obj1) foreach 1 .. 25000;
-my $t2 = time;
-
-my $tt = ($t2-$t1)/25000;
-#print "time ! $tt per s\n";
-cmp_ok( $tt, '<', 1E5, "> 1E5 distance calculations s^-1");
-
 $obj1->set_coords( 0, V( 0.0011,     -0.98458734, 1.0003984 ) );
 $obj1->set_coords( 1, V( 1.00130011, 1.1,         2.0342 ) );
 my $vec0 = $obj1->get_coords(0);

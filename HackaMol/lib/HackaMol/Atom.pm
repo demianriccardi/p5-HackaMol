@@ -10,7 +10,7 @@ with Storage( 'io' => 'StorableFile' ),
 use PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 
-my @delta_attrs = qw(Z symbol vdw_radius covalent_radius);
+my @delta_attrs = qw(Z symbol mass vdw_radius covalent_radius);
 
 has 'is_dirty' => (
 # when attributes change, the Atom gets dirty. change_symbol, change_Z
@@ -31,10 +31,8 @@ has 'symbol' => (
 );
 
 sub _build_symbol {
-
-    # if we are building symbol, Z must exist.  BUILD croaks without one of them
     my $self = shift;
-    $self->symbol( _Z_to_symbol( $self->Z ) );
+    return ( _Z_to_symbol( $self->Z ) );
 }
 
 has 'Z' => (
@@ -47,10 +45,8 @@ has 'Z' => (
 );
 
 sub _build_Z {
-
-    # if we are building Z, symbol must exist.  BUILD croaks without one of them
     my $self = shift;
-    $self->Z( _symbol_to_Z( $self->symbol ) );
+    return  ( _symbol_to_Z( $self->symbol ) );
 }
 
 
@@ -64,17 +60,13 @@ has $_ => (
 ) foreach (qw(covalent_radius vdw_radius));
 
 sub _build_covalent_radius {
-
-    # if we are building symbol, Z must exist.  BUILD croaks without one of them
     my $self = shift;
-    $self->covalent_radius( _Z_to_covalent_radius( $self->Z ) );
+    return ( _Z_to_covalent_radius( $self->Z ) );
 }
 
 sub _build_vdw_radius {
-
-    # if we are building symbol, Z must exist.  BUILD croaks without one of them
     my $self = shift;
-    $self->vdw_radius( _Z_to_vdw_radius( $self->Z ) );
+    return( _Z_to_vdw_radius( $self->Z ) );
 }
 
 sub change_Z {
@@ -82,7 +74,6 @@ sub change_Z {
     my $Z    = shift or croak "pass argument Z to change_Z method";
     $self->_clean_atom;
     $self->Z($Z);
-    $self->mass(_symbol_to_mass($self->symbol));
 }
 
 sub change_symbol{
@@ -90,7 +81,6 @@ sub change_symbol{
     my $symbol = shift or croak "pass argument symbol to change_Z method";   
     $self->_clean_atom;
     $self->symbol(_fix_symbol($symbol));
-    $self->mass(_symbol_to_mass($self->symbol));
 }
 
 sub _clean_atom {
@@ -120,7 +110,7 @@ sub BUILD {
 
 sub _build_mass {
   my $self = shift;
-  $self->mass(_symbol_to_mass($self->symbol));
+  return (_symbol_to_mass($self->symbol));
 };
 
 sub _symbol_to_Z {

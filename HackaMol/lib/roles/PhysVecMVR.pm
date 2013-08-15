@@ -1,6 +1,7 @@
 package PhysVecMVR;
 # ABSTRACT: Provides the core of HackaMol Atom and Molecule classes.
 use Math::Vector::Real;
+use Math::Trig;
 use Moose::Role;
 use Carp;
 
@@ -8,7 +9,6 @@ requires '_build_mass';
 
 has 'name', is => 'rw', isa => 'Str';
 
-has 'mass', is => 'rw', isa => 'Num', lazy => 1, builder => '_build_mass';
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
 
@@ -65,6 +65,14 @@ has 'xyzfree' => (
     default => sub { [ 1, 1, 1 ] },
     lazy    => 1,
     trigger => \&_freedom,
+);
+
+has 'mass' => (
+    is => 'rw', 
+    isa => 'Num', 
+    lazy => 1, 
+    clearer=> 'clear_mass', 
+    builder => '_build_mass',
 );
 
 sub _freedom {
@@ -177,6 +185,42 @@ sub distance {
     my $vs = $self->get_coords($ts); 
     my $v2 = $obj2->get_coords($t2); 
     return ( $vs->dist( $v2 ) );
+}
+
+sub angle {
+    # obj2    obj3
+    #   \ Ang /
+    #    \   /
+    #     self
+    #
+    # returns in degrees
+    my ($self,$obj2,$obj3) = @_;
+    croak "need to pass two objects that do PhysVecMVR" unless (@_ == 3);
+    my $v1 = $self->inter_dcoords($obj2);
+    my $v2 = $self->inter_dcoords($obj3);
+    return ( rad2deg( atan2($v1,$v2) ) );
+}
+
+sub dihedral {
+    # self            obj4
+    #   \             /
+    #    \    Ang    /
+    #     obj2---obj3
+    #
+    # returns in degrees
+    my ($self,$obj2,$obj3,$obj4) = @_;
+    croak "need to pass three objects that do PhysVecMVR" unless (@_ == 4);
+
+    my $v1 = $self->inter_dcoords($obj2);
+    my $v2 = $obj2->inter_dcoords($obj3);
+    my $v3 = $obj3->inter_dcoords($obj4);
+    my $v3_x_v2 = $v3 x $v2;
+    my $v2_x_v1 = $v2 x $v1;
+
+    my $dihe = rad2deg( atan2($v3_x_v2,$v2_x_v1) ) ;
+    my $sign = $v1*$v3_x_v2;
+    $dihe *= -1 if ($sign>0);
+    return $dihe;
 }
 
 sub inter_dcharges {      
@@ -434,9 +478,16 @@ for the purpose of analysis.
 
 =method distance
 
-Takes one argument ($obj) and calculates the distance using Math::Vector::Real
+Takes one argument ($obj2) and calculates the distance using Math::Vector::Real
 
   $obj1->distance($obj2);
+
+=method angle
+
+Takes two arguments ($obj2,$obj3) and calculates the angle (degrees) between 
+the vectors with $obj1 as orgin using Math::Vector::Real.  
+
+  $obj1->angle($obj2,$obj3);
 
 =method intra_dcharges
 

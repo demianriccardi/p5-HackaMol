@@ -20,9 +20,64 @@ has 'atoms'   =>  (
                     },
                    );
 
-has 'dipole_moment'  , is => 'rw', isa => 'Num';
-has 'dipole'         , is => 'rw', isa => 'ArrayRef|Object';
-has 'com'            , 
+has 'dipole'         , is => 'rw', isa => 'Math::Vector::Real';
+has 'com'            , is => 'rw', isa => 'Math::Vector::Real';
+
+has $_ => (
+           is      => 'rw',
+           isa     => 'Math::Vector::Real',
+           builder => "_build_$_",
+           clearer => "_clear_$_",
+          ) foreach (qw(dipole COM COZ));
+
+sub _build_dipole {
+    my $self    = shift;
+    my @atoms   = $self->all_atoms;
+    my @vectors = map { $_->get_coords($_->t)} @atoms;
+    my @charges = map { $_->get_charges($_->t)} @atoms;
+    croak "mismatch number of coords and charges" if ($#vectors != $#charges);
+    my $dipole  = V(0,0,0);
+    $dipole += $vectors[$_]*$charges[$_] foreach 0 .. $#charges;
+    return ($dipole);
+}
+
+sub _build_COM {
+    my $self = shift;
+
+}
+
+sub _build_COZ {
+    my $self = shift;
+    
+}
+
+
+has $_ => (
+           is      => 'rw',
+           isa     => 'Num',
+           builder => "_build_$_",
+           clearer => "_clear_$_",
+          ) foreach (qw(dipole_moment total_charge));
+
+sub _build_total_charge {
+  my $self    = shift;
+  my @atoms   = $self->all_atoms;
+  my @charges = map{$_->get_charges($_->t)} @atoms;
+  my $sum = 0;
+  $sum += $_ foreach @charges;
+  return $sum; 
+}
+
+sub _build_dipole_moment {
+  my $self    = shift;
+  my @atoms   = $self->all_atoms;
+  my @charges = map{$_->get_charges($_->t)} @atoms;
+  my $sum = 0;
+  $sum += $_ foreach @charges;
+  return $sum;
+}
+
+
 
 has 'atomtype_bin'  => (
                          is        => 'rw', 
@@ -31,22 +86,6 @@ has 'atomtype_bin'  => (
                          clearer   => 'clear_atomtype_bin',
                          predicate => 'has_atomtype_bin',
                        );
-
-after 'add_groups' => sub {
-    my $self = shift;
-    $self->countbin_atoms;
-    my $atoms = $self->atoms; #this need to be cleaned up, maybe an attribute with all atoms?      
-do i need this!!!     
-    $atoms->[$_]->iatom($_) foreach (0 .. $#{$atoms});
-};  #should be run afterward
-
-after 'set_groups' => sub {
-    my $self = shift;
-    $self->atomtype_bin({});
-    $self->countbin_atoms;
-    my $atoms = $self->atoms; #this need to be cleaned up, maybe an attribute with all atoms?      
-    $atoms->[$_]->iatom($_) foreach (0 .. $#{$atoms});
-};
 
 sub countbin_atoms  
 {
@@ -57,18 +96,6 @@ sub countbin_atoms
     $self->atomtype_bin->{$sym}++;
   }
   $self->natoms( scalar(@$syms) );
-}
-
-sub add_to_basis_atoms
-{
-  my ($self,$atom) = @_;
-  push @{$self->basis_atoms}, $atom if (exists $self->atomtype_bin->{$atom->symbol}); 
-}
-
-sub set_basis_atoms{
-  my ($self,$atoms) = @_;
-  my @ats  =  grep{ exists ($self->atomtype_bin->{$_->symbol})} @$atoms;
-  $self->basis_atoms(\@ats);
 }
 
 sub canonical_name {
@@ -93,6 +120,6 @@ use Atom qw(_symbol_to_Z);
 
 }
 
- __PACKAGE__->meta->make_immutable;
+no Moose::Role;
 
 1;

@@ -132,7 +132,7 @@ my $tt3 = $cnt/($t2-$t1);
 #print "time ! $tt per s\n";
 cmp_ok( $tt3, '>', 1E4, "> 10000 dihedral calculations s^-1");
 
-#print "distances: $tt1 angles: $tt2 dihedrals $tt3 per s\n"; exit;
+print "distances: $tt1 angles: $tt2 dihedrals $tt3 per s\n"; exit;
 
 my ( $bin, $elname ) = bin_atoms( \@atoms );
 is( $elname, 'C1H3Hg1',

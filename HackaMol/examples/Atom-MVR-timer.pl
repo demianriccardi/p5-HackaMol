@@ -6,7 +6,7 @@ use Benchmark qw(cmpthese);
 use Scalar::Util qw(refaddr);
 use Atom;
 
-my $natoms = 100000;
+my $natoms = 1000000;
 print
 "Atom-timer will time the construction of and array of  $natoms atoms to give idea about speed\n";
 

@@ -12,7 +12,6 @@ has 'mass', is => 'rw', isa => 'Num', lazy => 1, builder => '_build_mass';
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
 
-has 'is_fixed', is => 'rw', isa => 'Bool', lazy => 1, default => 0;
 
 my @t_dep = qw(coords forces);
 
@@ -65,12 +64,28 @@ has 'xyzfree' => (
     isa     => 'ArrayRef[Int]',
     default => sub { [ 1, 1, 1 ] },
     lazy    => 1,
+    trigger => \&_freedom,
+);
+
+sub _freedom {
+    my ($self, $new,$old) = @_;
+    
+    if (@_ > 2) {
+      $self->is_fixed(1) if (grep {$_ == 0} @{$new});
+    }
+}    
+
+has 'is_fixed' => ( 
+    is => 'rw', 
+    isa => 'Bool', 
+    lazy => 1, 
+    default => 0,
 );
 
 #intraobject methods
 sub intra_dcharges {
     my $self = shift;
-    croak "delta_charges> pass initial and final time" unless ( @_ == 2 );
+    croak "intra_dcharges> pass initial and final time" unless ( @_ == 2 );
     my $ti = shift;
     my $tf = shift;
     return($self->get_charges($tf) - $self->get_charges($ti));
@@ -96,7 +111,7 @@ sub msd_charges {
 sub intra_dcoords {
 #M::V::R makes much simpler
     my $self = shift;
-    croak "delta_coords> pass initial and final time" unless ( @_ == 2 );
+    croak "intra_dcoords> pass initial and final time" unless ( @_ == 2 );
     my $ti = shift;
     my $tf = shift;
     return( $self->get_coords($tf) - $self->get_coords($ti) );
@@ -126,7 +141,7 @@ sub msd_coords {
 sub intra_dforces {
 #M::V::R makes much simpler
     my $self = shift;
-    croak "delta_forces> pass initial and final time" unless ( @_ == 2 );
+    croak "intra_dforces> pass initial and final time" unless ( @_ == 2 );
     my $ti = shift;
     my $tf = shift;
     return( $self->get_forces($tf) - $self->get_forces($ti) );
@@ -232,7 +247,7 @@ print "average charge: ", $sum_charges / $obj->count_charges;
 
 # add some coordinates
 
-$obj->push_coords($_) foreach ( map{V(@{$_})} foreach ([0,0,0], [1,1,1], [-1.0,2.0,-4.0]) );
+$obj->push_coords($_) foreach ( V(0,0,0), V(1,1,1), V(-1.0,2.0,-4.0) ) );
 
 print $obj->mean_charges . "\n";
 print $obj->msd_charges . "\n";
@@ -242,18 +257,19 @@ print $obj->msd_coords . "\n";
 
 =head1 DESCRIPTION
 
-PhysVec provides the core attributes and methods shared between Atom 
+PhysVecMVR provides the core attributes and methods shared between Atom 
 and Molecule classes. Consuming this role gives Classes a place to store 
 coordinates, forces, and charges, perhaps, over the course of a simulation 
-or for a collection 
-configurations for which all other object metadata (name, mass, etc) remains 
-fixed. As such, the 't' attribute, described below, is important to understand. 
-The PhysVec is very flexible. Several attribute types are left agnostic and all
-are rw so that they may be filled with whatever the user defines them to be... on 
-the fly.  This seems most intuitive from the perspective of carrying out computational 
-work on molecules.  Thus, HackaMol bravely ignores Moose recommendations to use mostly
-'ro' attributes and to generate objects on the fly.  HackaMol may be coerced to be more
-rigid in future releases.    
+or for a collection of configurations for which all other object metadata (name, 
+mass, etc) remains fixed. As such, the 't' attribute, described below, is 
+important to understand. The PhysVecMVR uses Math::Vector::Real, which has pure
+Perl and XS implementations.  The PhysVec role was written with a bunch of
+agnostic coderefs, but that approach become unwieldly. 
+Several attribute types are rw so that they may be filled with whatever the 
+user defines them to be on the fly.  This seems most intuitive from the 
+perspective of carrying out computational work on molecules.  Thus, HackaMol bravely 
+ignores Moose recommendations to use mostly 'ro' attributes and to generate 
+objects on the fly.  HackaMol may be coerced to be more rigid in future releases.    
 
 Comparing the PhysVec within Atom and Molecule may be helpful. For both, the PhysVecRol 
 generates a little metadata (mass, name, etc.) and an array of coordinates, forces, and 
@@ -263,8 +279,13 @@ is the array of coordinates for Molecule? Usually, the coordinates for a molecul
 remain empty (because the atoms that Molecule contains have the more useful coordinates), but we
 can imagine using the coordinates array to track the center of mass of the molecule if needed. 
 But for much larger systems, the atoms may be ignored while the Molecule coordinates array could 
-be filled with PDLs from Perl Data Language for much faster analyses. I.e. flexible arrays of
-coordinates are incredibly powerful. 
+be filled with PDLs from Perl Data Language for much faster analyses. An
+innocuous ArrayRef will be added to the Molecule class for such purposes.
+
+In the following:  Methods with mean_foo msd_foo intra_dfoo out front, carries out some analysis
+within $self. Methods with inter_ out front carries out some analysis between
+two objects that "does" PhysVecMVR (tests for this should be added) at the
+$self->t and $obj->t; a warning is carped if the ts are different 
 
 =array_method push_$_, all_$_, get_$_, set_$_, count_$_, clear_$_ foreach qw(charges coords forces)
 
@@ -390,121 +411,64 @@ fix the X and Y coordinates:
 
   $obj->xyzfree([0,0,1]);
 
+fixing any coordinate will set trigger the is_fixed(1) flag.  
+
 =attr is_fixed
 
-isa Bool that is rw and lazy with a default of 0 (false)
+isa Bool that is rw and lazy with a default of 0 (false).
 
-=attr charges coords forces
+=attr charges
 
-isa ArrayRef that is lazy with public ARRAY traits described in ARRAY_METHODS
+isa ArrayRef[Num] that is lazy with public ARRAY traits described in ARRAY_METHODS
 
-Gives atoms and molecules t-dependent arrays of charges, coordinates, and forces,
-for the purpose of analysis.  e.g. store and analyze atomic charges from a 
-quantum mechanical molecule in several intramolecular configurations or a fixed 
-configuration in varied external potentials.    
+Gives atoms and molecules t-dependent arrays of charges. e.g. store and analyze
+atomic charges from a quantum mechanical molecule in several intramolecular 
+configurations or a fixed configuration in varied external potentials. 
 
-The types of the attributes are left agnostic so that they may be filled with 
-whatever the user defines them to be.  Perhaps this is too flexible? One example 
-to argue for the flexibility: A molecule consumes PhysVec so it has an array 
-of coordinates for itself that is likely to remain empty (because the atoms that 
-Molecule contains have the more useful coordinates).  For much larger systems, 
-the atoms may be ignored while the Molecule t-dependent coordinate array could 
-be filled with PDLs from Perl Data Language.  
+=attr coords forces
 
-=attr distance_coderef
+isa ArrayRef[Math::Vector::Real] that is lazy with public ARRAY traits described in ARRAY_METHODS
 
-isa CodeRef that is rw and lazy with default provided by
-_builder_distance_coderef. Default takes two arguments:
-
-  &{$self->distance_coderef}($obj1,$obj2);
-
-Wrapped in the method "distance" for cleaner interface. 
-see _build_distance_coderef that is default
+Gives atoms and molecules t-dependent arrays of coordinates and forces,
+for the purpose of analysis.  
 
 =method distance
 
-Takes one argument ($obj) and passes $self and 
-$obj to the "distance_coderef". I.e.:
+Takes one argument ($obj) and calculates the distance using Math::Vector::Real
 
   $obj1->distance($obj2);
 
-  which does this inside: &{$self->distance_coderef}($self,$obj2)
+=method intra_dcharges
 
-define distance_coderef as you wish.  See default generated from _build_distance_coderef for an example.
+Calculates the change in charge from initial t ($ti) to final t ($tf). I.e.:
 
-=private_attr _build_distance_coderef
+$self->get_charges($tf) - $self->get_charges($ti)
 
-builds the default distance_coderef attribute that is wrapped in the distance
-method.
+=method mean_charges
 
-=attr delta_charges_coderef
+No arguments.  Calculates the mean of all stored charges.
 
-isa CodeRef that is rw and lazy with default provided by
-_builder_delta_charges_coderef. Default takes three arguments:
+=method msd_charges
 
-  &{$self->delta_charges_coderef}($self,$ti,$tf);
+No arguments.  Calculates the mean square deviation of all stored charges.
 
-The delta_charges_coderef, delta_coords_coderef, and delta_forces_coderef are
-all analogous (they can probably be abstracted into other roles), 
-and are similar to distance_coderef.  In contrast to distance_coderef, which
-takes two objects as arguments, delta_charges_coderef subtracts the initial
-charges at $ti from that at the final $tf.  Wrapped in "delta_charges" method
-for a cleaner interface. The delta_charges_coderef default behaviour is built
-from _build_charges_coderef, and it can be adjusted on the fly
-to redefine "delta_charges".  You are free to define new Charge classes and work
-them into your objects. 
+=method intra_dcoords intra_dforces 
 
-=private_attr _build_delta_charges_coderef
+returns the difference (Math::Vector::Real object) from the initial t ($ti) to
+the final t ($tf).
 
-builds the default delta_charges_coderef attribute that is wrapped in the
-delta_charges method
+$obj1->intra_dcoords($ti,$tf);
 
-=method delta_charges 
+$obj1->intra_dforces($ti,$tf);
 
-Takes initial t ($ti) and final t ($tf) arguments, and passes $self,
-$ti, $tf to the delta_charges_coderef. I.e.:
+=method mean_coords mean_forces 
 
-  $obj1->delta_charges($ti,$tf);
+No arguments. Calculates the mean (Math::Vector::Real object) vector.
 
-  which does this inside: &{$self->delta_charges_coderef}($self,$ti,$tf)
+=method msd_coords msd_forces 
 
-  see delta_charges_coderef and delta_distance_coderef and the builders for
-  further discussions
-
-=attr delta_coords_coderef delta_forces_coderef
-
-isa CodeRef that is rw and lazy with default provided by
-default behaviour of delta_coords_coderef and delta_forces_coderef are exactly
-the same.  Default takes three arguments:
-
-  &{$self->delta_coords_coderef}($self,$ti,$tf);
-  &{$self->delta_forces_coderef}($self,$ti,$tf);
-
-See delta_charges_coderef for additional, analogous discussions.
-_build_delta_coords_coderef and _build_delta_forces_coderef are default builders
-
-=private_attr _build_delta_coords_coderef _build_delta_forces_coderef
-
-builds the default delta_coords_coderef and delta_forces_coderef attribute that is wrapped in the
-delta_coords and delta_forces methods.
-
-_build_delta_coords is the same with s/forces/coords/ .
-
-=method delta_coords delta_forces 
-
-Takes initial t ($ti) and final t ($tf) arguments, and passes $self,
-$ti, $tf to the delta_charges_coderef. I.e.:
-
-  $obj1->delta_coords($ti,$tf);
-  
-  which does this inside: &{$self->delta_coords_coderef}($self,$ti,$tf)
-
-  $obj1->delta_forces($ti,$tf);
-
-  which does this inside: &{$self->delta_forces_coderef}($self,$ti,$tf)
-
-  see delta_charges_coderef, delta_coords_coderef and delta_distance_coderef and the builders for
-  further discussions.
+No arguments. Calculates the mean (Math::Vector::Real object) dot product of the
+vector difference of the xyz coords from the mean vector.
 
 =method charge
 

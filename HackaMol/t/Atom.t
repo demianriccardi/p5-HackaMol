@@ -3,17 +3,17 @@ use Test::Most;
 use Test::Warnings;
 use Test::Moose;
 use Test::More;
+use Math::Vector::Real;
 use lib 'lib/HackaMol';
 use Atom;
 
 my @attributes = qw( name t mass xyzfree is_fixed
-                     distance_coderef inter_vector_coderef 
                      is_dirty symbol Z vdw_radius covalent_radius
                    );
 my @methods = qw(
   _build_mass _build_symbol _build_Z _build_covalent_radius _build_vdw_radius
   change_Z  change_symbol _clean_atom
-  distance delta_coords delta_forces delta_charges
+  distance 
 );
 
 my @pdb_attributes = qw(
@@ -40,7 +40,7 @@ dummy
 );
 #todo add tests for storage!
 
-my @roles = qw(PdbRole QmRole PhysVec BondsAnglesDihedrals);
+my @roles = qw(PdbRole QmRole PhysVecMVR BondsAnglesDihedrals);
 
 map has_attribute_ok( 'Atom', $_ ), @attributes;
 map can_ok( 'Atom', $_ ), @methods;
@@ -51,31 +51,31 @@ map has_attribute_ok( 'Atom', $_ ), @qm_attributes;
 my $atom1 = Atom->new(
     name    => 'C',
     charges => [-1],
-    coords  => [ [ 3.12618, -0.06060, 0.05453 ] ],
+    coords  => [ V( 3.12618, -0.06060, 0.05453 ) ],
     Z       => 6
 );
 my $atom2 = Atom->new(
     name    => 'Hg',
     charges => [2],
-    coords  => [ [ 1.04508, -0.06088, 0.05456 ] ],
+    coords  => [ V( 1.04508, -0.06088, 0.05456 ) ],
     symbol  => 'HG'
 );
 my $atom3 = Atom->new(
     name    => 'H1',
     charges => [0],
-    coords  => [ [ 3.50249, 0.04320, -0.98659 ] ],
+    coords  => [ V( 3.50249, 0.04320, -0.98659 ) ],
     symbol  => 'H'
 );
 my $atom4 = Atom->new(
     name    => 'H2',
     charges => [0],
-    coords  => [ [ 3.50252, 0.78899, 0.66517 ] ],
+    coords  => [ V( 3.50252, 0.78899, 0.66517 ) ],
     Z       => 1
 );
 my $atom5 = Atom->new(
     name    => 'H3',
     charges => [0],
-    coords  => [ [ 3.50247, -1.01438, 0.48514 ] ],
+    coords  => [ V( 3.50247, -1.01438, 0.48514 ) ],
     Z       => 1
 );
 

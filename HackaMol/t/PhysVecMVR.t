@@ -22,6 +22,8 @@ use Test::Moose;
 use lib 'lib/roles', 't/lib';
 use PhysVecMVR;                # v0.001;#To test for version availability
 use Math::Vector::Real;           
+use Scalar::Util qw(refaddr);
+use Time::HiRes qw(time);
 
 my @attributes = qw( name t mass xyzfree is_fixed);
 my @methods = qw(
@@ -50,6 +52,29 @@ lives_ok {
     $obj1 = $class->new( name => 'somephysvec', t => 1 );
 }
 'Test creation of an obj1';
+
+is($obj1->name, 'somephysvec', "name set ok");
+$obj1->name('newname');
+is($obj1->name, 'newname', "name change ok");
+
+is($obj1->t, 1, "t set ok");
+$obj1->t(0);
+is($obj1->t, 0, "t change ok");
+my $t = 1;
+$obj1->t(\$t);
+is_deeply($obj1->t, \$t, "set to scalar reference");
+$obj1->t(3);
+
+is_deeply($obj1->xyzfree, [1,1,1], "xyzfree by default");
+is($obj1->is_fixed, 0, "not fixed");
+$obj1->xyzfree([0,1,1]);
+is_deeply($obj1->xyzfree, [0,1,1], "x fixed");
+is($obj1->is_fixed, 1, "atom is now fixed");
+$obj1->is_fixed(0);
+is_deeply($obj1->xyzfree, [0,1,1], "xyzfree does not depend on is_fixed");
+
+is_deeply($obj1->origin, V(0,0,0), "origin defaults to 0 0 0");
+
 
 $obj1->push_charges($_) foreach ( 0.3, 0.2, 0.1, -0.1, -0.2, -0.36 );
 cmp_ok( $obj1->count_charges, '==', 6, 'pushed 6 _tcharges and we have 6' );
@@ -94,6 +119,14 @@ my $dq = $obj1->get_charges(1) - $obj1->get_charges(0);
 
 cmp_ok( $obj1->intra_dcharges( 0, 1 ),
     '==', $dq, "change in charges between t = 0 and t = 1: $dq" );
+
+my $t1 = time;
+$obj2->distance($obj1) foreach 1 .. 25000;
+my $t2 = time;
+
+my $tt = ($t2-$t1)/25000;
+#print "time ! $tt per s\n";
+cmp_ok( $tt, '<', 1E5, "> 1E5 distance calculations s^-1");
 
 $obj1->set_coords( 0, V( 0.0011,     -0.98458734, 1.0003984 ) );
 $obj1->set_coords( 1, V( 1.00130011, 1.1,         2.0342 ) );

@@ -268,6 +268,14 @@ sub force {
   return($self->get_forces($self->t));
 }
 
+sub copy_ref_from_t1_through_t2 {
+  croak "need to pass [charges|coords|forces] t and tf" unless @_ == 4;
+  my ($self,$qcf,$t,$tf)  = @_;
+  my ($get_qcf, $set_qcf) = map{$_.$qcf} qw(get_ set_);
+  my $qcf_at_t = $self->$get_qcf($t);
+  $self->$set_qcf($_,$qcf_at_t) foreach ($t+1 .. $tf);
+}
+
 no Moose::Role;
 
 1;
@@ -532,5 +540,12 @@ called with no arguments.  returns $self->get_coords($self->t);
 =method force
 
 called with no arguments.  returns $self->get_forces($self->t);
+
+=method copy_ref_from_t1_through_t2
+
+called as $obj->copy_ref_from_t1_through_t2($qcf,$t,$tf); where qcf is
+charges|coords|forces.  Fills the qcf from t+1 to tf with the value at t.
+Added this while trying to compare a dipole as a function of changing charges
+at a single set of coordinates.
 
 =cut

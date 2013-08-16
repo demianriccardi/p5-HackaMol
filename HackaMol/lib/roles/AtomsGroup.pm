@@ -5,6 +5,8 @@ use MooseX::Storage;
 use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' );
 
+my $angste_debye = 4.80320;
+
 has 'atoms' => (
     traits  => ['Array'],
     isa     => 'ArrayRef[Atom]',
@@ -27,6 +29,24 @@ sub _set_atoms_t {
     my ($self, $new_t, $old_t) = @_;
     if(@_ > 2) { # if setting the group t to something new do for all atoms
       $_->t($new_t) foreach $self->all_atoms;
+      $self->_clear_group_stuff;
+    }
+}
+
+#anytime the group changes, we need to reset the defaults!
+after $_ => sub {
+  my $self = shift;
+  $self->_clear_group_stuff;
+} foreach (qw(push_atoms set_atoms delete_atoms clear_atoms));
+
+
+sub _clear_group_stuff {
+    my $self = shift;
+    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
+                              clear_dipole_moment clear_total_charge
+                              clear_total_mass clear_total_Z 
+                              clear_atoms_bin)){
+      $self->$clearthis;
     }
 }
 
@@ -40,6 +60,7 @@ has $_ => (
 
 sub _build_dipole {
     my $self    = shift;
+    return(V(0)) unless ($self->count_atoms);
     my @atoms   = $self->all_atoms;
     my @vectors = map { $_->get_coords( $_->t ) } @atoms;
     my @charges = map { $_->get_charges( $_->t ) } @atoms;
@@ -51,6 +72,7 @@ sub _build_dipole {
 
 sub _build_COM {
     my $self      = shift;
+    return(V(0)) unless ($self->count_atoms);
     my @atoms     = $self->all_atoms;
     my @m_vectors = map { $_->mass * $_->get_coords( $_->t ) } @atoms;
     my $com       = V( 0, 0, 0 );
@@ -60,6 +82,7 @@ sub _build_COM {
 
 sub _build_COZ {
     my $self      = shift;
+    return(V(0)) unless ($self->count_atoms);
     my @atoms     = $self->all_atoms;
     my @z_vectors = map { $_->Z * $_->get_coords( $_->t ) } @atoms;
     my $coz       = V( 0, 0, 0 );
@@ -70,6 +93,7 @@ sub _build_COZ {
 sub Rg {
  #radius of gyration.  no tensors yet.
     my $self         = shift;
+    return(0) unless ($self->count_atoms);
     my @atoms        = $self->all_atoms;
     my $com          = $self->com;
     my $total_mass   = $self->total_mass;
@@ -78,6 +102,14 @@ sub Rg {
     my $sum    = 0;
     $sum      += $masses[$_]*$dvec2[$_] foreach 0 .. $#dvec2;
     return( sqrt($sum/$total_mass) );
+}
+
+sub do_forall{
+  my $self   = shift;
+  my $method = shift;
+  do{carp "doing nothing for all"; return} unless(@_);
+  my @atoms = $self->all_atoms;
+  $_->$method(@_) foreach @atoms;
 }
 
 has $_ => (
@@ -90,6 +122,7 @@ has $_ => (
 
 sub _build_total_charge {
     my $self    = shift;
+    return(0) unless ($self->count_atoms);
     my @atoms   = $self->all_atoms;
     my @charges = map { $_->get_charges( $_->t ) } @atoms;
     my $sum     = 0;
@@ -99,6 +132,7 @@ sub _build_total_charge {
 
 sub _build_total_mass {
     my $self   = shift;
+    return(0) unless ($self->count_atoms);
     my @masses = map { $_->mass } $self->all_atoms;
     my $sum    = 0;
     $sum += $_ foreach @masses;
@@ -107,6 +141,7 @@ sub _build_total_mass {
 
 sub _build_total_Z {
     my $self = shift;
+    return(0) unless ($self->count_atoms);
     my @Zs   = map { $_->Z } $self->all_atoms;
     my $sum  = 0;
     $sum    += $_ foreach @Zs;
@@ -115,7 +150,7 @@ sub _build_total_Z {
 
 sub _build_dipole_moment {
     my $self = shift;
-    return ( abs( $self->dipole ) );
+    return ( abs( $self->dipole )*$angste_debye );
 }
 
 
@@ -137,16 +172,17 @@ has 'atoms_bin' => (
 
 sub _build_atoms_bin {
     my $self  = shift;
+    return {{}} unless $self->count_atoms;
     my @atoms = $self->all_atoms;
     foreach my $atom (@atoms) {
         my $sym     = $atom->symbol;
         my $count_Z = $self->get_atoms_bin($sym);
+        print $sym . "\n";
         $self->set_atoms_bin( $sym => [ $count_Z->[0]++, $atom->Z ] );
     }
 }
 
 sub canonical_name {
-
     # return something like C4H10 sort in order of descending Z
     my $self = shift;
     my @names = map { $_->[0] . $_->[1] }

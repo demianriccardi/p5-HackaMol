@@ -199,5 +199,17 @@ is($obj3->msd_forces, 24.75, "mean square deviation forces");
 is($obj3->mean_charges, 4.5, "average charges");
 is($obj3->msd_charges, 8.25, "mean square deviation charges");
 
+my $obj4;
+lives_ok {
+    $obj4 = $class->new( name => 'somephysvec', t => 0, coords => [ V(1,2,3.0) ]  );
+}
+'Test creation of an obj1';
+
+$obj4->copy_ref_from_t1_through_t2('coords', 0, 10);
+
+cmp_ok($obj4->get_coords(0) , '==' , $obj4->get_coords($_),
+"copy_ref_from_t1_through_t2(coords, 0 , 10): $_") foreach 1 .. 10;
+
+
 done_testing();
 

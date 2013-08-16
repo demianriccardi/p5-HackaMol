@@ -12,13 +12,16 @@ has 'atoms' => (
     isa     => 'ArrayRef[Atom]',
     default => sub { [] },
     handles => {
-        push_atoms    => 'push',
-        get_atoms    => 'get',
-        set_atoms    => 'set',
-        delete_atoms => 'delete',
-        all_atoms    => 'elements',
-        count_atoms  => 'count',
-        clear_atoms  => 'clear',
+        push_atoms            => 'push',
+        quick_push_atoms      => 'push',  # for quick pushing with no binning each time
+        get_atoms             => 'get',
+        set_atoms             => 'set',
+        quick_set_atoms       => 'set',
+        delete_atoms          => 'delete',
+        quick_delete_atoms    => 'delete',
+        all_atoms             => 'elements',
+        count_atoms           => 'count',
+        clear_atoms           => 'clear',
     },
     lazy => 1,
 );
@@ -37,6 +40,7 @@ sub _set_atoms_t {
 after $_ => sub {
   my $self = shift;
   $self->_clear_group_stuff;
+  $self->bin_atoms;
 } foreach (qw(push_atoms set_atoms delete_atoms clear_atoms));
 
 
@@ -156,7 +160,7 @@ sub _build_dipole_moment {
 
 has 'atoms_bin' => (
     traits  => ['Hash'],
-    isa     => 'HashRef[Str]',
+    isa     => 'HashRef',
     default => sub{{}},
     clearer => 'clear_atoms_bin',
     handles => {
@@ -166,42 +170,41 @@ has 'atoms_bin' => (
         count_unique_atoms => 'count',
         all_unique_atoms   => 'keys',
         atom_counts        => 'kv',
+        exists_in_bin      => 'exists',
     },
     lazy => 1,
 );
 
 sub bin_atoms {
     my $self  = shift;
-    return {{}} unless $self->count_atoms;
-    my @atoms = $self->all_atoms;
-    foreach my $atom (@atoms) {
-      my $sym     = $atom->symbol;
-      print $sym . "\n";
-      $self->set_atoms_bin($sym => 1);
-    }
-}
-#sub _build_atoms_bin {
 
-#    my $self  = shift;
-#    return {{}} unless $self->count_atoms;
-#    my @atoms = $self->all_atoms;
-#    foreach my $atom (@atoms) {
-#        my $sym     = $atom->symbol;
-#        $self->set_atoms_bin($sym => 1);
-     #   my $count_Z = $self->get_atoms_bin($sym);
-     #   print $sym . "\n";
-     #   $self->set_atoms_bin( $sym => [ $count_Z->[0]++, $atom->Z ] );
-#    }
-#}
+    return ({}) unless $self->count_atoms;
+    $self->clear_atoms_bin;
+    foreach my $atom ($self->all_atoms){
+      my $symb = $atom->symbol;
+      if ($self->exists_in_bin($symb)){
+        my $count_z = $self->get_atoms_bin($symb);
+        $count_z->[0]++;
+        $self->set_atoms_bin($symb => $count_z);
+      }
+      else {
+        $self->set_atoms_bin($symb => [1, $atom->Z]);
+      }
+    }
+
+}
 
 sub canonical_name {
     # return something like C4H10 sort in order of descending Z
     my $self = shift;
-    my @names = map { $_->[0] . $_->[1] }
-      sort {
-        $b->[1][1] <=> $a->[1][1]    # sort by Z!  see above...
-      } $self->atom_counts;
-    return join( '', @names );
+    my @names = map { 
+                     my $name = $_->[0] . $_->[1][0] ; 
+                     $name =~ s/(\w+)1$/$1/; $name; 
+                    }
+                    sort {
+                          $b->[1][1] <=> $a->[1][1]    # sort by Z!  see above...
+                         } $self->atom_counts;
+                return join( '', @names );
 }
 
 no Moose::Role;

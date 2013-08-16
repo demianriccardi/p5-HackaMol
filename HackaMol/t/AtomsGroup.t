@@ -12,7 +12,7 @@ atoms dipole COM COZ dipole_moment total_charge atoms_bin
 );
 my @methods = qw(
 _build_dipole _build_COM _build_COZ _build_total_charge _build_dipole_moment 
-_build_atoms_bin clear_atoms_bin clear_dipole clear_dipole_moment clear_COM 
+clear_atoms_bin clear_dipole clear_dipole_moment clear_COM 
 clear_COZ clear_total_charge clear_dipole_moment
 set_atoms_bin get_atoms_bin has_empty_bin count_unique_atoms all_unique_atoms 
 atom_counts canonical_name Rg all_atoms push_atoms get_atoms delete_atoms count_atoms
@@ -63,6 +63,15 @@ foreach my $at ($group->all_atoms){
 }
 
 my @dipole_moments = qw(2.293 2.350 2.390);
+$group->t(0);
+foreach my $at ($group->all_atoms){
+  is($at->t, 0, "group->t(0) for each atom in group");
+}
+$group->t(1);
+foreach my $at ($group->all_atoms){
+  is($at->t, 1, "group->t(1) for each atom in group");
+}
+
 foreach my $t (0 .. 2){
   $group->t($t);
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
@@ -98,22 +107,37 @@ $group->push_atoms($atom5);
 is($group->count_atoms, 2, 'atom atom count 2');
 
 is_deeply($group->COM, V (0.5,0,0), 'Center of mass');
+is_deeply($group->COZ, V (0.5,0,0), 'Center of Z');
+
+$atom4->mass(1);
+$atom5->mass(10);
+
+is_deeply($group->COM, V (0.5,0,0), 'Center of mass');
+is_deeply($group->COZ, V (0.5,0,0), 'Center of Z');
 
 $group->push_atoms($atom6);
 
 is($group->count_atoms, 3, 'atom atom count 3');
 is_deeply($group->COM, V (1,0,0), 'Center of mass');
+is_deeply($group->COZ, V (1,0,0), 'Center of Z');
 
 $group->clear_atoms;
 is_deeply($group->COM, V (0), 'Center of mass V (0) no atoms');
 is_deeply($group->COZ, V (0), 'Center of Z V (0) no atoms');
 is_deeply($group->dipole, V (0), 'Dipole V (0) no atoms');
 
-$group->push_atoms($atom1);
-$group->push_atoms($atom2);
+
+$group->quick_push_atoms($atom1);
+$group->quick_push_atoms($atom2);
 $group->push_atoms($atom3);
-$group->bin_atoms;
 is($group->count_unique_atoms, 2, 'unique atoms in water is 2');
-#is($group->canonical_name, 'OH2', 'water named OH2');
+is($group->canonical_name, 'OH2', 'water named OH2');
+
+$group->push_atoms($atom1);
+is($group->count_unique_atoms, 2, 'push O1 again, unique atoms still 2');
+is($group->canonical_name, 'O2H2', 'now named O2H2');
+
+
+
 
 done_testing();

@@ -32,10 +32,10 @@ lives_ok {
 'Test creation of an group';
 
 my $atom1 = Atom->new(
-    name    => 'H',
+    name    => 'O',
     charges => [ -0.80, -0.82, -0.834 ],
     coords  => [ V(2.05274,        0.01959,       -0.07701) ],
-    Z       => 1
+    Z       => 8
 );
 
 my $atom2 = Atom->new(
@@ -112,6 +112,7 @@ is_deeply($group->dipole, V (0), 'Dipole V (0) no atoms');
 $group->push_atoms($atom1);
 $group->push_atoms($atom2);
 $group->push_atoms($atom3);
+$group->bin_atoms;
 is($group->count_unique_atoms, 2, 'unique atoms in water is 2');
 #is($group->canonical_name, 'OH2', 'water named OH2');
 

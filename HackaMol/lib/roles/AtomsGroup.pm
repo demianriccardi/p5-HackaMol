@@ -157,7 +157,7 @@ sub _build_dipole_moment {
 has 'atoms_bin' => (
     traits  => ['Hash'],
     isa     => 'HashRef[Str]',
-    builder => '_build_atoms_bin',
+    default => sub{{}},
     clearer => 'clear_atoms_bin',
     handles => {
         set_atoms_bin      => 'set',
@@ -170,17 +170,29 @@ has 'atoms_bin' => (
     lazy => 1,
 );
 
-sub _build_atoms_bin {
+sub bin_atoms {
     my $self  = shift;
     return {{}} unless $self->count_atoms;
     my @atoms = $self->all_atoms;
     foreach my $atom (@atoms) {
-        my $sym     = $atom->symbol;
-        my $count_Z = $self->get_atoms_bin($sym);
-        print $sym . "\n";
-        $self->set_atoms_bin( $sym => [ $count_Z->[0]++, $atom->Z ] );
+      my $sym     = $atom->symbol;
+      print $sym . "\n";
+      $self->set_atoms_bin($sym => 1);
     }
 }
+#sub _build_atoms_bin {
+
+#    my $self  = shift;
+#    return {{}} unless $self->count_atoms;
+#    my @atoms = $self->all_atoms;
+#    foreach my $atom (@atoms) {
+#        my $sym     = $atom->symbol;
+#        $self->set_atoms_bin($sym => 1);
+     #   my $count_Z = $self->get_atoms_bin($sym);
+     #   print $sym . "\n";
+     #   $self->set_atoms_bin( $sym => [ $count_Z->[0]++, $atom->Z ] );
+#    }
+#}
 
 sub canonical_name {
     # return something like C4H10 sort in order of descending Z

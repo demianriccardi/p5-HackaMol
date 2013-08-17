@@ -66,10 +66,13 @@ sub _build_dipole {
     my $self    = shift;
     return(V(0)) unless ($self->count_atoms);
     my @atoms   = $self->all_atoms;
-    my @vectors = map { $_->get_coords(  $_->t ) } @atoms;
-    my @charges = map { $_->get_charges( $_->t ) } @atoms;
-    croak "mismatch number of coords and charges" if ( $#vectors != $#charges );
+    my @vectors = grep {defined} map { $_->get_coords(  $_->t ) } @atoms;
+    my @charges = grep {defined} map { $_->get_charges( $_->t ) } @atoms;
     my $dipole = V( 0, 0, 0 );
+    if ( $#vectors != $#charges ){
+      carp "build_dipole> mismatch number of coords and charges. all defined?";
+      return $dipole;
+    }
     $dipole += $vectors[$_] * $charges[$_] foreach 0 .. $#charges;
     return ($dipole);
 }

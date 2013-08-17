@@ -21,6 +21,7 @@ my @t_dep = qw(coords forces);
 
 has "$_" => (
     traits  => ['Array'],
+    is      => 'ro',
     isa     => 'ArrayRef[Math::Vector::Real]',
     default => sub { [] },
     handles => {
@@ -36,8 +37,9 @@ has "$_" => (
 
 has "$_" => (
     traits  => ['Array'],
+    is      => 'ro',
     isa     => 'ArrayRef[Num]',
-    default => sub { [0] },
+    default => sub { [] },
     handles => {
         "push_$_"  => 'push',
         "get_$_"   => 'get',

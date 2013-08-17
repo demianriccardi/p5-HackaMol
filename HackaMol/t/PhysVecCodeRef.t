@@ -20,7 +20,7 @@ use Test::Warnings;
 use Test::Moose;
 #use MooseX::ClassCompositor;    #use this for testing roles
 use lib 'lib/roles', 't/lib';
-use PhysVec;                # v0.001;#To test for version availability
+use PhysVecCodeRef;                # v0.001;#To test for version availability
 use Math::VectorReal;           # just for example test of swapping coderefs
 
 my @attributes = qw( name t mass xyzfree is_fixed
@@ -37,7 +37,7 @@ my %methods = ('_build_mass' => sub{return 0}); # this is from the above
 
 my $class = MooseX::ClassCompositor::ReqRole->new( { 
                                             class_basename => 'Test', 
-                                          } )->class_for('PhysVec',\%methods);
+                                          } )->class_for('PhysVecCodeRef',\%methods);
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;

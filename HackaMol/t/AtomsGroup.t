@@ -109,12 +109,6 @@ is($group->count_atoms, 2, 'atom atom count 2');
 is_deeply($group->COM, V (0.5,0,0), 'Center of mass');
 is_deeply($group->COZ, V (0.5,0,0), 'Center of Z');
 
-$atom4->mass(1);
-$atom5->mass(10);
-
-is_deeply($group->COM, V (0.5,0,0), 'Center of mass');
-is_deeply($group->COZ, V (0.5,0,0), 'Center of Z');
-
 $group->push_atoms($atom6);
 
 is($group->count_atoms, 3, 'atom atom count 3');
@@ -126,18 +120,35 @@ is_deeply($group->COM, V (0), 'Center of mass V (0) no atoms');
 is_deeply($group->COZ, V (0), 'Center of Z V (0) no atoms');
 is_deeply($group->dipole, V (0), 'Dipole V (0) no atoms');
 
+my @atoms = map{Atom->new(Z=>1, coords=> [V($_, $_, $_)])} 1 .. 10;
+$group->push_atoms(@atoms);
+is_deeply($group->COM,     V(5.5,5.5,5.5), 
+          'Center of mass 10 atoms [1,1,1]...[10,10,10]');
+is_deeply($group->COZ,     V(5.5,5.5,5.5), 
+          'Center of Z    10 atoms [1,1,1]...[10,10,10]');
+is_deeply($group->dipole,     V(0,0,0), 
+          'dipole (0,0,0) atoms [1,1,1]...[10,10,10]');
+cmp_ok(abs($group->Rg-4.97493), '<', 0.0001, "Rg for the ten atoms, double check" );
+is($group->canonical_name, "H10", "canonical name is H10");
+
+$group->delete_atoms(0) foreach 0 .. 4 ;
+
+is_deeply($group->COM,     V(8,8,8), 
+          'center of mass delete first 5 of 10 atoms [1,1,1]...[10,10,10]');
+is($group->canonical_name, "H5", "canonical name is H5");
+
+$group->clear_atoms;
 
 $group->quick_push_atoms($atom1);
 $group->quick_push_atoms($atom2);
 $group->push_atoms($atom3);
+
 is($group->count_unique_atoms, 2, 'unique atoms in water is 2');
 is($group->canonical_name, 'OH2', 'water named OH2');
 
 $group->push_atoms($atom1);
 is($group->count_unique_atoms, 2, 'push O1 again, unique atoms still 2');
 is($group->canonical_name, 'O2H2', 'now named O2H2');
-
-
 
 
 done_testing();

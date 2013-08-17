@@ -66,7 +66,7 @@ sub _build_dipole {
     my $self    = shift;
     return(V(0)) unless ($self->count_atoms);
     my @atoms   = $self->all_atoms;
-    my @vectors = map { $_->get_coords( $_->t ) } @atoms;
+    my @vectors = map { $_->get_coords(  $_->t ) } @atoms;
     my @charges = map { $_->get_charges( $_->t ) } @atoms;
     croak "mismatch number of coords and charges" if ( $#vectors != $#charges );
     my $dipole = V( 0, 0, 0 );
@@ -95,11 +95,11 @@ sub _build_COZ {
 }
 
 sub Rg {
- #radius of gyration.  no tensors yet.
+ #radius of gyration. 
     my $self         = shift;
     return(0) unless ($self->count_atoms);
     my @atoms        = $self->all_atoms;
-    my $com          = $self->com;
+    my $com          = $self->COM;
     my $total_mass   = $self->total_mass;
     my @masses = map { $_->mass} @atoms;
     my @dvec2  = map{$_*$_} map { $_->get_coords($_->t) - $com } @atoms;

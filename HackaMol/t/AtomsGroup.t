@@ -126,6 +126,13 @@ is_deeply($group->COM,     V(5.5,5.5,5.5),
           'Center of mass 10 atoms [1,1,1]...[10,10,10]');
 is_deeply($group->COZ,     V(5.5,5.5,5.5), 
           'Center of Z    10 atoms [1,1,1]...[10,10,10]');
+
+warning_is { $group->dipole }
+"build_dipole> mismatch number of coords and charges. all defined?",
+  "carp warning> mismatch number of coords and charges. ";
+
+$group->do_forall('set_charges', $group->t, 0);
+
 is_deeply($group->dipole,     V(0,0,0), 
           'dipole (0,0,0) atoms [1,1,1]...[10,10,10]');
 cmp_ok(abs($group->Rg-4.97493), '<', 0.0001, "Rg for the ten atoms, double check" );

@@ -9,9 +9,7 @@ requires '_build_mass';
 
 has 'name', is => 'rw', isa => 'Str';
 
-
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
-
 
 my @t_dep = qw(coords forces);
 

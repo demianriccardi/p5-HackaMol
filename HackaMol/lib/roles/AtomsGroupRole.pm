@@ -11,6 +11,7 @@ my $angste_debye = 4.80320;
 
 has 'atoms' => (
     traits  => ['Array'],
+    is      => 'ro',
     isa     => 'ArrayRef[Atom]',
     default => sub { [] },
     handles => {
@@ -22,13 +23,14 @@ has 'atoms' => (
         delete_atoms          => 'delete',
         quick_delete_atoms    => 'delete',
         all_atoms             => 'elements',
+    #    atoms                 => 'elements',
         count_atoms           => 'count',
         clear_atoms           => 'clear',
     },
     lazy     => 1,
 );
 
-has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0, trigger => \&_set_atoms_t;
+has 'gt', is => 'rw', isa => 'Int|ScalarRef', default => 0, trigger => \&_set_atoms_t;
 
 sub _set_atoms_t {
     my ($self, $new_t, $old_t) = @_;

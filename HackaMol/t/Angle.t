@@ -120,7 +120,7 @@ my $angle2 = Angle->new(atoms => [$atom2,$atom1,$atom4]);
 my $angle3 = Angle->new(atoms => [$atom2,$atom1,$atom5]);
 
 foreach my $t (0 .. 9){
-  $angle1->t($t);
+  $angle1->gt($t);
   cmp_ok($angle1->ang,'==', 180.0, "antiparallel t dependent angle: 180");
   cmp_ok($angle2->ang,'==', 90.0, "xz t dependent ang: 90");
   is_deeply($angle1->ang_normvec, V(0,0,0), "antiparallel t dependent ang_normvec: V (0, 0, 0)");

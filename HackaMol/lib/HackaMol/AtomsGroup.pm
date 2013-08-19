@@ -6,6 +6,11 @@ use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
 
+has 'groupname' => (
+    is  => 'rw',
+    isa => 'Str',
+);
+
 sub Rg {
  #radius of gyration. 
     my $self         = shift;
@@ -31,6 +36,10 @@ sub _clear_group_attrs {
     }
 }
 
+sub BUILD {
+  my $self = shift;
+  $self->bin_atoms;
+}
 
 __PACKAGE__->meta->make_immutable;
 

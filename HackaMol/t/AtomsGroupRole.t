@@ -88,17 +88,17 @@ foreach my $at ($group->all_atoms){
 }
 
 my @dipole_moments = qw(2.293 2.350 2.390);
-$group->t(0);
+$group->gt(0);
 foreach my $at ($group->all_atoms){
   is($at->t, 0, "group->t(0) for each atom in group");
 }
-$group->t(1);
+$group->gt(1);
 foreach my $at ($group->all_atoms){
   is($at->t, 1, "group->t(1) for each atom in group");
 }
 
 foreach my $t (0 .. 2){
-  $group->t($t);
+  $group->gt($t);
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
 }
 
@@ -156,7 +156,7 @@ warning_is { $group->dipole }
 "build_dipole> mismatch number of coords and charges. all defined?",
   "carp warning> mismatch number of coords and charges. ";
 
-$group->do_forall('set_charges', $group->t, 0);
+$group->do_forall('set_charges', $group->gt, 0);
 
 is_deeply($group->dipole,     V(0,0,0), 
           'dipole (0,0,0) atoms [1,1,1]...[10,10,10]');

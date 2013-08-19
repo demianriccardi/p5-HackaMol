@@ -83,7 +83,7 @@ my $bond1 = Bond->new(atoms => [$atom1,$atom2]);
 my $bond2 = Bond->new(atoms => [$atom1,$atom3]);
 
 foreach my $t (0 .. 9){
-  $bond1->t($t);
+  $bond1->gt($t);
   cmp_ok($bond1->bond_length,'==', $t, "t dependent bond length: $t");
   is_deeply($bond1->bond_vector, V($t,0,0), "t dependent bond vector: V ($t, 0, 0)");
   is($bond1->bond_order, 1, "bond order default");

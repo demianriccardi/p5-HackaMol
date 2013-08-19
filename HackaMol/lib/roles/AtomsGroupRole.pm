@@ -1,9 +1,11 @@
-package AtomsGroup;
+package AtomsGroupRole;
 use Moose::Role;
 use Carp;
 use MooseX::Storage;
 use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' );
+
+requires '_clear_group_attrs';
 
 my $angste_debye = 4.80320;
 
@@ -23,7 +25,7 @@ has 'atoms' => (
         count_atoms           => 'count',
         clear_atoms           => 'clear',
     },
-    lazy => 1,
+    lazy     => 1,
 );
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0, trigger => \&_set_atoms_t;
@@ -32,27 +34,27 @@ sub _set_atoms_t {
     my ($self, $new_t, $old_t) = @_;
     if(@_ > 2) { # if setting the group t to something new do for all atoms
       $_->t($new_t) foreach $self->all_atoms;
-      $self->_clear_group_stuff;
+      $self->_clear_group_attrs;
     }
 }
 
 #anytime the group changes, we need to reset the defaults!
 after $_ => sub {
   my $self = shift;
-  $self->_clear_group_stuff;
+  $self->_clear_group_attrs;
   $self->bin_atoms;
 } foreach (qw(push_atoms set_atoms delete_atoms clear_atoms));
 
 
-sub _clear_group_stuff {
-    my $self = shift;
-    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
-                              clear_dipole_moment clear_total_charge
-                              clear_total_mass clear_total_Z 
-                              clear_atoms_bin)){
-      $self->$clearthis;
-    }
-}
+#sub _clear_group_attrs {
+#    my $self = shift;
+#    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
+#                              clear_dipole_moment clear_total_charge
+#                              clear_total_mass clear_total_Z 
+#                              clear_atoms_bin)){
+#      $self->$clearthis;
+#    }
+#}
 
 has $_ => (
     is      => 'rw',
@@ -95,20 +97,6 @@ sub _build_COZ {
     my $coz       = V( 0, 0, 0 );
     $coz += $_ foreach @z_vectors;
     return ($coz/$self->total_Z);
-}
-
-sub Rg {
- #radius of gyration. 
-    my $self         = shift;
-    return(0) unless ($self->count_atoms);
-    my @atoms        = $self->all_atoms;
-    my $com          = $self->COM;
-    my $total_mass   = $self->total_mass;
-    my @masses = map { $_->mass} @atoms;
-    my @dvec2  = map{$_*$_} map { $_->get_coords($_->t) - $com } @atoms;
-    my $sum    = 0;
-    $sum      += $masses[$_]*$dvec2[$_] foreach 0 .. $#dvec2;
-    return( sqrt($sum/$total_mass) );
 }
 
 sub do_forall{

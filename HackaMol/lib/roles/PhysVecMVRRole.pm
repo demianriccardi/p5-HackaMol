@@ -1,4 +1,4 @@
-package PhysVecMVR;
+package PhysVecMVRRole;
 # ABSTRACT: Provides the core of HackaMol Atom and Molecule classes.
 use Math::Vector::Real;
 use Math::Trig;
@@ -200,6 +200,7 @@ sub angle {
     croak "need to pass two objects that do PhysVecMVR" unless (@_ == 3);
     my $v1 = $self->inter_dcoords($obj2);
     my $v2 = $self->inter_dcoords($obj3);
+    return (0) if (abs($v1) == 0 or abs($v2) == 0);
     return ( rad2deg( atan2($v1,$v2) ) );
 }
 

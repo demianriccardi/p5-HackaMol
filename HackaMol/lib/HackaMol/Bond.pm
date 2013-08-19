@@ -4,7 +4,7 @@ use Moose;
 use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'AtomsGroup';
+with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
 
 has $_ => (
             is  => 'rw'  ,
@@ -21,6 +21,11 @@ has $_ => (
             builder => '_build_bond_vector',
             lazy    => 1,
           ) foreach qw(bond_vector);
+
+sub BUILD {
+    my $self = shift;
+    $_->push_bonds($self) foreach $self->all_atoms;
+}
 
 sub _build_bond_vector{
   my $self  = shift;
@@ -42,16 +47,16 @@ sub _build_bond_length{
   return ($atoms[0]->distance($atoms[1]));
 }
 
-after _clear_group_stuff => sub {
+sub _clear_group_attrs {
     my $self = shift;
-    foreach my $clearthis (qw(
-                              clear_bond_length
-                              clear_bond_vector
-                              clear_bond_order
-                             )){
-    $self->$clearthis;
+    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
+                              clear_dipole_moment clear_total_charge
+                              clear_total_mass clear_total_Z 
+                              clear_atoms_bin clear_bond_length
+                              clear_bond_vector clear_bond_order)){
+      $self->$clearthis;
     }
-};
+}
 
 
 __PACKAGE__->meta->make_immutable;

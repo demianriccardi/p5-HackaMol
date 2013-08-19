@@ -1,17 +1,18 @@
-package BondsAnglesDihedrals;
+package BondsAnglesDihedralsRole;
 # ABSTRACT: Array traits for containers of HackaMol Bonds, Angles, Dihedrals.
 use Moose::Role;
 use Carp;
 
 has 'bonds'  => (
     traits   => ['Array'],
+    is       => 'ro',
     isa      => 'ArrayRef[Bond]',
     default  => sub { [] },
     lazy     => 1,
     weak_ref => 1,
     handles  => {
         "has_bonds"   => 'count',
-        "add_bonds"   => 'push',
+        "push_bonds"   => 'push',
         "get_bonds"   => 'get',
         "set_bonds"   => 'set',
         "all_bonds"   => 'elements',
@@ -29,7 +30,7 @@ has 'angles'  => (
     weak_ref => 1,
     handles  => {
         "has_angles"   => 'count',
-        "add_angles"   => 'push',
+        "push_angles"   => 'push',
         "get_angles"   => 'get',
         "set_angles"   => 'set',
         "all_angles"   => 'elements',
@@ -47,7 +48,7 @@ has 'dihedrals'  => (
     weak_ref => 1,
     handles  => {
         "has_dihedrals"   => 'count',
-        "add_dihedrals"   => 'push',
+        "push_dihedrals"   => 'push',
         "get_dihedrals"   => 'get',
         "set_dihedrals"   => 'set',
         "all_dihedrals"   => 'elements',

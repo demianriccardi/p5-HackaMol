@@ -11,26 +11,22 @@ use Bond;
 
 
 my @attributes = qw(
-atoms dipole COM COZ dipole_moment total_charge atoms_bin
+atoms bond_length bond_vector bond_order
 );
 my @methods = qw(
-_build_dipole _build_COM _build_COZ _build_total_charge _build_dipole_moment 
-clear_atoms_bin clear_dipole clear_dipole_moment clear_COM 
-clear_COZ clear_total_charge clear_dipole_moment
-set_atoms_bin get_atoms_bin has_empty_bin count_unique_atoms all_unique_atoms 
-atom_counts canonical_name Rg all_atoms push_atoms get_atoms delete_atoms count_atoms
-clear_atoms
+_build_bond_length _build_bond_vector 
+clear_bond_length clear_bond_vector clear_bond_order
 );
 
-my @roles = qw(AtomsGroup);
+my @roles = qw(AtomsGroupRole);
 
 map has_attribute_ok( 'Bond', $_ ), @attributes;
 map can_ok( 'Bond', $_ ), @methods;
 map does_ok( 'Bond', $_ ), @roles;
 
 my $atom1 = Atom->new(
-    name    => 'C',
-    charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+    name    => 'Hg',
+    charges => [2,2,2,2,2,2,2,2,2,2],
     coords  => [ 
                 V( 0.0, 0.0, 0.0 ), 
                 V( 0.0, 1.0, 0.0 ), 
@@ -43,11 +39,12 @@ my $atom1 = Atom->new(
                 V( 0.0, 8.0, 0.0 ), 
                 V( 0.0, 9.0, 0.0 ), 
                ],
-    Z       => 6
+    symbol  => 'HG'
 );
+
 my $atom2 = Atom->new(
-    name    => 'Hg',
-    charges => [2,2,2,2,2,2,2,2,2,2],
+    name    => 'C1',
+    charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [ 
                 V( 0.0, 0.0, 0.0 ), 
                 V( 1.0, 1.0, 0.0 ), 
@@ -60,20 +57,53 @@ my $atom2 = Atom->new(
                 V( 8.0, 8.0, 0.0 ), 
                 V( 9.0, 9.0, 0.0 ), 
                ],
-    symbol  => 'HG'
+    Z       => 6
 );
 
-my $bond = Bond->new(atoms => [$atom1,$atom2]);
+my $atom3 = Atom->new(
+    name    => 'C2',
+    charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+    coords  => [
+                V( -1.0, 0.0, 0.0 ),
+                V( -1.0, 1.0, 0.0 ),
+                V( -2.0, 2.0, 0.0 ),
+                V( -3.0, 3.0, 0.0 ),
+                V( -4.0, 4.0, 0.0 ),
+                V( -5.0, 5.0, 0.0 ),
+                V( -6.0, 6.0, 0.0 ),
+                V( -7.0, 7.0, 0.0 ),
+                V( -8.0, 8.0, 0.0 ),
+                V( -9.0, 9.0, 0.0 ),
+               ],
+    Z => 6,
+);
+
+
+my $bond1 = Bond->new(atoms => [$atom1,$atom2]);
+my $bond2 = Bond->new(atoms => [$atom1,$atom3]);
 
 foreach my $t (0 .. 9){
-  $bond->t($t);
-  cmp_ok($bond->bond_length,'==', $t, "t dependent bond length: $t");
-  is_deeply($bond->bond_vector, V($t,0,0), "t dependent bond vector: V ($t, 0, 0)");
-  is($bond->bond_order, 1, "bond order default");
-  $bond->bond_order(1.5);
+  $bond1->t($t);
+  cmp_ok($bond1->bond_length,'==', $t, "t dependent bond length: $t");
+  is_deeply($bond1->bond_vector, V($t,0,0), "t dependent bond vector: V ($t, 0, 0)");
+  is($bond1->bond_order, 1, "bond order default");
+  $bond1->bond_order(1.5);
 }
 
-is($bond->bond_order, 1.5, "bond order set to num");
+is($bond1->bond_order, 1.5, "bond order set to num");
+is($atom1->count_bonds, 2, "atom1 knows it has 2 bonds");
+is($atom2->count_bonds, 1, "atom2 knows it has 1 bonds");
+is($atom3->count_bonds, 1, "atom3 knows it has 1 bonds");
+is($atom1->get_bonds(0),$bond1, 'the atom is aware of its bond');
+is($atom2->get_bonds(0),$bond1, 'the atom is aware of its bond');
+is($atom1->get_bonds(1),$bond2, 'the atom is aware of its bond');
+is($atom3->get_bonds(0),$bond2, 'the atom is aware of its other bond');
+
+print "use Molecule class to really delete bonds\n";
+#$bond1 = undef; # = {};
+#print $atom2->get_bonds(0)->dump;
+#is($atom1->get_bonds(0),$bond1, 'the atom is aware of its bond');
+
 
 #my $t1 = time;
 #$atom1->distance($atom2) foreach 0 .. 10000;  

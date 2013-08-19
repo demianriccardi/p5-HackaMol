@@ -40,6 +40,15 @@ sub _build_ang{
   return ($atoms[1]->angle($atoms[0],$atoms[2]));
 }
 
+before $_ => sub {
+    my $self = shift;
+    if (grep {$_->is_dirty} $self->all_atoms){
+      my $method = "clear_$_";
+      $self->$method;
+
+    }
+} foreach (qw(ang ang_normvec));
+
 sub _clear_group_attrs {
     my $self = shift;
     foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ

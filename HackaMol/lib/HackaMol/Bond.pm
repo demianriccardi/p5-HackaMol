@@ -47,6 +47,15 @@ sub _build_bond_length{
   return ($atoms[0]->distance($atoms[1]));
 }
 
+before $_ => sub {
+    my $self = shift;
+    if (grep {$_->is_dirty} $self->all_atoms){
+      my $method = "clear_$_";
+      $self->$method;
+    }
+} foreach (qw(bond_length bond_vector));
+
+
 sub _clear_group_attrs {
     my $self = shift;
     foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ

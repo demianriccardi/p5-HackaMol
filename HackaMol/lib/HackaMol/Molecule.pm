@@ -3,7 +3,7 @@ package Molecule;
 use Moose;
 use lib 'lib/roles';
 use MooseX::Storage;
-with Storage('io' => 'StorableFile');#, 'PhysVecRole';
+with Storage('io' => 'StorableFile'), 'PhysVecMVRRole';
 
 
 1;

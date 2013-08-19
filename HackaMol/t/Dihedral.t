@@ -72,11 +72,11 @@ is($atom2->get_dihedrals(0),$dihe, 'the atom1 is aware of dihedral');
 is($atom3->get_dihedrals(0),$dihe, 'the atom1 is aware of dihedral');
 
 $atom3->set_coords(0,V(-1.0,sqrt(2)/2,sqrt(2)/2));
-$dihe->_clear_group_attrs;
+#$dihe->_clear_group_attrs; #added a check for is_dirty
 cmp_ok($dihe->dihe,'==', -45.0, "-45 dihedral");
 
 $atom3->set_coords(0,V(-1.0,-sqrt(2)/2,-sqrt(2)/2));
-$dihe->_clear_group_attrs;
+#$dihe->_clear_group_attrs;
 cmp_ok($dihe->dihe,'==', 135.0, "135 dihedral");
 
 #say "4 \n";

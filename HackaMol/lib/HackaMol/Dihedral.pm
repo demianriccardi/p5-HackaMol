@@ -15,7 +15,12 @@ has $_ => (
             lazy    => 1,
           ) foreach qw(dihe);
 
-before 
+before 'dihe' => sub {
+    my $self = shift;
+    if (grep {$_->is_dirty} $self->all_atoms){
+      $self->clear_dihe;
+    }
+};
 
 sub _build_dihe{
   my $self  = shift;

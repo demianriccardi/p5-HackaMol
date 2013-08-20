@@ -24,14 +24,13 @@ use Atom;
 use AtomsGroupRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
-atoms dipole COM COZ dipole_moment total_charge atoms_bin
+atoms 
 );
 my @methods = qw(
-_build_dipole _build_COM _build_COZ _build_total_charge _build_dipole_moment 
-clear_atoms_bin clear_dipole clear_dipole_moment clear_COM 
-clear_COZ clear_total_charge clear_dipole_moment
-set_atoms_bin get_atoms_bin has_empty_bin count_unique_atoms all_unique_atoms 
-atom_counts canonical_name all_atoms push_atoms get_atoms delete_atoms count_atoms
+bin_atoms dipole COM COZ dipole_moment total_charge
+count_unique_atoms  
+canonical_name 
+all_atoms push_atoms get_atoms delete_atoms count_atoms
 clear_atoms
 );
 my %methods = ('_clear_group_attrs' => sub{
@@ -88,17 +87,17 @@ foreach my $at ($group->all_atoms){
 }
 
 my @dipole_moments = qw(2.293 2.350 2.390);
-$group->gt(0);
+$group->do_forall('t',0);
 foreach my $at ($group->all_atoms){
   is($at->t, 0, "group->t(0) for each atom in group");
 }
-$group->gt(1);
+$group->do_forall('t',1);
 foreach my $at ($group->all_atoms){
   is($at->t, 1, "group->t(1) for each atom in group");
 }
 
 foreach my $t (0 .. 2){
-  $group->gt($t);
+  $group->do_forall('t',$t);
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
 }
 
@@ -156,7 +155,7 @@ warning_is { $group->dipole }
 "build_dipole> mismatch number of coords and charges. all defined?",
   "carp warning> mismatch number of coords and charges. ";
 
-$group->do_forall('set_charges', $group->gt, 0);
+$group->do_forall('set_charges', $group->get_atoms(0)->t, 0);
 
 is_deeply($group->dipole,     V(0,0,0), 
           'dipole (0,0,0) atoms [1,1,1]...[10,10,10]');

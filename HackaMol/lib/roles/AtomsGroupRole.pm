@@ -30,43 +30,7 @@ has 'atoms' => (
     lazy     => 1,
 );
 
-has 'gt', is => 'rw', isa => 'Int|ScalarRef', default => 0, trigger => \&_set_atoms_t;
-
-sub _set_atoms_t {
-    my ($self, $new_t, $old_t) = @_;
-    if(@_ > 2) { # if setting the group t to something new do for all atoms
-      $_->t($new_t) foreach $self->all_atoms;
-      $self->_clear_group_attrs;
-    }
-}
-
-#anytime the group changes, we need to reset the defaults!
-after $_ => sub {
-  my $self = shift;
-  $self->_clear_group_attrs;
-  $self->bin_atoms;
-} foreach (qw(push_atoms set_atoms delete_atoms clear_atoms));
-
-
-#sub _clear_group_attrs {
-#    my $self = shift;
-#    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
-#                              clear_dipole_moment clear_total_charge
-#                              clear_total_mass clear_total_Z 
-#                              clear_atoms_bin)){
-#      $self->$clearthis;
-#    }
-#}
-
-has $_ => (
-    is      => 'rw',
-    isa     => 'Math::Vector::Real',
-    builder => "_build_$_",
-    clearer => "clear_$_",
-    lazy => 1,
-) foreach (qw(dipole COM COZ));
-
-sub _build_dipole {
+sub dipole {
     my $self    = shift;
     return(V(0)) unless ($self->count_atoms);
     my @atoms   = $self->all_atoms;
@@ -81,7 +45,7 @@ sub _build_dipole {
     return ($dipole);
 }
 
-sub _build_COM {
+sub COM {
     my $self      = shift;
     return(V(0)) unless ($self->count_atoms);
     my @atoms     = $self->all_atoms;
@@ -91,7 +55,7 @@ sub _build_COM {
     return ($com/$self->total_mass);
 }
 
-sub _build_COZ {
+sub COZ {
     my $self      = shift;
     return(V(0)) unless ($self->count_atoms);
     my @atoms     = $self->all_atoms;
@@ -109,15 +73,7 @@ sub do_forall{
   $_->$method(@_) foreach @atoms;
 }
 
-has $_ => (
-    is      => 'rw',
-    isa     => 'Num',
-    builder => "_build_$_",
-    clearer => "clear_$_",
-    lazy => 1,
-) foreach (qw(dipole_moment total_charge total_mass total_Z));
-
-sub _build_total_charge {
+sub total_charge {
     my $self    = shift;
     return(0) unless ($self->count_atoms);
     my @atoms   = $self->all_atoms;
@@ -127,7 +83,7 @@ sub _build_total_charge {
     return ($sum);
 }
 
-sub _build_total_mass {
+sub total_mass {
     my $self   = shift;
     return(0) unless ($self->count_atoms);
     my @masses = map { $_->mass } $self->all_atoms;
@@ -136,7 +92,7 @@ sub _build_total_mass {
     return ($sum);
 }
 
-sub _build_total_Z {
+sub total_Z {
     my $self = shift;
     return(0) unless ($self->count_atoms);
     my @Zs   = map { $_->Z } $self->all_atoms;
@@ -145,58 +101,40 @@ sub _build_total_Z {
     return ($sum);
 }
 
-sub _build_dipole_moment {
+sub dipole_moment {
     my $self = shift;
     return ( abs( $self->dipole )*$angste_debye );
 }
 
-
-has 'atoms_bin' => (
-    traits  => ['Hash'],
-    isa     => 'HashRef',
-    default => sub{{}},
-    clearer => 'clear_atoms_bin',
-    handles => {
-        set_atoms_bin      => 'set',
-        get_atoms_bin      => 'get',
-        has_empty_bin      => 'is_empty',
-        count_unique_atoms => 'count',
-        all_unique_atoms   => 'keys',
-        atom_counts        => 'kv',
-        exists_in_bin      => 'exists',
-    },
-    lazy => 1,
-);
-
 sub bin_atoms {
     my $self  = shift;
-
-    return ({}) unless $self->count_atoms;
-    $self->clear_atoms_bin;
+    my $bin_hr = {};
+    my $z_hr   = {};
+    return ($bin_hr,$z_hr) unless $self->count_atoms;
     foreach my $atom ($self->all_atoms){
-      my $symb = $atom->symbol;
-      if ($self->exists_in_bin($symb)){
-        my $count_z = $self->get_atoms_bin($symb);
-        $count_z->[0]++;
-        $self->set_atoms_bin($symb => $count_z);
-      }
-      else {
-        $self->set_atoms_bin($symb => [1, $atom->Z]);
-      }
+      $bin_hr->{$atom->symbol}++;
+      $z_hr->{$atom->symbol}=$atom->Z;
     }
+    return ($bin_hr,$z_hr);
+}
 
+sub count_unique_atoms {
+    my $self = shift;
+    my ($bin_hr,$z_hr) = $self->bin_atoms;
+    return (scalar(keys %{$bin_hr}));
 }
 
 sub canonical_name {
     # return something like C4H10 sort in order of descending Z
     my $self = shift;
+    my ($bin_hr,$z_hr) = $self->bin_atoms;
     my @names = map { 
-                     my $name = $_->[0] . $_->[1][0] ; 
-                     $name =~ s/(\w+)1$/$1/; $name; 
+                     my $name = $_ . $bin_hr->{$_}; 
+                     $name =~ s/(\w+)1$/$1/; $name; # substitue 1 away? 
                     }
                     sort {
-                          $b->[1][1] <=> $a->[1][1]    # sort by Z!  see above...
-                         } $self->atom_counts;
+                          $z_hr->{$b} <=> $z_hr->{$a}    # sort by Z!  see above...
+                         } keys %{$bin_hr};
                 return join( '', @names );
 }
 

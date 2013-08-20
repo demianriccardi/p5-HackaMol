@@ -63,6 +63,13 @@ sub COZ {
     return ($coz/$self->total_Z);
 }
 
+sub gt {
+#set group time
+  my $self = shift;
+  my $t    = shift;
+  $self->do_forall('t',$t);
+}
+
 sub do_forall{
   my $self   = shift;
   my $method = shift;

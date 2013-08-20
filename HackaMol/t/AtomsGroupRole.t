@@ -89,15 +89,16 @@ foreach my $at ($group->all_atoms){
 my @dipole_moments = qw(2.293 2.350 2.390);
 $group->do_forall('t',0);
 foreach my $at ($group->all_atoms){
-  is($at->t, 0, "group->t(0) for each atom in group");
+  is($at->t, 0, "\$atom->t(0) for each atom: group->do_for_all");
 }
-$group->do_forall('t',1);
+
+$group->gt(1);
 foreach my $at ($group->all_atoms){
-  is($at->t, 1, "group->t(1) for each atom in group");
+  is($at->t, 1, "\$atom->t(1) for each atom: group->gt");
 }
 
 foreach my $t (0 .. 2){
-  $group->do_forall('t',$t);
+  $group->gt($t);
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
 }
 

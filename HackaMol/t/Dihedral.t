@@ -76,5 +76,12 @@ cmp_ok($dihe->dihe,'==', -45.0, "-45 dihedral");
 $atom3->set_coords(0,V(-1.0,-sqrt(2)/2,-sqrt(2)/2));
 cmp_ok($dihe->dihe,'==', 135.0, "135 dihedral");
 
+$dihe->dihe_fc(1.0);
+$dihe->dihe_eq($dihe->dihe - 0.5);
+cmp_ok (abs(0.25-$dihe->improper_dihe_energy),'<',1E-7, 'simple improper dihe energy test') ;
+
+$dihe->dihe_multi(2);
+$dihe->dihe_dphase(0.1);
+cmp_ok(abs(0.9-$dihe->torsion_energy), '<', 1E-2, 'simple torsion energy test');
 
 done_testing();

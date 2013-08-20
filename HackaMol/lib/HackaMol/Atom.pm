@@ -99,7 +99,6 @@ after 'set_coords' => sub {
 
 sub BUILD {
     my $self = shift;
-
     if ($self->has_symbol){
       $self->symbol( _fix_symbol( $self->symbol ) ) ;
       return;

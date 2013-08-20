@@ -95,7 +95,7 @@ lives_ok {
 }
 'Test creation of an obj2';
 
-$obj1->set_coords( $obj1->t, V( 1, 0, 0 ));
+$obj1->set_coords( $obj1->t, V( 1, 0, 0 ) );
 $obj2->set_coords( $obj2->t, V( 0, 1, 0 ) );
 warning_is { $obj1->distance($obj2) }
 "comparing objects with different times",

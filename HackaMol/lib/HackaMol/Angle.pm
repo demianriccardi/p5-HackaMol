@@ -10,7 +10,7 @@ with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
 has $_ => (
             is  => 'rw'  ,
             isa => 'Num' ,
-            default => 1 ,
+            default => 0 ,
             lazy    => 1 ,
             clearer => "clear_$_",
             predicate => "has_$_",
@@ -41,7 +41,7 @@ sub BUILD {
 
 sub angle_energy {
     my $self  = shift;
-    return (0) unless ($self->has_fc and $self->has_ang_eq);
+    return (0) unless ($self->ang_fc > 0);
     my $angsd = ( $self->ang - $self->ang_eq )**2;
     return ($self->force_constant*$angsd);
 }

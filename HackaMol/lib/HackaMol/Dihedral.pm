@@ -4,41 +4,36 @@ use Moose;
 use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
-use Math::Vector::Real;
+use Math::Trig;
 with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
 
 has $_ => (
-            is      => 'rw'  ,
-            isa     => 'Num' ,
+            is  => 'rw'  ,
+            isa => 'Num' ,
+            default => 0 ,
+            lazy    => 1 ,
             clearer => "clear_$_",
-            builder => "_build_$_",
-            lazy    => 1,
-          ) foreach qw(dihe);
+          ) foreach qw(dihe_fc dihe_dphase dihe_eq dihe_multi);
 
-before 'dihe' => sub {
-    my $self = shift;
-    if (grep {$_->is_dirty} $self->all_atoms){
-      $self->clear_dihe;
-    }
-};
-
-sub _build_dihe{
+sub dihe{
   my $self  = shift;
   my @atoms = $self->all_atoms;
   return ($atoms[0]->dihedral($atoms[1],$atoms[2],$atoms[3]));
 }
 
-sub _clear_group_attrs {
-    my $self = shift;
-    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
-                              clear_dipole_moment clear_total_charge
-                              clear_total_mass clear_total_Z 
-                              clear_atoms_bin 
-                              clear_dihe)) {
-      $self->$clearthis;
-    }
+sub torsion_energy {
+    my $self  = shift;
+    return (0) unless ($self->dihe_fc > 0 );
+    my $tfunc = 1 + cos($self->dihe_multi*$self->dihe - $self->dihe_dphase);
+    return ($self->dihe_fc*$tfunc);
 }
 
+sub improper_dihe_energy {
+    my $self  = shift;
+    return (0) unless ($self->dihe_fc > 0 );
+    my $angsd = ($self->dihe - $self->dihe_eq)**2 ;
+    return ($self->dihe_fc*$angsd);
+}
 
 sub BUILD {
     my $self = shift;

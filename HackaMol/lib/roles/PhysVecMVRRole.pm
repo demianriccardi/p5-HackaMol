@@ -202,7 +202,7 @@ sub angle {
     return ( rad2deg( atan2($v1,$v2) ) );
 }
 
-sub dihedral {
+sub dihedral_rad {
     # self            obj4
     #   \             /
     #    \    Ang    /
@@ -217,11 +217,17 @@ sub dihedral {
     my $v3 = $obj3->inter_dcoords($obj4);
     my $v3_x_v2 = $v3 x $v2;
     my $v2_x_v1 = $v2 x $v1;
-
-    my $dihe = rad2deg( atan2($v3_x_v2,$v2_x_v1) ) ;
     my $sign = $v1*$v3_x_v2;
+
+    my $dihe = atan2($v3_x_v2,$v2_x_v1);
     $dihe *= -1 if ($sign>0);
     return $dihe;
+}
+
+sub dihedral {
+    my $self = shift;
+    my $dihe = $self->dihedral_rad(@_);
+    return ( rad2deg($dihe) );
 }
 
 sub inter_dcharges {      

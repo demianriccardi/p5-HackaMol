@@ -39,11 +39,29 @@ sub BUILD {
     $_->push_angles($self) foreach $self->all_atoms;
 }
 
+has 'angle_energy_func' => (
+    is      => 'ro',
+    isa     => 'CodeRef',
+    builder => "_build_angle_energy_func",
+    lazy    => 1,
+);
+
+
+sub _build_angle_energy_func {
+    #my $self = shift; #self is passed by moose, but we don't use it here
+    my $subref = sub {
+        my $angle = shift;
+        my $val = ( $angle->ang - $angle->ang_eq )**2;
+        return ($angle->ang_fc*$val);
+    };
+    return ($subref);
+}
+
 sub angle_energy {
     my $self  = shift;
     return (0) unless ($self->ang_fc > 0);
-    my $angsd = ( $self->ang - $self->ang_eq )**2;
-    return ($self->ang_fc*$angsd);
+    my $energy = &{$self->angle_energy_func}($self);
+    return ($energy);
 }
 
 __PACKAGE__->meta->make_immutable;

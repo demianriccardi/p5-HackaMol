@@ -107,20 +107,10 @@ is($atom2->get_bonds(0),$bond1, 'the atom is aware of its bond');
 is($atom1->get_bonds(1),$bond2, 'the atom is aware of its bond');
 is($atom3->get_bonds(0),$bond2, 'the atom is aware of its other bond');
 
-print "use Molecule class to really delete bonds\n";
-#$bond1 = undef; # = {};
-#print $atom2->get_bonds(0)->dump;
-#is($atom1->get_bonds(0),$bond1, 'the atom is aware of its bond');
+$bond1->bond_fc(1.0);
+$bond1->bond_length_eq($bond1->bond_length - 0.5);
 
-
-#my $t1 = time;
-#$atom1->distance($atom2) foreach 0 .. 10000;  
-#my $t2 = time;
-#$bond->bond_length foreach 0 .. 10000;  
-#my $t3 = time;
-#printf ("Calculate distance>   %10.3f per s \n", 10000/($t2-$t1));
-#printf ("retrieve bond_length> %10.3f per s \n", 10000/($t3-$t2));
-#print $bond->dump;
+cmp_ok (abs(0.25-$bond1->bond_energy),'<',1E-7, 'simple bond energy test') ;
 
 done_testing();
 

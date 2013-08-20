@@ -142,13 +142,9 @@ is($atom3->get_angles(0),$angle1, 'the atom1 is aware of angle1');
 is($atom4->get_angles(0),$angle2, 'the atom1 is aware of angle2');
 is($atom5->get_angles(0),$angle3, 'the atom1 is aware of angle3');
 
-#my $t1 = time;
-#$atom1->distance($atom2) foreach 0 .. 10000;  
-#my $t2 = time;
-#$angle->angle_length foreach 0 .. 10000;  
-#my $t3 = time;
-#printf ("Calculate distance>   %10.3f per s \n", 10000/($t2-$t1));
-#printf ("retrieve angle_length> %10.3f per s \n", 10000/($t3-$t2));
-#print $angle->dump;
+$angle1->ang_fc(1.0);
+$angle1->ang_eq($angle1->ang - 0.5);
+
+cmp_ok (abs(0.25-$angle1->angle_energy),'<',1E-7, 'simple angle energy test') ;
 
 done_testing();

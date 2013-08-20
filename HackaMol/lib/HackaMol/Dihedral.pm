@@ -21,18 +21,58 @@ sub dihe{
   return ($atoms[0]->dihedral($atoms[1],$atoms[2],$atoms[3]));
 }
 
+sub dihe_rad{
+  my $self  = shift;
+  my @atoms = $self->all_atoms;
+  return ($atoms[0]->dihedral_rad($atoms[1],$atoms[2],$atoms[3]));
+}
+
+has 'improper_dihe_energy_func' => (
+    is      => 'ro',
+    isa     => 'CodeRef',
+    builder => "_build_improper_dihe_energy_func",
+    lazy    => 1,
+);
+
+
+sub _build_improper_dihe_energy_func {
+    my $subref = sub {
+        my $dihedral = shift;
+        my $val = ( $dihedral->dihe - $dihedral->dihe_eq )**2;
+        return ($dihedral->dihe_fc*$val);
+    };
+    return ($subref);
+}
+
+has 'torsion_energy_func' => (
+    is      => 'ro',
+    isa     => 'CodeRef',
+    builder => "_build_torsion_energy_func",
+    lazy    => 1,
+);
+
+
+sub _build_torsion_energy_func {
+    my $subref = sub {
+        my $dihedral = shift;
+        my $val = 1 + cos($dihedral->dihe_multi*$dihedral->dihe_rad - $dihedral->dihe_dphase);
+        return ($dihedral->dihe_fc*$val);
+    };
+    return ($subref);
+}
+
 sub torsion_energy {
     my $self  = shift;
     return (0) unless ($self->dihe_fc > 0 );
-    my $tfunc = 1 + cos($self->dihe_multi*$self->dihe - $self->dihe_dphase);
-    return ($self->dihe_fc*$tfunc);
+    my $energy = &{$self->torsion_energy_func}($self);
+    return ($energy);
 }
 
 sub improper_dihe_energy {
     my $self  = shift;
     return (0) unless ($self->dihe_fc > 0 );
-    my $angsd = ($self->dihe - $self->dihe_eq)**2 ;
-    return ($self->dihe_fc*$angsd);
+    my $energy = &{$self->improper_dihe_energy_func}($self);
+    return ($energy);
 }
 
 sub BUILD {

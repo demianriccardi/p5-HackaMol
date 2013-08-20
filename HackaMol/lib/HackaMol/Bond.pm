@@ -23,6 +23,24 @@ has $_ => (
             predicate => "has_$_",
           ) foreach qw(bond_fc bond_length_eq);
 
+has 'bond_energy_func' => (
+    is      => 'ro',
+    isa     => 'CodeRef',
+    builder => "_build_bond_energy_func",
+    lazy    => 1,
+);
+
+
+sub _build_bond_energy_func {
+    #my $self = shift; #self is passed by moose, but we don't use it here
+    my $subref = sub {
+        my $bond = shift;
+        my $val = ($bond->bond_length - $bond->bond_length_eq )**2;
+        return ($bond->bond_fc*$val);
+    };
+    return ($subref);
+}
+
 sub BUILD {
     my $self = shift;
     # atoms know about bonds they have
@@ -44,8 +62,8 @@ sub bond_length{
 sub bond_energy {
     my $self  = shift;
     return (0) unless ($self->bond_fc > 0);
-    my $bndsd = ( $self->bond_length - $self->bond_length_eq )**2;
-    return ($self->bond_fc*$bndsd);
+    my $energy = &{$self->bond_energy_func}($self);
+    return ($energy);
 }
 
 __PACKAGE__->meta->make_immutable;

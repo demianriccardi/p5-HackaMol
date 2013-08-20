@@ -30,8 +30,12 @@ has 'atomgroups'  => (
 after 'gt' => sub {
   my $self = shift;
   $_->_clear_group_attrs foreach $self->all_groups;
+  $_->_clear_group_attrs foreach $self->all_bonds;
+  $_->_clear_group_attrs foreach $self->all_angles;
+  $_->_clear_group_attrs foreach $self->all_dihedrals;
 }; 
 
+after 'push_bonds' => sub {shift->gt};
 
 sub _build_mass {
   my $self = shift;

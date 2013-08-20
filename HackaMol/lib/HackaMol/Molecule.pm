@@ -5,7 +5,7 @@ use lib 'lib/HackaMol','lib/roles';
 use AtomsGroup;
 use MooseX::Storage;
 with Storage('io' => 'StorableFile'), 'PhysVecMVRRole',
-'BondsAnglesDihedralsRole';
+'BondsAnglesDihedralsRole','QmRole';
 
 extends 'AtomsGroup';
 

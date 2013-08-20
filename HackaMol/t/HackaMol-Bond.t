@@ -4,10 +4,10 @@ use Test::Warnings;
 use Test::Moose;
 use Test::More;
 use Math::Vector::Real;
-use lib 'lib/HackaMol';
+use lib 'lib'; #/HackaMol';
 use Time::HiRes qw(time);
-use Atom;
-use Bond;
+use HackaMol::Atom;
+use HackaMol::Bond;
 
 
 my @attributes = qw(

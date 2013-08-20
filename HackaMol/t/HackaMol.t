@@ -1,34 +1,18 @@
 use Test::Most;
 use Test::Warnings;
 use Test::Moose;
-use lib 'lib/HackaMol', 't/lib';
-use Math::Vector::Real;
-use Math::Vector::Real::Random;
+use lib 'lib', 't/lib';
+use HackaMol;
 use Math::Trig;
-use AtomsGroup;
-use Bond;
-use Molecule;
 use PDBintoAtoms qw(readinto_atoms);
-
-my @attributes = qw(
-atoms mass name 
-);
-my @methods = qw(
-push_groups set_groups get_groups all_groups clear_groups
-delete_groups count_groups 
-Rg 
-);
-my @roles = qw(PhysVecMVRRole BondsAnglesDihedralsRole AtomsGroupRole);
-
-map has_attribute_ok( 'Molecule', $_ ), @attributes;
-map can_ok (          'Molecule', $_ ), @methods;
-map does_ok(          'Molecule', $_ ), @roles;
 
 my @atoms = readinto_atoms("t/lib/2LL5.pdb");
 my $max_t = $atoms[0]->count_coords -1;
 
-my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
+#my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
+exit;
+=shit
 is($mol->count_atoms, 283, 'number of atoms: 283');
 
 #dubious test, Rgs COMs generated from HackaMol, double check

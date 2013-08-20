@@ -5,8 +5,6 @@ use MooseX::Storage;
 use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' );
 
-requires '_clear_group_attrs';
-
 my $angste_debye = 4.80320;
 
 has 'atoms' => (

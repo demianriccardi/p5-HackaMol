@@ -6,7 +6,7 @@ use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
 
-has 'groupname' => (
+has 'gname' => (
     is  => 'rw',
     isa => 'Str',
 );
@@ -23,22 +23,6 @@ sub Rg {
     my $sum    = 0;
     $sum      += $masses[$_]*$dvec2[$_] foreach 0 .. $#dvec2;
     return( sqrt($sum/$total_mass) );
-}
-
-sub _clear_group_attrs {
-    my $self = shift;
-    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
-                              clear_dipole_moment clear_total_charge
-                              clear_total_mass clear_total_Z 
-                              clear_atoms_bin
-                             )){
-    $self->$clearthis;
-    }
-}
-
-sub BUILD {
-  my $self = shift;
-  $self->bin_atoms;
 }
 
 __PACKAGE__->meta->make_immutable;

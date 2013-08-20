@@ -11,11 +11,10 @@ use Bond;
 
 
 my @attributes = qw(
-atoms bond_length bond_vector bond_order
+atoms bond_order
 );
 my @methods = qw(
-_build_bond_length _build_bond_vector 
-clear_bond_length clear_bond_vector clear_bond_order
+bond_length bond_vector 
 );
 
 my @roles = qw(AtomsGroupRole);
@@ -86,8 +85,6 @@ foreach my $t (0 .. 9){
   $bond1->do_forall('t',$t);
   cmp_ok($bond1->bond_length,'==', $t, "t dependent bond length: $t");
   is_deeply($bond1->bond_vector, V($t,0,0), "t dependent bond vector: V ($t, 0, 0)");
-  is($bond1->bond_order, 1, "bond order default");
-  $bond1->bond_order(1.5);
 }
 
 $atom1->set_coords($_, V(0,0,0)) foreach 0 .. 9;
@@ -96,10 +93,10 @@ foreach my $t (0 .. 9){
   $bond1->do_forall('t',$t);
   cmp_ok(abs($bond1->bond_length - sqrt(2)*$t),'<', 0.000001, "t dependent bond length $t");
   is_deeply($bond1->bond_vector, V($t,$t,0), "t dependent bond vector: V ($t, 0, 0)");
-  is($bond1->bond_order, 1, "bond order default");
-  $bond1->bond_order(1.5);
 }
 
+is($bond1->bond_order, 1, "bond order default");
+$bond1->bond_order(1.5);
 
 is($bond1->bond_order, 1.5, "bond order set to num");
 is($atom1->count_bonds, 2, "atom1 knows it has 2 bonds");

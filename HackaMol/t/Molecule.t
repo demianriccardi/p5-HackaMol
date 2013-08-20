@@ -11,14 +11,12 @@ use Molecule;
 use PDBintoAtoms qw(readinto_atoms);
 
 my @attributes = qw(
-atoms dipole COM COZ dipole_moment total_charge atoms_bin
+atoms mass name 
 );
 my @methods = qw(
-_build_dipole _build_COM _build_COZ _build_total_charge _build_dipole_moment 
-clear_atoms_bin clear_dipole clear_dipole_moment clear_COM 
-clear_COZ clear_total_charge clear_dipole_moment
-set_atoms_bin get_atoms_bin has_empty_bin count_unique_atoms all_unique_atoms 
-atom_counts canonical_name atoms all_atoms push_atoms get_atoms delete_atoms count_atoms clear_atoms Rg
+push_groups set_groups get_groups all_groups clear_groups
+delete_groups count_groups 
+Rg 
 );
 my @roles = qw(PhysVecMVRRole BondsAnglesDihedralsRole AtomsGroupRole);
 
@@ -73,7 +71,7 @@ my @COMs = (
 );
 
 foreach my $t (0 .. $max_t) {
-  $mol->gt($t);
+  $mol->t($t);
   my $ocom = sprintf ("%8.3f %8.3f %8.3f\n",@{$mol->COM});
   my $ecom = sprintf ("%8.3f %8.3f %8.3f\n",@{$COMs[$t]});
   is($ocom,$ecom, "COM at $t");
@@ -101,14 +99,14 @@ $mol->push_bonds(@bonds);
 
 my @ncord = grep{$_->bond_length < 5.0 and $_->bond_length > 0.0} $mol->all_bonds;
 foreach my $bond (@ncord){
-  is($bond->gt, $mol->gt, "bond time and mol time are same");
+  is($bond->get_atoms(0)->t, $mol->t, "atoms in bond time and mol time are same");
 }
 
 is(scalar(@ncord), 23, "23 atoms within 5 angstroms of first atom");
 
 
 #foreach my $t (0 .. $max_t) {
-#  $mol->gt($t);
+#  $mol->t($t);
 #  print $mol->count_groups . "\n\n";
 #  foreach my $g ($mol->all_groups){
 #    printf("Hg %8.3f %8.3f %8.3f\n", @{$g->COM});

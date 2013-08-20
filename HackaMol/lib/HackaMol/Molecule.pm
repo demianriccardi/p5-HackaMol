@@ -22,20 +22,15 @@ has 'atomgroups'  => (
         "set_groups"   => 'set',
         "all_groups"   => 'elements',
         "count_groups" => 'count',
-        "break_groups" => 'delete',
+        "delete_groups" => 'delete',
         "clear_groups" => 'clear',
     },
 );
 
-after 'gt' => sub {
+after 't' => sub {
   my $self = shift;
-  $_->_clear_group_attrs foreach $self->all_groups;
-  $_->_clear_group_attrs foreach $self->all_bonds;
-  $_->_clear_group_attrs foreach $self->all_angles;
-  $_->_clear_group_attrs foreach $self->all_dihedrals;
-}; 
-
-after 'push_bonds' => sub {shift->gt};
+  $self->gt(@_) if (@_); # set t for all in group
+};
 
 sub _build_mass {
   my $self = shift;
@@ -58,7 +53,6 @@ sub push_groups_by_atom_attr {
                         AtomsGroup->new(atoms=>$group{$_})
                        } sort keys (%group);
                       # } sort{$a<=>$b} keys (%group);
-
 
   $self->push_groups(@atomsgroups);
   

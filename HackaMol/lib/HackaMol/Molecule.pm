@@ -14,7 +14,7 @@ has 'atomgroups'  => (
     is       => 'ro',
     isa      => 'ArrayRef[AtomsGroup]',
     default  => sub { [] },
-    lazy     => 1,
+    lazy     => 1,  
     handles  => {
         "has_groups"   => 'count',
         "push_groups"   => 'push',
@@ -27,11 +27,37 @@ has 'atomgroups'  => (
     },
 );
 
+after 'gt' => sub {
+  my $self = shift;
+  $_->_clear_group_attrs foreach $self->all_groups;
+}; 
+
+
 sub _build_mass {
   my $self = shift;
   my $mass = 0;
   $mass += $_->mass foreach $self->all_atoms;
   return ($mass); 
+}
+
+sub push_groups_by_atom_attr {
+
+  my $self = shift;
+  my $attr = shift;
+
+  my %group;
+  foreach my $atom ($self->all_atoms){
+    push @{$group{$atom->$attr}},$atom;
+  }
+
+  my @atomsgroups = map{
+                        AtomsGroup->new(atoms=>$group{$_})
+                       } sort keys (%group);
+                      # } sort{$a<=>$b} keys (%group);
+
+
+  $self->push_groups(@atomsgroups);
+  
 }
 
 1;

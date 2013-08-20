@@ -6,6 +6,7 @@ use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
 use AtomsGroup;
+use Bond;
 use Molecule;
 use PDBintoAtoms qw(readinto_atoms);
 
@@ -79,17 +80,37 @@ foreach my $t (0 .. $max_t) {
   cmp_ok(abs($mol->Rg-$Rgt[$t]) ,'<', 1E-7, "Rg at $t");
 }
 
-my %group;
-foreach my $atom ($mol->all_atoms){
-  push @{$group{$atom->resid}},$atom;
+$mol->push_groups_by_atom_attr('resid'); 
+
+is($mol->count_groups, 22, "group_by_atom_resid yields 22 groups");
+$mol->clear_groups;
+is($mol->count_groups, 0, "clear->groups yields 0 groups");
+
+$mol->push_groups_by_atom_attr('symbol'); 
+
+is($mol->count_groups, 4, "group_by_atom_symbol yields 4 (ONCH) groups");
+
+$mol->clear_groups;
+$mol->push_groups_by_atom_attr('name'); 
+
+is($mol->count_groups, 60, "group_by_atom_name yields 60 groups");
+
+my @bonds = map{Bond->new(atoms=>[$atoms[0],$_])} @atoms;  
+
+$mol->push_bonds(@bonds);
+
+foreach my $bond ($mol->all_bonds){
+  print $bond->bond_length . "\n";
 }
 
-my @atomsgroups = map{AtomsGroup->new(atoms=>$group{$_})} sort{$a<=>$b} keys (%group);
-$mol->push_groups(@atomsgroups);
-
-foreach my $g ($mol->all_groups){
-  print $g->Rg . "\n";
-}
+#foreach my $t (0 .. $max_t) {
+#  $mol->gt($t);
+#  print $mol->count_groups . "\n\n";
+#  foreach my $g ($mol->all_groups){
+#    printf("Hg %8.3f %8.3f %8.3f\n", @{$g->COM});
+#    printf("Zn %8.3f %8.3f %8.3f\n", @{$g->COZ});
+#  }
+#}
 
 done_testing();
 

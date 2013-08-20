@@ -11,17 +11,16 @@ use Angle;
 
 
 my @attributes = qw(
-atoms ang ang_normvec 
+atoms ang_eq ang_fc  
 );
 my @methods = qw(
-_clear_group_attrs 
-clear_ang clear_ang_normvec
+ang ang_normvec angle_energy clear_ang_eq clear_ang_fc has_ang_eq has_ang_fc
 );
 
 my @roles = qw(AtomsGroupRole);
 
 map has_attribute_ok( 'Angle', $_ ), @attributes;
-map can_ok( 'Angle', $_ ), @methods;
+map can_ok ( 'Angle', $_ ), @methods;
 map does_ok( 'Angle', $_ ), @roles;
 
 my $atom1 = Atom->new(
@@ -119,25 +118,13 @@ my $angle2 = Angle->new(atoms => [$atom2,$atom1,$atom4]);
 my $angle3 = Angle->new(atoms => [$atom2,$atom1,$atom5]);
 
 foreach my $t (0 .. 9){
-  $angle1->gt($t);
-  $angle2->gt($t);
+  $angle1->do_forall('t',$t);
+  $angle2->do_forall('t',$t);
   cmp_ok($angle1->ang,'==', 180.0, "antiparallel t dependent angle: 180");
   cmp_ok($angle2->ang,'==', 90.0, "xz t dependent ang: 90");
   is_deeply($angle1->ang_normvec, V(0,0,0), "antiparallel t dependent ang_normvec: V (0, 0, 0)");
   is_deeply($angle1->COM, $atom1->get_coords($t), "antiparallel COM at Hg");
   is_deeply($angle2->ang_normvec, V(0,-1,0), "xz t dependent ang_normvec: V (0, 1, 0)");
-}
-
-$atom1->is_dirty(1);
-
-foreach my $t (0 .. 9){
-  $angle1->gt($t);
-  $angle2->gt($t);
-  cmp_ok($angle1->ang,'==', 180.0, "after dirty: antiparallel t dependent angle: 180");
-  cmp_ok($angle2->ang,'==', 90.0, "after dirty:  xz t dependent ang: 90");
-  is_deeply($angle1->ang_normvec, V(0,0,0), "after dirty: antiparallel t dependent ang_normvec: V (0, 0, 0)");
-  is_deeply($angle1->COM, $atom1->get_coords($t), "after dirty: antiparallel COM at Hg");
-  is_deeply($angle2->ang_normvec, V(0,-1,0), "after dirty: xz t dependent ang_normvec: V (0, 1, 0)");
 }
 
 is($atom1->count_angles, 3, "atom1 knows it is in 3 angles");

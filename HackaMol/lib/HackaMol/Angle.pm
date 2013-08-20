@@ -8,14 +8,15 @@ use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
 
 has $_ => (
-            is      => 'rw'  ,
-            isa     => 'Math::Vector::Real' ,
+            is  => 'rw'  ,
+            isa => 'Num' ,
+            default => 1 ,
+            lazy    => 1 ,
             clearer => "clear_$_",
-            builder => "_build_$_",
-            lazy    => 1,
-          ) foreach qw(ang_normvec);
+            predicate => "has_$_",
+          ) foreach qw(ang_fc ang_eq);
 
-sub _build_ang_normvec{
+sub ang_normvec{
   my $self  = shift;
   my @atoms = $self->all_atoms;
   my $ang  = $self->ang;
@@ -26,49 +27,23 @@ sub _build_ang_normvec{
   return ($v1xv2->versor);
 }
 
-has $_ => (
-            is      => 'rw'  ,
-            isa     => 'Num' ,
-            clearer => "clear_$_",
-            builder => "_build_$_",
-            lazy    => 1,
-          ) foreach qw(ang);
-
-sub _build_ang{
+sub ang{
   my $self  = shift;
   my @atoms = $self->all_atoms;
   return ($atoms[1]->angle($atoms[0],$atoms[2]));
 }
 
-before 'ang' => sub {
-    my $self = shift;
-    if (grep {$_->is_dirty} $self->all_atoms){
-      $self->clear_ang;
-    }
-};
-
-before 'ang_normvec' => sub {
-    my $self = shift;
-    if (grep {$_->is_dirty} $self->all_atoms){
-      $self->clear_ang_normvec;
-    }
-};
-
-sub _clear_group_attrs {
-    my $self = shift;
-    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
-                              clear_dipole_moment clear_total_charge
-                              clear_total_mass clear_total_Z 
-                              clear_atoms_bin 
-                              clear_ang clear_ang_normvec )){
-      $self->$clearthis;
-    }
-}
-
-
 sub BUILD {
     my $self = shift;
+    #atoms know about the angles they are in
     $_->push_angles($self) foreach $self->all_atoms;
+}
+
+sub angle_energy {
+    my $self  = shift;
+    return (0) unless ($self->has_fc and $self->has_ang_eq);
+    my $angsd = ( $self->ang - $self->ang_eq )**2;
+    return ($self->force_constant*$angsd);
 }
 
 __PACKAGE__->meta->make_immutable;

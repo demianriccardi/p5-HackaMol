@@ -40,14 +40,19 @@ sub _build_ang{
   return ($atoms[1]->angle($atoms[0],$atoms[2]));
 }
 
-before $_ => sub {
+before 'ang' => sub {
     my $self = shift;
     if (grep {$_->is_dirty} $self->all_atoms){
-      my $method = "clear_$_";
-      $self->$method;
-
+      $self->clear_ang;
     }
-} foreach (qw(ang ang_normvec));
+};
+
+before 'ang_normvec' => sub {
+    my $self = shift;
+    if (grep {$_->is_dirty} $self->all_atoms){
+      $self->clear_ang_normvec;
+    }
+};
 
 sub _clear_group_attrs {
     my $self = shift;

@@ -90,6 +90,17 @@ foreach my $t (0 .. 9){
   $bond1->bond_order(1.5);
 }
 
+$atom1->set_coords($_, V(0,0,0)) foreach 0 .. 9;
+
+foreach my $t (0 .. 9){
+  $bond1->gt($t);
+  cmp_ok(abs($bond1->bond_length - sqrt(2)*$t),'<', 0.000001, "t dependent bond length $t");
+  is_deeply($bond1->bond_vector, V($t,$t,0), "t dependent bond vector: V ($t, 0, 0)");
+  is($bond1->bond_order, 1, "bond order default");
+  $bond1->bond_order(1.5);
+}
+
+
 is($bond1->bond_order, 1.5, "bond order set to num");
 is($atom1->count_bonds, 2, "atom1 knows it has 2 bonds");
 is($atom2->count_bonds, 1, "atom2 knows it has 1 bonds");

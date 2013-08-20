@@ -99,9 +99,13 @@ my @bonds = map{Bond->new(atoms=>[$atoms[0],$_])} @atoms;
 
 $mol->push_bonds(@bonds);
 
-foreach my $bond ($mol->all_bonds){
-  print $bond->bond_length . "\n";
+my @ncord = grep{$_->bond_length < 5.0 and $_->bond_length > 0.0} $mol->all_bonds;
+foreach my $bond (@ncord){
+  is($bond->gt, $mol->gt, "bond time and mol time are same");
 }
+
+is(scalar(@ncord), 23, "23 atoms within 5 angstroms of first atom");
+
 
 #foreach my $t (0 .. $max_t) {
 #  $mol->gt($t);

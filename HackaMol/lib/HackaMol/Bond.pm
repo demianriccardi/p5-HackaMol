@@ -47,13 +47,19 @@ sub _build_bond_length{
   return ($atoms[0]->distance($atoms[1]));
 }
 
-before $_ => sub {
+before 'bond_length' => sub {
     my $self = shift;
     if (grep {$_->is_dirty} $self->all_atoms){
-      my $method = "clear_$_";
-      $self->$method;
+      $self->clear_bond_length;
     }
-} foreach (qw(bond_length bond_vector));
+};
+
+before 'bond_vector' => sub {
+    my $self = shift;
+    if (grep {$_->is_dirty} $self->all_atoms){
+      $self->clear_bond_vector;
+    }
+};
 
 
 sub _clear_group_attrs {

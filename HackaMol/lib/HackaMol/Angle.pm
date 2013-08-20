@@ -43,7 +43,7 @@ sub angle_energy {
     my $self  = shift;
     return (0) unless ($self->ang_fc > 0);
     my $angsd = ( $self->ang - $self->ang_eq )**2;
-    return ($self->force_constant*$angsd);
+    return ($self->ang_fc*$angsd);
 }
 
 __PACKAGE__->meta->make_immutable;

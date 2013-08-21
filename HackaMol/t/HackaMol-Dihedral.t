@@ -11,7 +11,7 @@ use Dihedral;
 
 
 my @attributes = qw(
-atoms dihe_eq dihe_multi dihe_dphase dihe_fc 
+atoms dihe_eq dihe_mult dihe_dphase dihe_fc 
 );
 my @methods = qw(
 torsion_energy improper_dihe_energy dihe
@@ -80,7 +80,7 @@ $dihe->dihe_fc(1.0);
 $dihe->dihe_eq($dihe->dihe - 0.5);
 cmp_ok (abs(0.25-$dihe->improper_dihe_energy),'<',1E-7, 'simple improper dihe energy test') ;
 
-$dihe->dihe_multi(2);
+$dihe->dihe_mult(2);
 $dihe->dihe_dphase(0.1);
 cmp_ok(abs(0.9-$dihe->torsion_energy), '<', 1E-2, 'simple torsion energy test');
 

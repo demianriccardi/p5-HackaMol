@@ -73,7 +73,7 @@ __END__
 =head1 SYNOPSIS
 
 use HackaMol::Atom;
-use HackaMol::Bond;
+use HackaMol::Angle;
 
 my $atom1 = HackaMol::Atom->new(
     name    => 'O1',
@@ -121,7 +121,8 @@ my @ang_w_HH = grep { $_->get_atoms(0)->Z == 1 and
 foreach my $angle ($atom1->all_angles) {
 
   my $pangle = sprintf(
-                "Angle: %s, angle: %.2f, vector normal to angle plane: %.5 %.5 %.5 \n",
+                "Angle: %s, angle: %.2f, vector normal to angle plane:".
+                " %.5 %.5 %.5 \n",
                 $angle->name, 
                 $angle->ang, 
                 @{$angle->ang_normvec},
@@ -136,10 +137,10 @@ The HackaMol Angle class provides a set of methods and attributes for working wi
 two connections between three atoms.  Like the Bond, the Angle class consumes the 
 AtomGroupRole providing methods to determine the center of mass, total charge, etc (see 
 AtomGroupRole). The Angle class is flexible.   Instantiation of a Angle object also
-adds the Angle to the atoms in the angle (during the BUILD phase). In contrast, pushing (atom1, atom2, 
-atom3) on to an instance of Angle or resetting atoms will not add the Angle to the atoms.    
-An Angle containing (atom1,atom2,atom3) produce angles between the atom21 atom23 interatomic
-vectors.
+adds the Angle to the atoms in the angle (during the BUILD phase). 
+In contrast, pushing or resetting atoms for an Angle instance will not add 
+that Angle object to the atoms. An Angle containing (atom1,atom2,atom3) 
+produce angles between the atom21 atom23 interatomic vectors.
 
 The Angle class also provides attributes and methods to set force_constants and 
 measure energy.  The angle_energy method calls on a CodeRef attribute that the 
@@ -150,16 +151,13 @@ user may define.  See descriptions below.
 isa ArrayRef[Atom] that is lazy with public ARRAY traits provided by the AtomGroupRole (see documentation
 for more details).
 
-Pushing (atom1, atom2, atom3) on to the Angle object will produce ang ang ang_normvec between the atom21 atom23 interatomic
-vectors.
-
 =attr name
 
 isa Str that is lazy and rw. useful for labeling, bookkeeping...
 
 =attr angle_fc
 
-isa Num that is lazy and rw. default = 0.  force constant for harmonic bond potentials.
+isa Num that is lazy and rw. default = 0.  force constant for harmonic potentials.
 
 =attr ang_eq
 
@@ -183,9 +181,9 @@ no arguments. returns the angle between the atom21 and atom23 vectors.
 
 =method angle_energy
 
-arguments, as much as you want. Calculates energy using the bond_energy_func described 
-below, if the attribute, angle_fc > 0.  The angle_energy method calls the angle_energy_func as 
-follows: 
+arguments, as many as you want. Calculates energy using the angle_energy_func 
+described below, if the attribute, angle_fc > 0.  The angle_energy method calls 
+the angle_energy_func as follows: 
 
 my $energy = &{$self->angle_energy_func}($self,@_);
 

@@ -192,9 +192,9 @@ no arguments. returns $atoms[0]->distance($atoms[1]) for the two atoms in the bo
 
 =method bond_energy
 
-arguments, as much as you want. Calculates energy using the bond_energy_func described 
-below, if the attribute, bond_fc > 0.  The bond_energy method calls the bond_energy_func as 
-follows: 
+arguments, as many as you want. Calculates energy using the bond_energy_func 
+described below, if the attribute, bond_fc > 0.  The bond_energy method calls 
+the bond_energy_func as follows: 
 
 my $energy = &{$self->bond_energy_func}($self,@_);
 

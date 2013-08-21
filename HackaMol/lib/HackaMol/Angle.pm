@@ -40,7 +40,7 @@ sub BUILD {
 }
 
 has 'angle_energy_func' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'CodeRef',
     builder => "_build_angle_energy_func",
     lazy    => 1,
@@ -145,7 +145,7 @@ The Angle class also provides attributes and methods to set force_constants and
 measure energy.  The angle_energy method calls on a CodeRef attribute that the 
 user may define.  See descriptions below.  
 
-=array_attr atoms
+=attr atoms
 
 isa ArrayRef[Atom] that is lazy with public ARRAY traits provided by the AtomGroupRole (see documentation
 for more details).
@@ -166,7 +166,7 @@ isa Num that is lazy and rw. default = 0.  force constant for harmonic bond pote
 isa Num that is lazy and rw. default = 0.  Equilibrium angle.  The ang method returns angle
 in degrees.
 
-=attr Angle_energy_func
+=attr angle_energy_func
 
 isa CodeRef that is lazy and rw. default uses builder to generate harmonic potential 
 from the angle_fc, ang_eq, and ang.  See the _build_angle_energy_func,

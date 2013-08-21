@@ -28,7 +28,7 @@ sub dihe_rad{
 }
 
 has 'improper_dihe_energy_func' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'CodeRef',
     builder => "_build_improper_dihe_energy_func",
     lazy    => 1,
@@ -45,7 +45,7 @@ sub _build_improper_dihe_energy_func {
 }
 
 has 'torsion_energy_func' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'CodeRef',
     builder => "_build_torsion_energy_func",
     lazy    => 1,
@@ -55,7 +55,8 @@ has 'torsion_energy_func' => (
 sub _build_torsion_energy_func {
     my $subref = sub {
         my $dihedral = shift;
-        my $val = 1 + cos($dihedral->dihe_multi*$dihedral->dihe_rad - $dihedral->dihe_dphase);
+        my $val = 1 + cos($dihedral->dihe_multi*$dihedral->dihe_rad 
+                          - $dihedral->dihe_dphase);
         return ($dihedral->dihe_fc*$val);
     };
     return ($subref);

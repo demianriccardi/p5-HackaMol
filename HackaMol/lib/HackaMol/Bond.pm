@@ -151,7 +151,7 @@ The Bond class also provides attributes and methods to set force_constants and
 measure energy.  The bond_energy method calls on a CodeRef attribute that the 
 user may define.  See descriptions below.  
 
-=array_attr atoms
+=attr atoms
 
 isa ArrayRef[Atom] that is lazy with public ARRAY traits provided by the AtomGroupRole (see documentation
 for more details).

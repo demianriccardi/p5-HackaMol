@@ -84,4 +84,27 @@ $dihe->dihe_multi(2);
 $dihe->dihe_dphase(0.1);
 cmp_ok(abs(0.9-$dihe->torsion_energy), '<', 1E-2, 'simple torsion energy test');
 
+$dihe->torsion_energy_func(
+                          sub {
+                               my $a = shift;
+                               my $sum = 0;
+                               $sum += $_*$a->dihe foreach (@_);
+                               return($sum);
+                              }
+                          );
+
+$dihe->improper_dihe_energy_func($dihe->torsion_energy_func);
+
+cmp_ok (
+        abs($dihe->torsion_energy(1,2,3,4) - 10*$dihe->dihe),
+        '<', 1E-7, 'new nonsense torsion energy'
+       );
+
+cmp_ok (
+        abs($dihe->improper_dihe_energy(1,2,3,4) - 10*$dihe->dihe),
+        '<', 1E-7, 'new nonsense improper dihedral energy'
+       );
+
+
+
 done_testing();

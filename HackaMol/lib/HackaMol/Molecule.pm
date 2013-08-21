@@ -2,17 +2,17 @@ package Molecule;
 #ABSTRACT: Molecule class for HackaMol
 use Moose;
 use lib 'lib/HackaMol','lib/roles';
-use AtomsGroup;
+use AtomGroup;
 use MooseX::Storage;
 with Storage('io' => 'StorableFile'), 'PhysVecMVRRole',
 'BondsAnglesDihedralsRole','QmRole';
 
-extends 'AtomsGroup';
+extends 'AtomGroup';
 
 has 'atomgroups'  => (
     traits   => ['Array'],
     is       => 'ro',
-    isa      => 'ArrayRef[AtomsGroup]',
+    isa      => 'ArrayRef[AtomGroup]',
     default  => sub { [] },
     lazy     => 1,  
     handles  => {
@@ -50,7 +50,7 @@ sub push_groups_by_atom_attr {
   }
 
   my @atomsgroups = map{
-                        AtomsGroup->new(atoms=>$group{$_})
+                        AtomGroup->new(atoms=>$group{$_})
                        } sort keys (%group);
                       # } sort{$a<=>$b} keys (%group);
 

@@ -17,7 +17,7 @@ my @methods = qw(
 torsion_energy improper_dihe_energy dihe
 );
 
-my @roles = qw(AtomsGroupRole);
+my @roles = qw(AtomGroupRole);
 
 map has_attribute_ok( 'Dihedral', $_ ), @attributes;
 map can_ok( 'Dihedral', $_ ), @methods;

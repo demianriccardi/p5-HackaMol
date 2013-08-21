@@ -5,7 +5,7 @@ use lib 'lib/HackaMol','t/lib';
 use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
-use AtomsGroup;
+use AtomGroup;
 use Bond;
 use Molecule;
 use PDBintoAtoms qw(readinto_atoms);
@@ -18,7 +18,7 @@ push_groups set_groups get_groups all_groups clear_groups
 delete_groups count_groups 
 Rg 
 );
-my @roles = qw(PhysVecMVRRole BondsAnglesDihedralsRole AtomsGroupRole);
+my @roles = qw(PhysVecMVRRole BondsAnglesDihedralsRole AtomGroupRole);
 
 map has_attribute_ok( 'Molecule', $_ ), @attributes;
 map can_ok (          'Molecule', $_ ), @methods;

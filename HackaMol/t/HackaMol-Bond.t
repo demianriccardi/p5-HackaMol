@@ -17,7 +17,7 @@ my @methods = qw(
 bond_length bond_vector 
 );
 
-my @roles = qw(AtomsGroupRole);
+my @roles = qw(AtomGroupRole);
 
 map has_attribute_ok( 'Bond', $_ ), @attributes;
 map can_ok( 'Bond', $_ ), @methods;

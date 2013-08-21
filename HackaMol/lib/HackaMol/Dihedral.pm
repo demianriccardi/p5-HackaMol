@@ -5,7 +5,7 @@ use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
 use Math::Trig;
-with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
+with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
 has $_ => (
             is  => 'rw'  ,

@@ -4,7 +4,7 @@ use Moose;
 use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'AtomsGroupRole';
+with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
 has $_ => (
             is  => 'rw'  ,
@@ -144,11 +144,20 @@ connections between two atoms.  The Bond class consumes the AtomGroupRole provid
 Bond objects with methods to determine the center of mass, total charge, etc (see 
 AtomGroupRole). The Bond class is flexible.  Place any two atoms in a Bond to 
 measure their interatomic distance or vector.  Instantiation of a Bond object also
-pushes the Bond on to the atoms in the bond (See SYNOPSIS). 
+pushes the Bond on to the atoms in the bond (See SYNOPSIS). In contrast, pushing (atom1, atom2) 
+on to an instance of Bond or resetting atoms will not add the Bond to the atoms.    
 
 The Bond class also provides attributes and methods to set force_constants and 
 measure energy.  The bond_energy method calls on a CodeRef attribute that the 
 user may define.  See descriptions below.  
+
+=array_attr atoms
+
+isa ArrayRef[Atom] that is lazy with public ARRAY traits provided by the AtomGroupRole (see documentation
+for more details).
+
+Pushing (atom1, atom2) on to the Bond object will produce bond_length and bond_vector from atom1 to atom2 (the atom12 
+interatomic vector).
 
 =attr name
 

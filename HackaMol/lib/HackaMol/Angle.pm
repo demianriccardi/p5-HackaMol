@@ -60,7 +60,7 @@ sub _build_angle_energy_func {
 sub angle_energy {
     my $self  = shift;
     return (0) unless ($self->ang_fc > 0);
-    my $energy = &{$self->angle_energy_func}($self);
+    my $energy = &{$self->angle_energy_func}($self,@_);
     return ($energy);
 }
 

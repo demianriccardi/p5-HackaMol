@@ -112,5 +112,19 @@ $bond1->bond_length_eq($bond1->bond_length - 0.5);
 
 cmp_ok (abs(0.25-$bond1->bond_energy),'<',1E-7, 'simple bond energy test') ;
 
+$bond1->bond_energy_func(
+                          sub { 
+                               my $b = shift; 
+                               my $sum = 0;
+                               $sum += $_*$b->bond_length foreach (@_);
+                               return($sum);
+                              }
+                        );
+
+cmp_ok ( 
+        abs($bond1->bond_energy(1,2,3,4) - 10*$bond1->bond_length), 
+        '<', 1E-7, 'new nonsense energy'
+       );
+
 done_testing();
 

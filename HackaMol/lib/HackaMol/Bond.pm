@@ -148,7 +148,7 @@ pushes the Bond on to the atoms in the bond (See SYNOPSIS).
 
 The Bond class also provides attributes and methods to set force_constants and 
 measure energy.  The bond_energy method calls on a CodeRef attribute that the 
-user may define.  See descriptions below. 
+user may define.  See descriptions below.  
 
 =attr name
 

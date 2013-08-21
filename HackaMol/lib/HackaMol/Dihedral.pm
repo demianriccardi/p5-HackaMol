@@ -64,14 +64,14 @@ sub _build_torsion_energy_func {
 sub torsion_energy {
     my $self  = shift;
     return (0) unless ($self->dihe_fc > 0 );
-    my $energy = &{$self->torsion_energy_func}($self);
+    my $energy = &{$self->torsion_energy_func}($self,@_);
     return ($energy);
 }
 
 sub improper_dihe_energy {
     my $self  = shift;
     return (0) unless ($self->dihe_fc > 0 );
-    my $energy = &{$self->improper_dihe_energy_func}($self);
+    my $energy = &{$self->improper_dihe_energy_func}($self,@_);
     return ($energy);
 }
 

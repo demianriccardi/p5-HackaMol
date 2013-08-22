@@ -7,6 +7,11 @@ use MooseX::Storage;
 use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
+has 'name' => (
+    is   => 'rw',
+    isa  => 'Str',
+); 
+
 has $_ => (
             is  => 'rw'  ,
             isa => 'Num' ,

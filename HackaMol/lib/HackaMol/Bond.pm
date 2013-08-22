@@ -6,6 +6,11 @@ use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
+has 'name' => (
+    is   => 'rw',
+    isa  => 'Str',
+); 
+
 has $_ => (
             is  => 'rw'  ,
             isa => 'Num' ,

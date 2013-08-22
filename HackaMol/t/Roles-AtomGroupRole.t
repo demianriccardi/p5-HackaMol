@@ -171,8 +171,8 @@ is($group->canonical_name, "H5", "canonical name is H5");
 
 $group->clear_atoms;
 
-$group->quick_push_atoms($atom1);
-$group->quick_push_atoms($atom2);
+$group->push_atoms($atom1);
+$group->push_atoms($atom2);
 $group->push_atoms($atom3);
 
 is($group->count_unique_atoms, 2, 'unique atoms in water is 2');

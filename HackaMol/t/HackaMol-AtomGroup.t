@@ -9,7 +9,7 @@ use AtomGroup;
 use Atom;
 
 my @attributes = qw(
-gname
+name
 );
 my @methods = qw(
 Rg
@@ -27,7 +27,7 @@ my @atoms = map {Atom->new(Z => 8, charges=> [0], coords => [$_]) }
             map {$_*$radius} 
             map {Math::Vector::Real->random_in_sphere(3)} 1 .. $natoms;
 
-my $group = AtomGroup->new(gname => 'biggroup', atoms=> [@atoms]);
+my $group = AtomGroup->new(name => 'biggroup', atoms=> [@atoms]);
 
 is($group->count_atoms, $natoms, "atom count: $natoms");
 is($group->count_unique_atoms, 1, 'unique atoms in sphere is 1');

@@ -3,6 +3,9 @@ package Molecule;
 use Moose;
 use lib 'lib/HackaMol','lib/roles';
 use AtomGroup;
+use Carp;
+use Math::Trig;
+use Scalar::Util qw(refaddr);
 use MooseX::Storage;
 with Storage('io' => 'StorableFile'), 'PhysVecMVRRole',
 'BondsAnglesDihedralsRole','QmRole';
@@ -57,6 +60,25 @@ sub push_groups_by_atom_attr {
   $self->push_groups(@atomsgroups);
   
 }
+
+sub dihedral_rotate {
+  my $self = shift;
+  croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ == 3;
+  my $t = $self->t;
+  my ($dihe,$ang,$atoms) = @_;
+  my ($atom0, $ratom1, $ratom2, $atom3) = $dihe->all_atoms;
+  if (2 == scalar( grep{ refaddr($atom0) == refaddr($_) or 
+                         refaddr($atom3) == refaddr($_) } @{$atoms} )){ 
+    croak "will not rotate atoms on both sides of dihedral " ;
+  } 
+  my $rvec = ($ratom2->inter_dcoords($ratom1))->versor;
+  my @cor  = map{$_->get_coords($t)-$ratom1->xyz} @$atoms; #shift origin too
+  my @rcor = $rvec->rotate_3d( deg2rad($ang), @cor );
+#shift origin back
+  $atoms->[$_]->set_coords($t, $rcor[$_]+$ratom1->xyz) foreach 0 .. $#rcor; 
+
+}
+
 
 1;
 

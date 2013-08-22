@@ -2,11 +2,10 @@ package AtomGroup;
 #ABSTRACT: HackaMol AtomGroup class 
 use Moose;
 use lib 'lib/roles';
-use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
-has 'gname' => (
+has 'name' => (
     is  => 'rw',
     isa => 'Str',
 );
@@ -31,14 +30,46 @@ __PACKAGE__->meta->make_immutable;
 
 __END__
 
-=pod
+=head1 SYNOPSIS
 
-=head1 NAME
+use HackaMol::AtomGroup;
+use Math::Vector::Real;
+use Math::Vector::Real::Random;
 
-AtomGroup - HackaMol AtomGroup class 
+my $radius = 16;
+my $natoms = int(0.0334*($radius**3)*4*pi/3);
 
-=head1 NAME
+my @atoms = map {Atom->new(Z => 8, charges=> [0], coords => [$_]) }
+            map {$_*$radius}
+            map {Math::Vector::Real->random_in_sphere(3)} 1 .. $natoms;
 
-Bond
+my $group = AtomGroup->new(gname => 'biggroup', atoms=> [@atoms]);
 
-=cut
+print $group->count_atoms . "\n";
+
+print $group->count_unique_atoms . "\n";
+
+print $group->canonical_name . "\n";
+
+print $group->Rg . "\n";
+
+my $numerical_error = sqrt($radius*$radius*3/5) - $group->Rg;
+
+=head1 DESCRIPTION
+
+The HackaMol AtomGroup class provides methods and attributes for groups of atoms.
+Atom groupings can be defined to mimic conventional forcefields or manipulated to 
+generate novel analytical tools.  For example, with a trajectory loaded (via 
+HackaMolX extensions), a dynamic cluster of atoms can be placed in a group and 
+monitored in time. Or, perhaps, track regional charges of a quantum mechanical
+molecule with changes in configuration or external field.  The AtomGroup class
+consumes the AtomGroupRole and provides the parent class for the Molecule class.
+
+=attr name
+
+isa Str that is lazy and rw. useful for labeling, bookkeeping...
+
+=method Rg 
+
+no arguments. returns the scalar radius of gyration for the group of atoms
+

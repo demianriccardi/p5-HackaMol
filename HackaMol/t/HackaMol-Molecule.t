@@ -104,15 +104,23 @@ foreach my $bond (@ncord){
 
 is(scalar(@ncord), 23, "23 atoms within 5 angstroms of first atom");
 
+use Math::Trig;
 
-#foreach my $t (0 .. $max_t) {
-#  $mol->t($t);
-#  print $mol->count_groups . "\n\n";
+foreach my $t (1 .. 360) {
+  #$mol->t($t);
+
+  print $mol->count_groups . "\n\n";
+  
+  my $v = V(1,0,0);
+  my @gs = map{$_->COM} $mol->all_groups;
+  my @s = $v->rotate_3d($t/(2*pi), @gs);  
+  printf("Hg %8.3f %8.3f %8.3f\n", @{$_}) foreach @s;
+
 #  foreach my $g ($mol->all_groups){
 #    printf("Hg %8.3f %8.3f %8.3f\n", @{$g->COM});
 #    printf("Zn %8.3f %8.3f %8.3f\n", @{$g->COZ});
 #  }
-#}
+}
 
 done_testing();
 

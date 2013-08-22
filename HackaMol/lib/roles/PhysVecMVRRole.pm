@@ -331,14 +331,13 @@ and Molecule classes. Consuming this role gives Classes a place to store
 coordinates, forces, and charges, perhaps, over the course of a simulation 
 or for a collection of configurations for which all other object metadata (name, 
 mass, etc) remains fixed. As such, the 't' attribute, described below, is 
-important to understand. The PhysVecMVR uses Math::Vector::Real, which has pure
-Perl and XS implementations.  The PhysVec role was written with a bunch of
-agnostic coderefs, but that approach become unwieldly. 
-Several attribute types are rw so that they may be filled with whatever the 
-user defines them to be on the fly.  This seems most intuitive from the 
+important to understand. The PhysVecMVR uses Math::Vector::Real (referred to as MVR), 
+which has pure Perl and XS implementations.  MVR::XS is fast with many useful/powerful
+overloaded methods. PhysVecMVR leaves many attributes rw so that they may be set and 
+reset on the fly. This seems most intuitive from the 
 perspective of carrying out computational work on molecules.  Thus, HackaMol bravely 
 ignores Moose recommendations to use mostly 'ro' attributes and to generate 
-objects on the fly.  HackaMol may be coerced to be more rigid in future releases.    
+objects as needed.  HackaMol may be coerced to be more rigid in future releases.    
 
 Comparing the PhysVec within Atom and Molecule may be helpful. For both, the PhysVecRol 
 generates a little metadata (mass, name, etc.) and an array of coordinates, forces, and 
@@ -347,9 +346,6 @@ to store multiple [x,y,z] positions (as a function of time, symmetry, distributi
 is the array of coordinates for Molecule? Usually, the coordinates for a molecule will likely 
 remain empty (because the atoms that Molecule contains have the more useful coordinates), but we
 can imagine using the coordinates array to track the center of mass of the molecule if needed. 
-But for much larger systems, the atoms may be ignored while the Molecule coordinates array could 
-be filled with PDLs from Perl Data Language for much faster analyses. An
-innocuous ArrayRef will be added to the Molecule class for such purposes.
 
 In the following:  Methods with mean_foo msd_foo intra_dfoo out front, carries out some analysis
 within $self. Methods with inter_ out front carries out some analysis between

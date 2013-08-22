@@ -92,11 +92,6 @@ sub _clean_atom {
     $self->is_dirty(1); 
 }
 
-after 'set_coords' => sub {
-    my $self = shift;
-    $self->is_dirty(1);
-};
-
 sub BUILD {
     my $self = shift;
     if ($self->has_symbol){

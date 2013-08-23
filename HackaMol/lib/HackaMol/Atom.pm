@@ -155,23 +155,97 @@ __END__
 
 =head1 SYNOPSIS
 
-my $atom1 = Atom->new(
-    name    => 'C1',
-    charges => [-1.0],
-    coords  => [ [ 3.12618, -0.06060, 0.05453 ] ],
-    forces  => [ [ 0 , 0, 0 ] ],
-    Z       => 6
+use HackaMol::Atom;
+use Math::Vector::Real;
+
+
+my $atom1 = HackaMol::Atom->new(
+    name    => 'Zinc',
+    coords  => [ V( 2.05274, 0.01959, -0.07701 ) ],
+    Z       => 30,
 );
 
-my $atom2 = Atom->new(
-    name    => 'Hg1',
-    charges => [2.0],
-    coords  => [ [ 1.04508, -0.06088, 0.05456  ] ],
-    forces  => [ [ 0 , 0, 0 ] ],
-    symbol  => 'Hg'
-);
+print $atom->symbol ; #prints "Zn"
 
+print "clean " unless $atom->is_dirty; #prints clean
 
+$atom->change_symbol("Hg");
 
+print $atom->Z ; #prints 80
 
+print "dirty " if $atom->is_dirty; #prints dirty
+
+=head1 DESCRIPTION
+
+Central to HackaMol, the Atom class provides methods and attributes for a given atom. 
+The Atom class consumes PhysVecMVRRole, PdbRole, QmRole, and BondsAnglesDihedralsRole,
+which provide a large number of attributes and methods. See the documentation of those 
+roles for details.  The Atom class builds on the capabilities of those roles to add
+attributes (such as symbol, Z, covalent radius) and methods (such as change_symbol) 
+specific to atoms. Creating an instance of an Atom object requires either the atomic 
+number (Z) or the atomic symbol. The other attributes are lazily built when needed.  
+An Atom object is flexible. The atom type can be changed in place 
+(e.g. convert a zinc atom to a mercury atom, see SYNOPSIS), but changing the type of atom will set
+the is_dirty flag so that other objects using the atom have the ability to know whether
+atom-type dependent attributes need to be updated (e.g. forcefield parameters).  Atom data
+is generated from the PeriodicTable module that borrows data from PerlMol.  The PeriodicTable 
+module may be extended in the future.
+
+=attr is_dirty
+
+isa Bool that is lazy and rw.  Default is 0.  $self->is_dirty(1) called during the change_symbol and 
+change_Z methods.
+
+=attr symbol
+
+isa Str that is lazy and rw. _build_symbol builds the default. 
+
+Generating an atom instance with symbol, will run ucfirst(lc ($symbol)) to make sure
+the format is correct.  Thus, creating an atom object is slightly slower with symbol than with Z. If Z is 
+used to generate the instance of the Atom class (my $atom = Atom->new(Z=>1)), the _build_symbol method generates the symbol from Z only when the symbol attribute is read (symbol attribute is lazy).
+
+=attr Z
+
+isa Int that is lazy and rw. _build_Z builds the default
+
+Z is the Atomic number.
+
+=attr covalent_radius
+
+isa Num that is lazy and rw. _build_covalent_radius builds the default.
+
+the covalent radii are taken from those tabulated in:
+
+=for :list
+* P. Pyykkö, M. Atsumi (2009). 
+"Molecular Single-Bond Covalent Radii for Elements 1-118". Chemistry: A European Journal 15: 186.
+* P. Pyykkö, M. Atsumi (2009). 
+"Molecular Double-Bond Covalent Radii for Elements Li–E112". Chemistry: A European Journal 15 (46): 12770.
+* P. Pyykkö, S. Riedel, M. Patzschke (2005). 
+"Triple-Bond Covalent Radii". Chemistry: A European Journal 11 (12): 3511. 
+
+=attr vdw_radius
+
+isa Num that is lazy and rw. _build_vdw_radius builds the default. 
+
+Atomic vdw radii information will be revisited and revised. Included as reminder for now. See the source of PeriodicTable.pm for more information.
+
+=method change_Z
+
+no arguments.  Changes the atom type using Z.  change_Z calls _clean_atom which clears all attributes and
+sets calls is_dirty(1).
+
+=method change_symbol
+
+no arguments.  Changes the atom type using symbol. Similar to change_Z, change_symbol calls _clean_atom which clears all attributes and
+sets calls is_dirty(1).
+
+=head1 SEE ALSO
+
+=for :list
+* L<PhysVecMVRRole>
+* L<BondsAnglesDihedralsRole>
+* L<PdbRole>
+* L<QmRole>
+* L<PerlMol>
 

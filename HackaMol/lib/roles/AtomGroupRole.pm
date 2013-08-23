@@ -140,6 +140,40 @@ sub canonical_name {
                 return join( '', @names );
 }
 
+sub translate {
+  my $self = shift;
+  my $tvec = shift or croak "pass MVR translation vector";
+  my $tf   = shift;
+
+  my @atoms = $self->all_atoms; 
+  $tf = $atoms[0]->t unless(defined($tf));
+
+  $_->set_coords($tf, $_->xyz+$tvec) foreach ($self->all_atoms);
+}
+
+sub rotate {
+  #rotate about origin. having origin allow rotation of subgroup
+  #without having to translate everything.  the origin could be taken
+  #as that of the atoms, but this may be tricky and needs some thinking
+  #wrt to API
+  my $self = shift;
+  my $rvec = shift or croak "pass MVR rotation vector";
+  my $ang  = shift or croak "pass rotation angle";
+  my $orig = shift or croak "pass MVR origin";
+  my $tf   = shift;
+
+  my @atoms = $self->all_atoms;
+  my $t = $atoms[0]->t;
+  $tf = $t unless(defined($tf));
+  $rvec = $rvec->versor; #unit vector
+
+  my @cor  = map{$_->get_coords($t)-$orig} @atoms; 
+  my @rcor = $rvec->rotate_3d( deg2rad($ang), @cor );
+
+  $atoms[$_]->set_coords($tf, $rcor[$_]+$orig) foreach 0 .. $#rcor;
+}
+
+
 no Moose::Role;
 
 1;
@@ -194,6 +228,12 @@ print $group->dipole_moment . "\n";
 print $group->canonical_name . "\n";
 
 print $group->unique_atoms . "\n";
+
+$group->translate(V(10,0,0));
+
+$group->rotate( V(1,0,0),
+                     180,
+                V(0,0,0));
 
 =head1 DESCRIPTION
 
@@ -301,4 +341,18 @@ by Z and generates something like OH2 for water or O2H2 for peroxide.
 
 isa ArrayRef[Atom] that is lazy with public ARRAY traits described in ARRAY_METHODS
 
+=method translate
+
+requires Math::Vector::Real vector argument. Optional argument: integer tf.  
+
+Translates all atoms in group by the MVR vector.  Pass tf to the translate method to store new 
+coordinates in tf rather than atom->t.
+
+=method rotate
+
+requires Math::Vector::Real vector, an angle (in degrees), and a MVR vector origin as arguments. 
+Optional argument: integer tf.  
+
+Rotates all atoms in the group around the MVR vector. Pass tf to the translate method to store new 
+coordinates in tf rather than atom->t.
 

@@ -148,8 +148,6 @@ __END__
 
 =head1 SYNOPSIS
 
-use HackaMol::Angle;
-
 my $atom1 = HackaMol::Atom->new(
     name    => 'O1',
     coords  => [ V( 2.05274, 0.01959, -0.07701 ) ],
@@ -159,13 +157,13 @@ my $atom1 = HackaMol::Atom->new(
 my $atom2 = HackaMol::Atom->new(
     name    => 'H1',
     coords  => [ V( 1.08388, 0.02164, -0.12303 ) ],
-    Z       => 8,
+    Z       => 1,
 );
 
 my $atom3 = HackaMol::Atom->new(
     name    => 'H2',
     coords  => [ V( 2.33092, 0.06098, -1.00332 ) ],
-    Z       => 8,
+    Z       => 1,
 );
 
 $atom1->push_charges(-0.834);

@@ -89,13 +89,13 @@ my $atom1 = HackaMol::Atom->new(
 my $atom2 = HackaMol::Atom->new(
     name    => 'H1',
     coords  => [ V( 1.08388, 0.02164, -0.12303 ) ],
-    Z       => 8,
+    Z       => 1,
 );
 
 my $atom3 = HackaMol::Atom->new(
     name    => 'H2',
     coords  => [ V( 2.33092, 0.06098, -1.00332 ) ],
-    Z       => 8,
+    Z       => 1,
 );
 
 my $angle1 = HackaMol::Angle->new(name=>'OH2', atoms=>[$atom1,$atom2,$atom3]);

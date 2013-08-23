@@ -60,13 +60,17 @@ foreach my $dihe (@dihedrals){
   $r_these = \@cterm if (@nterm > @cterm);
  
   #set angle to rotate
-  #my $rang = -1*($dihe->dihe + $angle) ;
-  my $rang = -$angle ;
-  #switch nterm to cterm switches sign on angle
-  $rang *= -1 if (@nterm>@cterm); 
+  my $rang = $angle ;
   my @slice = @atoms[ @{ $r_these} ]; 
   #ready to rotate!
-  my $nrot = int(abs(($dihe->dihe+180)/$rang));
+  my $nrot1 = int(abs(($dihe->dihe-180)/$rang));
+  my $nrot2 = int(abs(($dihe->dihe+180)/$rang));
+  my $nrot = $nrot1;
+  if ($nrot2 < $nrot1){
+    $nrot = $nrot2; 
+    $rang *= -1;
+  }
+  $rang *= -1 if (@nterm > @cterm);
   foreach (1 .. $nrot) {
     $mol->dihedral_rotate($dihe,$rang,\@slice);
     print "$natoms \n\n"; 

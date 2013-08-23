@@ -3,6 +3,7 @@ package AtomGroupRole;
 use Moose::Role;
 use Carp;
 use MooseX::Storage;
+use Math::Trig;
 use Math::Vector::Real;
 with Storage( 'io' => 'StorableFile' );
 

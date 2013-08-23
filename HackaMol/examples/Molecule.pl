@@ -3,54 +3,38 @@ use lib 'lib/HackaMol','t/lib';
 use Molecule;
 use Dihedral;
 use PDBintoAtoms qw(readinto_atoms);
+use Math::Vector::Real;
 use Time::HiRes qw(time);
 
+
 my $t1 = time; 
-#my @atoms = readinto_atoms("t/lib/2CBA.pdb");
 my @atoms = readinto_atoms("t/lib/1L2Y.pdb");
 my $max_t = $atoms[0]->count_coords -1;
 my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
-#backbone
-my @N_CA_C = grep {
-                   $_->name eq 'N'  or 
-                   $_->name eq 'CA' or 
-                   $_->name eq 'C'   
-                  } @atoms;
+say $mol->count_atoms;
+print "\n";
+printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
-my @dihedrals ; 
+#$mol->translate(-$mol->COM);
+$mol->translate(V(10,10,10));
 
-# abcdefgh
-my $k = 0;
-while ($k+3 <= $#N_CA_C){
-  my $name; 
-  $name .= $_->name.$_->resid foreach (@N_CA_C[$k .. $k+3]);
-  push @dihedrals, Dihedral->new(name=>$name, atoms=>[ @N_CA_C[$k .. $k+3] ]);
-  $k++;
-}
+say $mol->count_atoms;
+print "\n";
+printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
-foreach my $dihe (@dihedrals){
-  #my @vals = map{$dihe->gt($_); $dihe->dihe} 0 .. $max_t;
-#  printf("%20s ", $dihe->name);
-#  do{$dihe->gt($_); printf("%7.2f ", $dihe->dihe) } foreach 0 .. $max_t/2;
-#  print "\n";
-  # %10.2f (%.2f)\n", $dihe->name , avg_rmsd(@vals));
-}
+$mol->rotate(V(1,0,0), 180, V(10,10,10));
 
-my $t2 = time;
+say $mol->count_atoms;
+print "\n";
+printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
-printf("time: %10.6f\n", $t2-$t1);
+$mol->push_groups_by_atom_attr('resid');
+$_->rotate(V(1,1,1),60,$_->COM,1) foreach $mol->all_groups;
 
+$mol->gt(1);
 
-sub avg {
-  my $sum = 0;
-  $sum += $_ foreach @_;
-  return ( $sum/scalar(@_) );
-}
+say $mol->count_atoms;
+print "\n";
+printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
-sub avg_rmsd {
-  my $avg = avg(@_);
-  my $sum = 0;
-  $sum += ($_-$avg)**2 foreach @_;
-  return ( $avg, sqrt($sum/scalar(@_)) );
-}

@@ -16,7 +16,7 @@ say $mol->count_atoms;
 print "\n";
 printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
-#$mol->translate(-$mol->COM);
+$mol->translate(-$mol->COM);
 $mol->translate(V(10,10,10));
 
 say $mol->count_atoms;

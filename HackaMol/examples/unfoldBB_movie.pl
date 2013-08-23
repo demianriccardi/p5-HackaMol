@@ -39,6 +39,7 @@ while ($k+3 <= $#atoms){
   push @dihedrals, Dihedral->new(name=>$name, atoms=>[ @atoms[$k .. $k+3] ]);
   $k++;
 }
+$mol->push_dihedrals(@dihedrals);
 
 my $natoms = $mol->count_atoms;
 my $t = 0;
@@ -47,7 +48,6 @@ $mol->t($t);
 my @iatoms = map{$_->iatom} @atoms;
 
 foreach my $dihe (@dihedrals){
-
   my $ratom1 = $dihe->get_atoms(1);
   my $ratom2 = $dihe->get_atoms(2);
 

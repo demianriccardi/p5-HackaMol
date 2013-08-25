@@ -5,6 +5,7 @@ use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
 use Math::Trig;
+use Scalar::Util qw(weaken);
 with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
 has 'name' => (
@@ -83,6 +84,7 @@ sub improper_dihe_energy {
 
 sub BUILD {
     my $self = shift;
+    weaken($self);
     $_->push_dihedrals($self) foreach $self->all_atoms;
 }
 

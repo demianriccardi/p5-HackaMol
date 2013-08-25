@@ -24,8 +24,7 @@ my $radius = 16;
 my $natoms = int(0.0334*($radius**3)*4*pi/3);
 
 my @atoms = map {Atom->new(Z => 8, charges=> [0], coords => [$_]) } 
-            map {$_*$radius} 
-            map {Math::Vector::Real->random_in_sphere(3)} 1 .. $natoms;
+            map {Math::Vector::Real->random_in_sphere(3,$radius)} 1 .. $natoms;
 
 my $group = AtomGroup->new(name => 'biggroup', atoms=> [@atoms]);
 

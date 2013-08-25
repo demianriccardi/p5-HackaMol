@@ -38,3 +38,10 @@ say $mol->count_atoms;
 print "\n";
 printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
+
+sub print_xyz {
+  my $mol = shift;
+  print $mol->count_atoms;
+  print "\n\n";
+  printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
+}

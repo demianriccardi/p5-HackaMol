@@ -79,7 +79,6 @@ sub dihedral_rotate {
 
 }
 
-
 1;
 
 __END__

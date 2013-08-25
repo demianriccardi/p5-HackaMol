@@ -174,6 +174,13 @@ sub rotate {
   $atoms[$_]->set_coords($tf, $rcor[$_]+$orig) foreach 0 .. $#rcor;
 }
 
+sub print_xyz {
+  my $self = shift;
+  my $t    = shift;
+  $t = $self->t unless (defined($t));
+  print $self->count_atoms . "\n\n";
+  printf ("%3s %10.6f %10.6f %10.6f\n", $_->symbol, @{$_->get_coords($t)}) foreach $self->all_atoms;
+}
 
 no Moose::Role;
 

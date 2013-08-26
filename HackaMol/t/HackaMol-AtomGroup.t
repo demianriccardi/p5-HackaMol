@@ -1,12 +1,11 @@
 use Test::Most;
 use Test::Warnings;
 use Test::Moose;
-use lib 'lib/HackaMol';
 use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
-use AtomGroup;
-use Atom;
+use HackaMol::AtomGroup;
+use HackaMol::Atom;
 
 my @attributes = qw(
 name

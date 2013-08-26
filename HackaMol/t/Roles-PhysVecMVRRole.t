@@ -19,8 +19,7 @@ use Test::Most;
 use Test::Warnings;
 use Test::Moose;
 #use MooseX::ClassCompositor;    #use this for testing roles
-use lib 'lib/roles', 't/lib';
-use PhysVecMVRRole;                # v0.001;#To test for version availability
+use roles::PhysVecMVRRole;                # v0.001;#To test for version availability
 use Math::Vector::Real;           
 use Scalar::Util qw(refaddr);
 use Time::HiRes qw(time);

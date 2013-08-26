@@ -1,15 +1,14 @@
 use Test::Most;
 use Test::Warnings;
 use Test::Moose;
-use lib 'lib/HackaMol', 't/lib';
+use lib 't/lib';
 use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
-use AtomGroup;
-use Bond;
-use Angle;
-use Dihedral;
-use Molecule;
+use HackaMol::Bond;
+use HackaMol::Angle;
+use HackaMol::Dihedral;
+use HackaMol::Molecule;
 use PDBintoAtoms qw(readinto_atoms);
 
 my @attributes = qw(

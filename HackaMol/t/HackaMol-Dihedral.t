@@ -4,10 +4,9 @@ use Test::Warnings;
 use Test::Moose;
 use Test::More;
 use Math::Vector::Real;
-use lib 'lib/HackaMol';
 use Time::HiRes qw(time);
-use Atom;
-use Dihedral;
+use HackaMol::Atom;
+use HackaMol::Dihedral;
 
 
 my @attributes = qw(

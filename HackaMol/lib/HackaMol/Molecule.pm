@@ -2,9 +2,9 @@ package Molecule;
 
 #ABSTRACT: Molecule class for HackaMol
 use Moose;
-use lib 'lib/HackaMol', 'lib/roles';
+use lib 'roles';
 use namespace::autoclean;
-use AtomGroup;
+use HackaMol::AtomGroup;
 use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);

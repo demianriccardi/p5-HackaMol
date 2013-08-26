@@ -18,10 +18,9 @@
 use Test::Most;
 use Test::Warnings;
 use Test::Moose;
-use lib 'lib/roles','lib/HackaMol';
 use Math::Vector::Real;
-use Atom;
-use AtomGroupRole;                # v0.001;#To test for version availability
+use HackaMol::Atom;
+use roles::AtomGroupRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 atoms 

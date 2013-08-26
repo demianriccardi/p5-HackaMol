@@ -2,8 +2,7 @@ use Test::Most;
 use Test::Warnings;
 use Test::Moose;
 use MooseX::ClassCompositor;    #use this for testing roles
-use lib 'lib/roles';
-use QmRole;                # v0.001;#To test for version availability
+use roles::QmRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 basis

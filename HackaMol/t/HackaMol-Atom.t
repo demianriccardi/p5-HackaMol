@@ -4,9 +4,8 @@ use Test::Warnings;
 use Test::Moose;
 use Test::More;
 use Math::Vector::Real;
-use lib 'lib/HackaMol';
 use Time::HiRes qw(time);
-use Atom;
+use HackaMol::Atom;
 
 my @attributes = qw( name t mass xyzfree is_fixed
                      is_dirty symbol Z vdw_radius covalent_radius

@@ -7,6 +7,8 @@ use Math::Vector::Real::Random;
 use Math::Trig;
 use AtomGroup;
 use Bond;
+use Angle;
+use Dihedral;
 use Molecule;
 use PDBintoAtoms qw(readinto_atoms);
 
@@ -15,8 +17,8 @@ atoms mass name
 );
 my @methods = qw(
 push_groups set_groups get_groups all_groups clear_groups
-delete_groups count_groups 
-Rg 
+delete_groups count_groups all_bonds_atoms all_angles_atoms
+all_dihedrals_atoms dihedral_rotate_atoms
 );
 my @roles = qw(PhysVecMVRRole BondsAnglesDihedralsRole AtomGroupRole);
 
@@ -104,22 +106,94 @@ foreach my $bond (@ncord){
 
 is(scalar(@ncord), 23, "23 atoms within 5 angstroms of first atom");
 
-use Math::Trig;
 
-foreach my $t (1 .. 360) {
-  #$mol->t($t);
+#push in a bunch of bonds, angles and dihedrals and do some rotations
+#using backbone and ignoring the circular sequence of 2LL5 
+my @bbatoms = grep {
+               $_->name eq 'N'  or
+               $_->name eq 'CA' or
+               $_->name eq 'C'
+              } $mol->all_atoms;
+#reset iatom
+$bbatoms[$_]->iatom($_) foreach 0 .. $#bbatoms; 
+my $mol2 = Molecule->new(name=> 'trp-cage', atoms=>[@bbatoms]);
+$mol2->t(0);
 
-  print $mol->count_groups . "\n\n";
-  
-  my $v = V(1,0,0);
-  my @gs = map{$_->COM} $mol->all_groups;
-  my @s = $v->rotate_3d($t/(2*pi), @gs);  
-  printf("Hg %8.3f %8.3f %8.3f\n", @{$_}) foreach @s;
+my @bbangles ;
+my @bbbonds ;
+my @bbdihedrals ;
 
-#  foreach my $g ($mol->all_groups){
-#    printf("Hg %8.3f %8.3f %8.3f\n", @{$g->COM});
-#    printf("Zn %8.3f %8.3f %8.3f\n", @{$g->COZ});
-#  }
+# build the bonds, angles, dihedrals 
+my $k = 0;
+while ($k+3 <= $#bbatoms){
+  my $name;
+  $name .= $_->name.$_->resid foreach (@bbatoms[$k .. $k+3]);
+  push @bbbonds    , Bond->new(name=>"Bond-".$name, atoms=>[ @bbatoms[$k,$k+1] ]);
+  push @bbbonds    , Bond->new(name=>"Bond-".$name, atoms=>[ @bbatoms[$k+1,$k+2] ]);
+  push @bbbonds    , Bond->new(name=>"Bond-".$name, atoms=>[ @bbatoms[$k+2,$k+3] ]);
+
+  push @bbangles,    Angle->new(name=>"Angl-".$name, atoms=>[ @bbatoms[$k   .. $k+2] ]);
+  push @bbangles,    Angle->new(name=>"Angl-".$name, atoms=>[ @bbatoms[$k+1 .. $k+3] ]);
+
+  push @bbdihedrals, Dihedral->new(name=>"Dihe-".$name, atoms=>[ @bbatoms[$k .. $k+3] ]);
+
+  $k++;
+}
+
+$mol2->push_bonds(@bbbonds);
+$mol2->push_angles(@bbangles);
+$mol2->push_dihedrals(@bbdihedrals);
+
+my @bond_lengths = map{$_->bond_length} $mol2->all_bonds;
+my @angs         = map{$_->ang} $mol2->all_angles;
+
+$mol2->push_groups_by_atom_attr('resid');
+is($mol2->count_groups, 22, "group_by_atom_resid yields 22 groups");
+is($mol2->count_atoms, 66, "number of atoms: 3*number of groups");
+
+my @iatoms = map{$_->iatom} @bbatoms;
+my $natoms = $mol2->count_atoms;
+
+foreach my $dihe (@bbdihedrals){
+
+  my $ratom1 = $dihe->get_atoms(1);
+  my $ratom2 = $dihe->get_atoms(2);
+
+  # atoms from nterm to ratom1 and from ratom2 to cterm
+  my @nterm = 0 .. $ratom1->iatom - 1;
+  my @cterm = $ratom2->iatom +1 .. $natoms-1;
+
+  # use the smaller list for rotation
+  my $r_these = \@nterm;
+  $r_these = \@cterm if (@nterm > @cterm);
+
+  #set angle to rotate
+  my $rang = -1*($dihe->dihe + 180) ;
+  #switch nterm to cterm switches sign on angle
+  $rang *= -1 if (@nterm>@cterm);
+  my @slice = @bbatoms[@{ $r_these}];
+  #ready to rotate!
+  $mol2->dihedral_rotate_atoms($dihe,$rang,\@slice);
+
+}
+
+my @bond_lengths_n = map{$_->bond_length} $mol2->all_bonds;
+my @angs_n         = map{$_->ang} $mol2->all_angles;
+
+foreach my $i (0 .. $#bond_lengths){
+  cmp_ok(abs($bond_lengths[$i]-$bond_lengths_n[$i]), '<', 1E-6, "bond_length $i unchanged after 180 rotation");
+}
+
+foreach my $i (0 .. $#angs){
+  cmp_ok(abs($angs[$i]-$angs_n[$i]), '<', 1E-6, "angle $i unchanged after 180 rotation");
+}
+
+foreach my $i (0 .. $#bbdihedrals){
+  my $dihe = $bbdihedrals[$i];
+  cmp_ok(abs(abs($dihe->dihe)-180), '<', 1E-6, "dihedral $i rotated to 180");  
+}
+
+foreach my $angle (@bbangles){
 }
 
 done_testing();

@@ -108,9 +108,9 @@ my @dihes  = $atom1->all_dihedrals;
 =head1 DESCRIPTION
 
 The HackaMol BondsAnglesDihedralsRole provides ARRAY trait methods for interacting with 
-arrays of bonds angles and dihedrals. Both the Atom and Molecule classes consume this
-role. I.e. atoms know which bonds/angles/dihedrals they are in, and molecules know those
-that they contain. 
+arrays of bonds angles and dihedrals. The Molecule class consumes this
+role. The Atom class does not. Thus, Molecules are responsible for reporting multiple bonded 
+connections for any given atom.
 
 =array_method push_bonds, get_bonds, set_bonds, all_bonds, count_bonds, delete_bonds, clear_bonds
 

@@ -1,6 +1,7 @@
 package Dihedral;
 #ABSTRACT: Dihedral Angle class for HackaMol
 use Moose;
+use namespace::autoclean;
 use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;

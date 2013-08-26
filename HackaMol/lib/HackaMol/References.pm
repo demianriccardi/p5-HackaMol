@@ -1,6 +1,7 @@
 package references;
 # ABSTRACT: some useful references 
 use Moose;
+use namespace::autoclean;
 
 has '_refs' => (
                   traits   => [ 'Array' ],

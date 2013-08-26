@@ -72,7 +72,7 @@ foreach my $dihe (@dihedrals){
   }
   $rang *= -1 if (@nterm > @cterm);
   foreach (1 .. $nrot) {
-    $mol->dihedral_rotate($dihe,$rang,\@slice);
+    $mol->dihedral_rotate_atoms($dihe,$rang,\@slice);
     print "$natoms \n\n"; 
     printf("%5s %8.3f %8.3f %8.3f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
   }  

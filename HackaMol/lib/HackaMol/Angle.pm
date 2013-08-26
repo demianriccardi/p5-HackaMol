@@ -2,6 +2,7 @@ package Angle;
 #ABSTRACT: Angle class for HackaMol
 use Moose;
 use lib 'lib/roles';
+use namespace::autoclean;
 use Carp;
 use MooseX::Storage;
 use Math::Vector::Real;

@@ -6,7 +6,7 @@ use lib 'lib/roles', 'lib/HackaMol/lib';
 use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ), 
-     'PhysVecMVRRole', 'BondsAnglesDihedralsRole', 'PdbRole', 'QmRole';
+     'PhysVecMVRRole', 'PdbRole', 'QmRole';
 use PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 
@@ -19,6 +19,18 @@ has 'is_dirty' => (
   isa     => 'Bool',
   lazy    => 1,
   default => 0, # anytime called, the atom becomes dirty forever!  
+);
+
+has 'bond_count' => (
+      traits  => ['Counter'],
+      is      => 'ro',
+      isa     => 'Num',
+      default => 0,
+      handles => {
+          inc_bond_count   => 'inc',
+          dec_bond_count   => 'dec',
+          reset_bond_count => 'reset',
+      },
 );
 
 has 'symbol' => (
@@ -178,8 +190,7 @@ print "dirty " if $atom->is_dirty; #prints dirty
 =head1 DESCRIPTION
 
 Central to HackaMol, the Atom class provides methods and attributes for a given atom. 
-The Atom class consumes PhysVecMVRRole, PdbRole, QmRole, and BondsAnglesDihedralsRole,
-which provide a large number of attributes and methods. See the documentation of those 
+The Atom class consumes PhysVecMVRRole, PdbRole, and QmRole. See the documentation of those 
 roles for details.  The Atom class builds on the capabilities of those roles to add
 attributes (such as symbol, Z, covalent radius) and methods (such as change_symbol) 
 specific to atoms. Creating an instance of an Atom object requires either the atomic 
@@ -244,7 +255,6 @@ sets calls is_dirty(1).
 
 =for :list
 * L<PhysVecMVRRole>
-* L<BondsAnglesDihedralsRole>
 * L<PdbRole>
 * L<QmRole>
 * L<PerlMol>

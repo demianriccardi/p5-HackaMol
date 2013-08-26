@@ -16,7 +16,8 @@ my $t1 = time;
 my $angle = shift ;
 $angle = 180 unless (defined($angle));
 
-my @all_atoms = readinto_atoms("t/lib/1L2Y.pdb");
+#my @all_atoms = readinto_atoms("t/lib/1L2Y.pdb");
+my @all_atoms = readinto_atoms("t/lib/2LL5.pdb");
 #to keep example simple, keep only the backbone
 my @atoms = grep {
                $_->name eq 'N'  or
@@ -65,7 +66,7 @@ foreach my $dihe (@dihedrals){
   $rang *= -1 if (@nterm>@cterm); 
   my @slice = @atoms[@{ $r_these}]; 
   #ready to rotate!
-  $mol->dihedral_rotate($dihe,$rang,\@slice);
+  $mol->dihedral_rotate_atoms($dihe,$rang,\@slice);
 
 }
  

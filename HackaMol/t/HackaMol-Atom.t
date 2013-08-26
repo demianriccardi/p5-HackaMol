@@ -41,7 +41,7 @@ dummy
 );
 #todo add tests for storage!
 
-my @roles = qw(PdbRole QmRole PhysVecMVRRole BondsAnglesDihedralsRole);
+my @roles = qw(PdbRole QmRole PhysVecMVRRole);
 
 map has_attribute_ok( 'Atom', $_ ), @attributes;
 map can_ok( 'Atom', $_ ), @methods;

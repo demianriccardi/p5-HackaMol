@@ -3,8 +3,8 @@ package Bond;
 use Moose;
 use lib 'lib/roles';
 use Carp;
+use namespace::autoclean;
 use MooseX::Storage;
-use Scalar::Util qw(weaken);
 with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
 has 'name' => (
@@ -49,8 +49,6 @@ sub _build_bond_energy_func {
 sub BUILD {
     my $self = shift;
     # atoms know about bonds they have
-    # weaken here?
-    weaken($self);
     $_->push_bonds($self) foreach $self->all_atoms;
 }
 

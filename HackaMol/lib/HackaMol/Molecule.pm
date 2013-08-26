@@ -32,34 +32,37 @@ has 'atomgroups' => (
     },
 );
 
-
 # need to increase atom bond_count when push
 before 'push_bonds' => sub {
-  my $self = shift;
-  foreach my $bond (@_){
-    $_->inc_bond_count foreach $bond->all_atoms;
-  }
+    my $self = shift;
+    foreach my $bond (@_) {
+        $_->inc_bond_count foreach $bond->all_atoms;
+    }
 };
 
 # need to reduce atom bond_count when set,delete, or clear
 before 'delete_bonds' => sub {
-  my $self = shift;
-  my $bond = $self->get_bonds(@_);
-  $_->dec_bond_count foreach $bond->all_atoms;
+    my $self = shift;
+    my $bond = $self->get_bonds(@_);
+    $_->dec_bond_count foreach $bond->all_atoms;
 };
 
-before 'set_bonds' => sub {
-  my $self = shift;
-  my $bond = $self->get_bonds(@_);
-  $_->dec_bond_count foreach $bond->all_atoms;
+around 'set_bonds' => sub {
+    my ( $orig, $self, $index, $bond ) = @_;
+    my $oldbond = $self->get_bonds($index);
+    if ( defined($oldbond) ) {
+        $_->dec_bond_count foreach $oldbond->all_atoms;
+    }
+    $_->inc_bond_count foreach $bond->all_atoms;
+    $self->$orig( $index, $bond );
 };
 
 before 'clear_bonds' => sub {
-  my $self = shift;
-  foreach my $bond ($self->all_bonds){
-    $_->dec_bond_count foreach $bond->all_atoms;
-  }
-}; 
+    my $self = shift;
+    foreach my $bond ( $self->all_bonds ) {
+        $_->dec_bond_count foreach $bond->all_atoms;
+    }
+};
 
 after 't' => sub {
     my $self = shift;
@@ -92,6 +95,7 @@ sub push_groups_by_atom_attr {
 
 sub all_bonds_atoms  { return ( shift->_all_these_atoms( 'bonds',  @_ ) ) }
 sub all_angles_atoms { return ( shift->_all_these_atoms( 'angles', @_ ) ) }
+
 sub all_dihedrals_atoms {
     return ( shift->_all_these_atoms( 'dihedrals', @_ ) );
 }
@@ -232,6 +236,27 @@ print $group->count_groups;
 
 same as count_groups, allows clearer conditional code. i.e.  doing something if $mol->has_groups;
 
+=array_method push_bonds, set_bonds, delete_bonds, clear_bonds
+
+MODIFIED ARRAY traits for the bonds attribute provided by BondsAnglesDihedralsRole
+
+=array_method push_bonds
+
+before push_bonds, bond_count is incremented for all atoms in all bonds to be pushed.
+
+=array_method set_bonds
+
+around set_bonds, bound_count decremented for all atoms in bond being replaced. Then, bond_count is 
+incremented for all atoms in new bond
+
+=array_method delete_bonds
+
+before deleting bond, bond_count decremented for all atoms in bond.
+
+=array_method clear_bonds
+
+before clearing bonds, bond_count decremented for all atoms in all bonds.
+
 =method t 
 
 t is the same attr as before.  Molecule modifies t.  the $mol->t accessor behaves as before.  The $mol->(1)
@@ -241,11 +266,22 @@ setter $self->gt(1) to set t for all atoms in the molecule.
 
 takes atom attribute as argument.  pushes the atoms into the atomgroup array by attribute
 
-=method dihedral_rotate
+=method all_bonds_atoms  
+
+takes array of atoms as argument, returns array of bonds that includes 1 or more of those atoms
+
+=method all_angles_atoms  
+
+takes array of atoms as argument, returns array of angles that includes 1 or more of those atoms
+
+=method all_dihedrals_atoms  
+
+takes array of atoms as argument, returns array of dihedrals that includes 1 or more of those atoms 
+
+=method dihedral_rotate_atoms
 
 takes Dihedral object, an angle (degress), and active atoms as arguments. rotates the active atoms
 about the dihedral and stores rotated coordinates in place ($atom->set_coords($mol->t,$rotated_coor).
-
 
 =head1 SEE ALSO
 

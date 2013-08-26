@@ -162,10 +162,12 @@ $mol2->delete_bonds(10);
 $bond_count = 0;
 $bond_count += $_->bond_count foreach $mol2->all_atoms;
 is($bond_count, 2*scalar(@bbatoms)-6, "delete 10th bond for backbone");
-$mol2->delete_bonds(-1);
+my $end_bond = $mol2->delete_bonds(-1);
 $bond_count = 0;
 $bond_count += $_->bond_count foreach $mol2->all_atoms;
 is($bond_count, 2*scalar(@bbatoms)-8, "delete last bond for backbone");
+$mol2->set_bonds(10,$end_bond);
+is($bond_count, 2*scalar(@bbatoms)-8, "count for set_bonds (removes and adds 2-2=0)");
 
 my @bond_lengths = map{$_->bond_length} $mol2->all_bonds;
 my @angs         = map{$_->ang} $mol2->all_angles;

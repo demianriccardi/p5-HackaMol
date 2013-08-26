@@ -6,7 +6,6 @@ use Test::More;
 use Math::Vector::Real;
 use lib 'lib'; #/HackaMol';
 use Time::HiRes qw(time);
-use Scalar::Util qw(isweak);
 use HackaMol::Atom;
 use HackaMol::Bond;
 
@@ -100,13 +99,6 @@ is($bond1->bond_order, 1, "bond order default");
 $bond1->bond_order(1.5);
 
 is($bond1->bond_order, 1.5, "bond order set to num");
-is($atom1->count_bonds, 2, "atom1 knows it has 2 bonds");
-is($atom2->count_bonds, 1, "atom2 knows it has 1 bonds");
-is($atom3->count_bonds, 1, "atom3 knows it has 1 bonds");
-is($atom1->get_bonds(0),$bond1, 'the atom is aware of its bond');
-is($atom2->get_bonds(0),$bond1, 'the atom is aware of its bond');
-is($atom1->get_bonds(1),$bond2, 'the atom is aware of its bond');
-is($atom3->get_bonds(0),$bond2, 'the atom is aware of its other bond');
 
 
 $bond1->bond_fc(1.0);
@@ -127,15 +119,6 @@ cmp_ok (
         abs($bond1->bond_energy(1,2,3,4) - 10*$bond1->bond_length), 
         '<', 1E-7, 'new nonsense energy'
        );
-
-my @bonds = $atom1->all_bonds;
-
-foreach my $bond (@bonds){
-  print "weak bond!" if (isweak($bond));
-}
-
-#my @bonds = $atom1->all_bonds;
-#print $_->dump foreach @bonds;
 
 done_testing();
 

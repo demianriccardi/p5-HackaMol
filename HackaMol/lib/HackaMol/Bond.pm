@@ -46,12 +46,6 @@ sub _build_bond_energy_func {
     return ($subref);
 }
 
-sub BUILD {
-    my $self = shift;
-    # atoms know about bonds they have
-    $_->push_bonds($self) foreach $self->all_atoms;
-}
-
 sub bond_vector{
   my $self  = shift;
   my @atoms = $self->all_atoms;

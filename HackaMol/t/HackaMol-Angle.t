@@ -127,21 +127,6 @@ foreach my $t (0 .. 9){
   is_deeply($angle2->ang_normvec, V(0,-1,0), "xz t dependent ang_normvec: V (0, 1, 0)");
 }
 
-is($atom1->count_angles, 3, "atom1 knows it is in 3 angles");
-is($atom2->count_angles, 3, "atom2 knows it is in 3 angles");
-is($atom3->count_angles, 1, "atom3 knows it is in 1 angle");
-is($atom4->count_angles, 1, "atom4 knows it is in 1 angle");
-is($atom5->count_angles, 1, "atom5 knows it is in 1 angle");
-is($atom1->get_angles(0),$angle1, 'the atom1 is aware of angle1');
-is($atom1->get_angles(1),$angle2, 'the atom1 is aware of angle2');
-is($atom1->get_angles(2),$angle3, 'the atom1 is aware of angle3');
-is($atom2->get_angles(0),$angle1, 'the atom2 is aware of angle1');
-is($atom2->get_angles(1),$angle2, 'the atom2 is aware of angle2');
-is($atom2->get_angles(2),$angle3, 'the atom2 is aware of angle3');
-is($atom3->get_angles(0),$angle1, 'the atom1 is aware of angle1');
-is($atom4->get_angles(0),$angle2, 'the atom1 is aware of angle2');
-is($atom5->get_angles(0),$angle3, 'the atom1 is aware of angle3');
-
 $angle1->ang_fc(1.0);
 $angle1->ang_eq($angle1->ang - 0.5);
 

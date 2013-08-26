@@ -61,15 +61,6 @@ my $dihe= Dihedral->new(atoms => [$atom0,$atom1,$atom2,$atom3]);
 cmp_ok($dihe->dihe,'==', 180.0, "180 dihedral");
 is_deeply($dihe->COM, V(0,0,0), "COM at 0,0,0");
 
-is($atom0->count_dihedrals, 1, "atom0 knows it is in 1 dihedrals");
-is($atom1->count_dihedrals, 1, "atom1 knows it is in 1 dihedrals");
-is($atom2->count_dihedrals, 1, "atom2 knows it is in 1 dihedrals");
-is($atom3->count_dihedrals, 1, "atom3 knows it is in 1 dihedrals");
-is($atom0->get_dihedrals(0),$dihe, 'the atom1 is aware of dihedral');
-is($atom1->get_dihedrals(0),$dihe, 'the atom1 is aware of dihedral');
-is($atom2->get_dihedrals(0),$dihe, 'the atom1 is aware of dihedral');
-is($atom3->get_dihedrals(0),$dihe, 'the atom1 is aware of dihedral');
-
 $atom3->set_coords(0,V(-1.0,sqrt(2)/2,sqrt(2)/2));
 cmp_ok($dihe->dihe,'==', -45.0, "-45 dihedral");
 

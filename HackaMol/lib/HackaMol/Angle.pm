@@ -5,7 +5,6 @@ use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
 use Math::Vector::Real;
-use Scalar::Util qw(weaken);
 with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
 
 has 'name' => (
@@ -37,13 +36,6 @@ sub ang{
   my $self  = shift;
   my @atoms = $self->all_atoms;
   return ($atoms[1]->angle($atoms[0],$atoms[2]));
-}
-
-sub BUILD {
-    my $self = shift;
-    #atoms know about the angles they are in
-    weaken($self);
-    $_->push_angles($self) foreach $self->all_atoms;
 }
 
 has 'angle_energy_func' => (

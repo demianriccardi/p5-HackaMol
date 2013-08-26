@@ -32,6 +32,35 @@ has 'atomgroups' => (
     },
 );
 
+
+# need to increase atom bond_count when push
+before 'push_bonds' => sub {
+  my $self = shift;
+  foreach my $bond (@_){
+    $_->inc_bond_count foreach $bond->all_atoms;
+  }
+};
+
+# need to reduce atom bond_count when set,delete, or clear
+before 'delete_bonds' => sub {
+  my $self = shift;
+  my $bond = $self->get_bonds(@_);
+  $_->dec_bond_count foreach $bond->all_atoms;
+};
+
+before 'set_bonds' => sub {
+  my $self = shift;
+  my $bond = $self->get_bonds(@_);
+  $_->dec_bond_count foreach $bond->all_atoms;
+};
+
+before 'clear_bonds' => sub {
+  my $self = shift;
+  foreach my $bond ($self->all_bonds){
+    $_->dec_bond_count foreach $bond->all_atoms;
+  }
+}; 
+
 after 't' => sub {
     my $self = shift;
     $self->gt(@_) if (@_);    # set t for all in group

@@ -95,9 +95,13 @@ $mol->push_groups_by_atom_attr('name');
 
 is($mol->count_groups, 60, "group_by_atom_name yields 60 groups");
 
-my @bonds = map{Bond->new(atoms=>[$atoms[0],$_])} @atoms;  
-
+my @bonds = map{Bond->new(atoms=>[$atoms[0],$atoms[$_]])} 1 .. $#atoms;  
 $mol->push_bonds(@bonds);
+is($atoms[0]->bond_count, $#atoms, "bond count of atom[0]");
+
+my $bond_count = 0;
+$bond_count += $_->bond_count foreach $mol->all_atoms;
+is($bond_count,2*$#atoms, "total double-counted bond count");
 
 my @ncord = grep{$_->bond_length < 5.0 and $_->bond_length > 0.0} $mol->all_bonds;
 foreach my $bond (@ncord){
@@ -106,6 +110,10 @@ foreach my $bond (@ncord){
 
 is(scalar(@ncord), 23, "23 atoms within 5 angstroms of first atom");
 
+$mol->clear_bonds;
+$bond_count = 0;
+$bond_count += $_->bond_count foreach $mol->all_atoms;
+is($bond_count, 0, "bond count is 0 after mol->clear_bonds");
 
 #push in a bunch of bonds, angles and dihedrals and do some rotations
 #using backbone and ignoring the circular sequence of 2LL5 
@@ -126,23 +134,38 @@ my @bbdihedrals ;
 # build the bonds, angles, dihedrals 
 my $k = 0;
 while ($k+3 <= $#bbatoms){
-  my $name;
-  $name .= $_->name.$_->resid foreach (@bbatoms[$k .. $k+3]);
-  push @bbbonds    , Bond->new(name=>"Bond-".$name, atoms=>[ @bbatoms[$k,$k+1] ]);
-  push @bbbonds    , Bond->new(name=>"Bond-".$name, atoms=>[ @bbatoms[$k+1,$k+2] ]);
-  push @bbbonds    , Bond->new(name=>"Bond-".$name, atoms=>[ @bbatoms[$k+2,$k+3] ]);
-
-  push @bbangles,    Angle->new(name=>"Angl-".$name, atoms=>[ @bbatoms[$k   .. $k+2] ]);
-  push @bbangles,    Angle->new(name=>"Angl-".$name, atoms=>[ @bbatoms[$k+1 .. $k+3] ]);
-
-  push @bbdihedrals, Dihedral->new(name=>"Dihe-".$name, atoms=>[ @bbatoms[$k .. $k+3] ]);
-
+  push @bbbonds    , Bond->new(name=>"Bond-".$k, atoms=>[ @bbatoms[$k,$k+1] ]);
+  push @bbangles,    Angle->new(name=>"Angl-".$k, atoms=>[ @bbatoms[$k   .. $k+2] ]);
+  push @bbdihedrals, Dihedral->new(name=>"Dihe-".$k, atoms=>[ @bbatoms[$k .. $k+3] ]);
   $k++;
 }
+push @bbbonds ,    Bond->new(name=>"Bond-".$k, atoms=>[ @bbatoms[$k,$k+1] ]);
+push @bbangles,    Angle->new(name=>"Angl-".$k, atoms=>[ @bbatoms[$k   .. $k+2] ]);
+$k++;
+push @bbbonds ,    Bond->new(name=>"Bond-".$k, atoms=>[ @bbatoms[$k,$k+1] ]);
 
 $mol2->push_bonds(@bbbonds);
 $mol2->push_angles(@bbangles);
 $mol2->push_dihedrals(@bbdihedrals);
+
+is($bbatoms[0]->bond_count,1, "bond count on atom 0 is 1");
+is($bbatoms[-1]->bond_count,1, "bond count on last atom is 1");
+
+$bond_count = 0;
+$bond_count += $_->bond_count foreach $mol2->all_atoms;
+is($bond_count, 2*scalar(@bbatoms)-2, "double-counted bond count for backbone");
+$mol2->delete_bonds(0);
+$bond_count = 0;
+$bond_count += $_->bond_count foreach $mol2->all_atoms;
+is($bond_count, 2*scalar(@bbatoms)-4, "delete first bond for backbone");
+$mol2->delete_bonds(10);
+$bond_count = 0;
+$bond_count += $_->bond_count foreach $mol2->all_atoms;
+is($bond_count, 2*scalar(@bbatoms)-6, "delete 10th bond for backbone");
+$mol2->delete_bonds(-1);
+$bond_count = 0;
+$bond_count += $_->bond_count foreach $mol2->all_atoms;
+is($bond_count, 2*scalar(@bbatoms)-8, "delete last bond for backbone");
 
 my @bond_lengths = map{$_->bond_length} $mol2->all_bonds;
 my @angs         = map{$_->ang} $mol2->all_angles;

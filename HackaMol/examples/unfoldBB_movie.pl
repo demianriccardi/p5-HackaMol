@@ -5,9 +5,9 @@
 # adding the sidechains shouldn't be too difficult.  Just have to identify which
 # atoms are moving
 use Modern::Perl;
-use lib 'lib/HackaMol','t/lib';
-use Molecule;
-use Dihedral;
+use lib 'lib','t/lib';
+use HackaMol::Molecule;
+use HackaMol::Dihedral;
 use PDBintoAtoms qw(readinto_atoms);
 use Time::HiRes qw(time);
 use Scalar::Util qw(refaddr);

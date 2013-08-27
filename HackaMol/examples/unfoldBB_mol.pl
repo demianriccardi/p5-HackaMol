@@ -5,9 +5,9 @@
 # adding the sidechains shouldn't be too difficult.  Just have to identify which
 # atoms are moving
 use Modern::Perl;
-use lib 'lib/HackaMol','t/lib';
-use Molecule;
-use Dihedral;
+use lib 'lib','t/lib';
+use HackaMol::Molecule;
+use HackaMol::Dihedral;
 use PDBintoAtoms qw(readinto_atoms);
 use Time::HiRes qw(time);
 use Scalar::Util qw(refaddr);
@@ -16,8 +16,8 @@ my $t1 = time;
 my $angle = shift ;
 $angle = 180 unless (defined($angle));
 
-#my @all_atoms = readinto_atoms("t/lib/1L2Y.pdb");
-my @all_atoms = readinto_atoms("t/lib/2LL5.pdb");
+my @all_atoms = readinto_atoms("t/lib/1L2Y.pdb");
+#my @all_atoms = readinto_atoms("t/lib/2LL5.pdb");
 #to keep example simple, keep only the backbone
 my @atoms = grep {
                $_->name eq 'N'  or

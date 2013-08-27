@@ -1,6 +1,6 @@
 use Modern::Perl;
-use lib 'lib/HackaMol','t/lib';
-use Molecule;
+use lib 'lib','t/lib';
+use HackaMol::Molecule;
 use PDBintoAtoms qw(readinto_atoms);
 use Math::Vector::Real;
 

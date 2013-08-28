@@ -101,6 +101,9 @@ sub all_dihedrals_atoms {
 }
 
 sub _all_these_atoms {
+
+    #these bonds, these angles, these dihedrals
+    #this bond, this angle, this dihedral
     my $self      = shift;
     my $these     = shift;
     my @atoms     = @_;
@@ -117,31 +120,87 @@ sub _all_these_atoms {
     return (@atoms_these);
 }
 
+sub bond_stretch_groups {
+    my $self = shift;
+    croak "pass Bond, trans distance (Angstroms), 1+ groups to trans"
+      unless @_ > 2;
+    my $t = $self->t;
+    my ( $bond, $dist ) = ( shift, shift );
+    my $vec    = $bond->bond_vector;
+    my @groups = @_;
+    my $tvec   = $dist * $vec->versor;
+    $_->translate( $tvec, $t ) foreach @groups;
+}
+
+sub bond_stretch_atoms {
+    my $self = shift;
+    croak "pass Bond, trans distance (Angstroms), 1+ atoms to trans"
+      unless @_ > 2;
+    my $t = $self->t;
+    my ( $bond, $dist ) = ( shift, shift );
+    my $vec   = $bond->bond_vector;
+    my @atoms = @_;
+    my $tvec  = $dist * $vec->versor;
+    $_->set_coords( $t, $_->xyz + $tvec ) foreach @atoms;
+}
+
+sub angle_bend_groups {
+    my $self = shift;
+    croak "pass Angle, ang to rotate (degrees), 1+ groups effected"
+      unless @_ > 2;
+    my $t = $self->t;
+    my ( $angle, $dang ) = ( shift, shift );
+    my $origin = $angle->get_atoms(1)->get_coords($t);
+    my $rvec   = $angle->ang_normvec;
+    my @groups = @_;
+    $_->rotate( $rvec, $dang, $origin, $t ) foreach @groups;
+}
+
+sub angle_bend_atoms {
+    my $self = shift;
+    croak "pass Angle, ang to rotate (degrees), 1+ groups effected"
+      unless @_ > 2;
+    my $t = $self->t;
+    my ( $angle, $dang ) = ( shift, shift );
+    my $origin = $angle->get_atoms(1)->get_coords($t);
+    my $rvec   = $angle->ang_normvec;
+    my @atoms  = @_;
+
+    my @cor =
+      map { $_->get_coords($t) - $origin } @atoms;    #shift origin
+    my @rcor = $rvec->rotate_3d( deg2rad($dang), @cor );
+
+    #shift origin back
+    $atoms[$_]->set_coords( $t, $rcor[$_] + $origin ) foreach 0 .. $#rcor;
+}
+
 sub dihedral_rotate_atoms {
     my $self = shift;
     croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ == 3;
     my $t = $self->t;
-    my ( $dihe, $ang, $atoms ) = @_;
+    my ( $dihe, $dang, $atoms ) = @_;
     my ( $atom0, $ratom1, $ratom2, $atom3 ) = $dihe->all_atoms;
-    if (
-        2 == scalar(
-            grep {
-                     refaddr($atom0) == refaddr($_)
-                  or refaddr($atom3) == refaddr($_)
-            } @{$atoms}
-        )
-      )
-    {
-        croak "will not rotate atoms on both sides of dihedral ";
-    }
-    my $rvec = ( $ratom2->inter_dcoords($ratom1) )->versor;
+    my $rvec   = ( $ratom2->inter_dcoords($ratom1) )->versor;
+    my $origin = $ratom1->xyz;
     my @cor =
-      map { $_->get_coords($t) - $ratom1->xyz } @$atoms;    #shift origin too
-    my @rcor = $rvec->rotate_3d( deg2rad($ang), @cor );
+      map { $_->get_coords($t) - $origin } @$atoms;    #shift origin too
+    my @rcor = $rvec->rotate_3d( deg2rad($dang), @cor );
 
     #shift origin back
-    $atoms->[$_]->set_coords( $t, $rcor[$_] + $ratom1->xyz )
-      foreach 0 .. $#rcor;
+    $atoms->[$_]->set_coords( $t, $rcor[$_] + $origin ) foreach 0 .. $#rcor;
+
+}
+
+sub dihedral_rotate_groups {
+    my $self = shift;
+    croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ == 3;
+    my $t = $self->t;
+    my ( $dihe, $dang ) = ( shift, shift );
+    my ( $atom0, $ratom1, $ratom2, $atom3 ) = $dihe->all_atoms;
+    my $rvec   = ( $ratom2->inter_dcoords($ratom1) )->versor;
+    my $origin = $ratom1->xyz;
+    my @groups = @_;
+    $_->rotate( $rvec, $dang, $origin, $t ) foreach @groups;
 
 }
 
@@ -272,16 +331,49 @@ takes array of atoms as argument, returns array of bonds that includes 1 or more
 
 =method all_angles_atoms  
 
-takes array of atoms as argument, returns array of angles that includes 1 or more of those atoms
+takes array of atoms as argument, returns array of angles that includes 1 or 
+more of those atoms
 
 =method all_dihedrals_atoms  
 
-takes array of atoms as argument, returns array of dihedrals that includes 1 or more of those atoms 
+takes array of atoms as argument, returns array of dihedrals that includes 1 or 
+more of those atoms 
+
+=method bond_stretch_atoms
+
+takes Bond object, a distance (angstroms, typically), and active atoms as arguments. 
+translates the active atoms along the bond_vector by the distance and stores coordinates 
+in place ($atom->set_coords($mol->t,$translated_coors)).
+
+=method bond_stretch_groups
+
+takes Bond object, a distance (angstroms, typically), and active groups as arguments. 
+translates the atoms in the active groups along the bond_vector by the distance and 
+stores coordinates in place.
+
+=method angle_bend_atoms
+
+takes Angle object, an angle (degress), and active atoms as arguments. rotates the active atoms
+about the vector normal to be angle and stores rotated coordinates in place 
+($atom->set_coords($mol->t,$rotated_coor)).
+
+=method angle_bend_groups
+
+takes Angle object, an angle (degress), and active groups as arguments. rotates the atoms
+in the active groups about the vector normal to be angle and stores rotated coordinates 
+in place ($atom->set_coords($mol->t,$rotated_coor)).
 
 =method dihedral_rotate_atoms
 
 takes Dihedral object, an angle (degress), and active atoms as arguments. rotates the active atoms
-about the dihedral and stores rotated coordinates in place ($atom->set_coords($mol->t,$rotated_coor).
+about the dihedral and stores rotated coordinates in place 
+($atom->set_coords($mol->t,$rotated_coor)).
+
+=method dihedral_rotate_groups
+
+takes Dihedral object, an angle (degress), and active groups as arguments. rotates atoms in 
+groups about the dihedral and stores rotated coordinates in place 
+($atom->set_coords($mol->t,$rotated_coor)).
 
 =head1 SEE ALSO
 

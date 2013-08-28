@@ -5,6 +5,7 @@ use lib 't/lib';
 use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
+use HackaMol::AtomGroup;
 use HackaMol::Bond;
 use HackaMol::Angle;
 use HackaMol::Dihedral;
@@ -330,8 +331,54 @@ foreach my $i ( 0 .. $#bbdihedrals ) {
         '<', 1E-6, "dihedral $i rotated to 180" );
 }
 
-foreach my $angle (@bbangles) {
-}
+#lets stretch a bond
+my $bond3      = $mol2->get_bonds(2);
+my @all_atoms  = $mol2->all_atoms;
+my @slice = @all_atoms[$bond3->get_atoms(1)->iatom .. $#all_atoms];
+
+my $group = AtomGroup->new(atoms=>[@slice]);
+
+#$mol2->print_xyz;
+my $bi = $bond3->bond_length;
+$mol2->bond_stretch_groups($bond3,10,$group);
+my $bf = $bond3->bond_length;
+cmp_ok(abs($bf-$bi - 10), '<', 1E-6, "bond stretch +10 groups");
+$mol2->bond_stretch_atoms($bond3,-10,@slice);
+$bf = $bond3->bond_length;
+
+cmp_ok(abs($bf-$bi), '<', 1E-6, "bond stretch -10 atoms");
+
+my $new_angle = Angle->new(name=>'quick', atoms=>[
+                                 $all_atoms[$bond3->get_atoms(0)->iatom-1],
+                                 $bond3->all_atoms,
+                                                 ]);
+
+my $angi = $new_angle->ang;
+$mol2->angle_bend_groups($new_angle,-50,$group);
+my $angf = $new_angle->ang;
+cmp_ok(abs($angf-$angi+50), '<', 1E-6, "angle bend -50 group");
+$mol2->angle_bend_groups($new_angle,+50,$group);
+$angf = $new_angle->ang;
+cmp_ok(abs($angf-$angi), '<', 1E-6, "angle bend +50 group");
+
+$mol2->angle_bend_atoms($new_angle,-50,@slice);
+$angf = $new_angle->ang;
+cmp_ok(abs($angf-$angi+50), '<', 1E-6, "angle bend -50 atoms");
+
+my $new_dihe = Dihedral->new(name=>'quick', atoms =>[
+                                 $all_atoms[$bond3->get_atoms(0)->iatom-2],
+                                  $new_angle->all_atoms,
+                                                    ]);
+
+my $dihei = $new_dihe->dihe;
+$mol2->dihedral_rotate_groups($new_dihe,360,$group);
+my $dihef = $new_dihe->dihe;
+
+cmp_ok(abs($dihef-$dihei), '<', 1E-6, "dihedral rotate 360 group");
+
+
+
+
 
 done_testing();
 

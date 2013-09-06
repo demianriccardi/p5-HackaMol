@@ -513,8 +513,13 @@ the vectors with $obj1 as orgin using Math::Vector::Real.
 =method intra_dcharges
 
 Calculates the change in charge from initial t ($ti) to final t ($tf). I.e.:
+  
+  $obj1->intra_dcharges( $ti, $tf );
 
-$self->get_charges($tf) - $self->get_charges($ti)
+  yields the same as:
+
+  $self->get_charges($tf) - $self->get_charges($ti);
+  
 
 =method mean_charges
 
@@ -529,9 +534,9 @@ No arguments.  Calculates the mean square deviation of all stored charges.
 returns the difference (Math::Vector::Real object) from the initial t ($ti) to
 the final t ($tf).
 
-$obj1->intra_dcoords($ti,$tf);
+  $obj1->intra_dcoords($ti,$tf);
 
-$obj1->intra_dforces($ti,$tf);
+  $obj1->intra_dforces($ti,$tf);
 
 =method mean_coords mean_forces 
 

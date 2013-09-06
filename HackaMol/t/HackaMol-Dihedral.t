@@ -16,13 +16,13 @@ my @methods = qw(
 torsion_energy improper_dihe_energy dihe
 );
 
-my @roles = qw(AtomGroupRole);
+my @roles = qw(HackaMol::AtomGroupRole);
 
-map has_attribute_ok( 'Dihedral', $_ ), @attributes;
-map can_ok( 'Dihedral', $_ ), @methods;
-map does_ok( 'Dihedral', $_ ), @roles;
+map has_attribute_ok( 'HackaMol::Dihedral', $_ ), @attributes;
+map can_ok( 'HackaMol::Dihedral', $_ ), @methods;
+map does_ok( 'HackaMol::Dihedral', $_ ), @roles;
 
-my $atom0 = Atom->new(
+my $atom0 = HackaMol::Atom->new(
     name    => 'C1',
     charges => [0],
     coords  => [
@@ -30,7 +30,7 @@ my $atom0 = Atom->new(
                ],
     Z => 6,
 );
-my $atom1 = Atom->new(
+my $atom1 = HackaMol::Atom->new(
     name    => 'S1',
     charges => [0],
     coords  => [
@@ -38,7 +38,7 @@ my $atom1 = Atom->new(
                ],
     Z => 16,
 );
-my $atom2 = Atom->new(
+my $atom2 = HackaMol::Atom->new(
     name    => 'S2',
     charges => [0],
     coords  => [ 
@@ -46,7 +46,7 @@ my $atom2 = Atom->new(
                ],
     Z       => 16
 );
-my $atom3 = Atom->new(
+my $atom3 = HackaMol::Atom->new(
     name    => 'C2',
     charges => [0],
     coords  => [
@@ -55,7 +55,7 @@ my $atom3 = Atom->new(
     Z => 6,
 );
 
-my $dihe= Dihedral->new(atoms => [$atom0,$atom1,$atom2,$atom3]);
+my $dihe= HackaMol::Dihedral->new(atoms => [$atom0,$atom1,$atom2,$atom3]);
 
 cmp_ok($dihe->dihe,'==', 180.0, "180 dihedral");
 is_deeply($dihe->COM, V(0,0,0), "COM at 0,0,0");

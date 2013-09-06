@@ -20,16 +20,16 @@ my @methods = qw(
   delete_groups count_groups all_bonds_atoms all_angles_atoms
   all_dihedrals_atoms dihedral_rotate_atoms
 );
-my @roles = qw(PhysVecMVRRole BondsAnglesDihedralsRole AtomGroupRole);
+my @roles = qw(HackaMol::PhysVecMVRRole HackaMol::BondsAnglesDihedralsRole HackaMol::AtomGroupRole);
 
-map has_attribute_ok( 'Molecule', $_ ), @attributes;
-map can_ok( 'Molecule', $_ ), @methods;
-map does_ok( 'Molecule', $_ ), @roles;
+map has_attribute_ok( 'HackaMol::Molecule', $_ ), @attributes;
+map can_ok( 'HackaMol::Molecule', $_ ), @methods;
+map does_ok( 'HackaMol::Molecule', $_ ), @roles;
 
 my @atoms = readinto_atoms("t/lib/2LL5.pdb");
 my $max_t = $atoms[0]->count_coords - 1;
 
-my $mol = Molecule->new( name => 'trp-cage', atoms => [@atoms] );
+my $mol = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms] );
 
 is( $mol->count_atoms, 283, 'number of atoms: 283' );
 
@@ -97,7 +97,7 @@ $mol->push_groups_by_atom_attr('name');
 is( $mol->count_groups, 60, "group_by_atom_name yields 60 groups" );
 
 my @bonds =
-  map { Bond->new( atoms => [ $atoms[0], $atoms[$_] ] ) } 1 .. $#atoms;
+  map {HackaMol::Bond->new( atoms => [ $atoms[0], $atoms[$_] ] ) } 1 .. $#atoms;
 $mol->push_bonds(@bonds);
 is( $atoms[0]->bond_count, $#atoms, "bond count of atom[0]" );
 
@@ -126,7 +126,7 @@ my @bbatoms = grep { $_->name eq 'N' or $_->name eq 'CA' or $_->name eq 'C' }
 
 #reset iatom
 $bbatoms[$_]->iatom($_) foreach 0 .. $#bbatoms;
-my $mol2 = Molecule->new( name => 'trp-cage', atoms => [@bbatoms] );
+my $mol2 = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@bbatoms] );
 $mol2->t(0);
 
 my @bbangles;
@@ -137,23 +137,23 @@ my @bbdihedrals;
 my $k = 0;
 while ( $k + 3 <= $#bbatoms ) {
     push @bbbonds,
-      Bond->new( name => "Bond-" . $k, atoms => [ @bbatoms[ $k, $k + 1 ] ] );
+      HackaMol::Bond->new( name => "Bond-" . $k, atoms => [ @bbatoms[ $k, $k + 1 ] ] );
     push @bbangles,
-      Angle->new( name => "Angl-" . $k, atoms => [ @bbatoms[ $k .. $k + 2 ] ] );
+      HackaMol::Angle->new( name => "Angl-" . $k, atoms => [ @bbatoms[ $k .. $k + 2 ] ] );
     push @bbdihedrals,
-      Dihedral->new(
+      HackaMol::Dihedral->new(
         name  => "Dihe-" . $k,
         atoms => [ @bbatoms[ $k .. $k + 3 ] ]
       );
     $k++;
 }
 push @bbbonds,
-  Bond->new( name => "Bond-" . $k, atoms => [ @bbatoms[ $k, $k + 1 ] ] );
+  HackaMol::Bond->new( name => "Bond-" . $k, atoms => [ @bbatoms[ $k, $k + 1 ] ] );
 push @bbangles,
-  Angle->new( name => "Angl-" . $k, atoms => [ @bbatoms[ $k .. $k + 2 ] ] );
+  HackaMol::Angle->new( name => "Angl-" . $k, atoms => [ @bbatoms[ $k .. $k + 2 ] ] );
 $k++;
 push @bbbonds,
-  Bond->new( name => "Bond-" . $k, atoms => [ @bbatoms[ $k, $k + 1 ] ] );
+  HackaMol::Bond->new( name => "Bond-" . $k, atoms => [ @bbatoms[ $k, $k + 1 ] ] );
 
 $mol2->push_bonds(@bbbonds);
 $mol2->push_angles(@bbangles);
@@ -336,7 +336,7 @@ my $bond3      = $mol2->get_bonds(2);
 my @all_atoms  = $mol2->all_atoms;
 my @slice = @all_atoms[$bond3->get_atoms(1)->iatom .. $#all_atoms];
 
-my $group = AtomGroup->new(atoms=>[@slice]);
+my $group = HackaMol::AtomGroup->new(atoms=>[@slice]);
 
 #$mol2->print_xyz;
 my $bi = $bond3->bond_length;
@@ -348,7 +348,7 @@ $bf = $bond3->bond_length;
 
 cmp_ok(abs($bf-$bi), '<', 1E-6, "bond stretch -10 atoms");
 
-my $new_angle = Angle->new(name=>'quick', atoms=>[
+my $new_angle = HackaMol::Angle->new(name=>'quick', atoms=>[
                                  $all_atoms[$bond3->get_atoms(0)->iatom-1],
                                  $bond3->all_atoms,
                                                  ]);
@@ -365,7 +365,7 @@ $mol2->angle_bend_atoms($new_angle,-50,@slice);
 $angf = $new_angle->ang;
 cmp_ok(abs($angf-$angi+50), '<', 1E-6, "angle bend -50 atoms");
 
-my $new_dihe = Dihedral->new(name=>'quick', atoms =>[
+my $new_dihe = HackaMol::Dihedral->new(name=>'quick', atoms =>[
                                  $all_atoms[$bond3->get_atoms(0)->iatom-2],
                                   $new_angle->all_atoms,
                                                     ]);

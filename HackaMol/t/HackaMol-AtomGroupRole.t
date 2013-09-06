@@ -20,7 +20,7 @@ use Test::Warnings;
 use Test::Moose;
 use Math::Vector::Real;
 use HackaMol::Atom;
-use roles::AtomGroupRole;                # v0.001;#To test for version availability
+use HackaMol::AtomGroupRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 atoms 
@@ -44,7 +44,7 @@ my %methods = ('_clear_group_attrs' => sub{
 );
 my $class = MooseX::ClassCompositor::ReqRole->new( { 
                                             class_basename => 'Test', 
-                                          })->class_for('AtomGroupRole',\%methods);
+                                          })->class_for('HackaMol::AtomGroupRole',\%methods);
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;
@@ -54,20 +54,20 @@ lives_ok {
 }
 'Test creation of an group';
 
-my $atom1 = Atom->new(
+my $atom1 = HackaMol::Atom->new(
     name    => 'O',
     charges => [ -0.80, -0.82, -0.834 ],
     coords  => [ V(2.05274,        0.01959,       -0.07701) ],
     Z       => 8
 );
 
-my $atom2 = Atom->new(
+my $atom2 = HackaMol::Atom->new(
     name    => 'H',
     charges => [0.4,0.41,0.417],
     coords  => [ V( 1.08388,        0.02164,       -0.12303 ) ],
     Z       => 1
 );
-my $atom3 = Atom->new(
+my $atom3 = HackaMol::Atom->new(
     name    => 'H',
     charges => [0.4,0.41,0.417],
     coords  => [ V( 2.33092,        0.06098,       -1.00332 ) ],
@@ -101,21 +101,21 @@ foreach my $t (0 .. 2){
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
 }
 
-my $atom4 = Atom->new(
+my $atom4 = HackaMol::Atom->new(
     name    => 'H',
     charges => [0.0],
     coords  => [ V( 0,0,0 ) ],
     Z       => 1
 );
 
-my $atom5 = Atom->new(
+my $atom5 = HackaMol::Atom->new(
     name    => 'H',
     charges => [0.0],
     coords  => [ V( 1,0,0 ) ],
     Z       => 1
 );
 
-my $atom6 = Atom->new(
+my $atom6 = HackaMol::Atom->new(
     name    => 'H',
     charges => [0.0],
     coords  => [ V( 2,0,0 ) ],
@@ -144,7 +144,7 @@ is_deeply($group->COM, V (0), 'Center of mass V (0) no atoms');
 is_deeply($group->COZ, V (0), 'Center of Z V (0) no atoms');
 is_deeply($group->dipole, V (0), 'Dipole V (0) no atoms');
 
-my @atoms = map{Atom->new(Z=>1, coords=> [V($_, $_, $_)])} 1 .. 10;
+my @atoms = map{HackaMol::Atom->new(Z=>1, coords=> [V($_, $_, $_)])} 1 .. 10;
 $group->push_atoms(@atoms);
 is_deeply($group->COM,     V(5.5,5.5,5.5), 
           'Center of mass 10 atoms [1,1,1]...[10,10,10]');

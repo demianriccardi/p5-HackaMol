@@ -40,39 +40,39 @@ dummy
 );
 #todo add tests for storage!
 
-my @roles = qw(PdbRole QmRole PhysVecMVRRole);
+my @roles = qw(HackaMol::PdbRole HackaMol::QmRole HackaMol::PhysVecMVRRole);
 
-map has_attribute_ok( 'Atom', $_ ), @attributes;
-map can_ok( 'Atom', $_ ), @methods;
-map does_ok( 'Atom', $_ ), @roles;
-map has_attribute_ok( 'Atom', $_ ), @pdb_attributes;
-map has_attribute_ok( 'Atom', $_ ), @qm_attributes;
+map has_attribute_ok( 'HackaMol::Atom', $_ ), @attributes;
+map can_ok( 'HackaMol::Atom', $_ ), @methods;
+map does_ok( 'HackaMol::Atom', $_ ), @roles;
+map has_attribute_ok( 'HackaMol::Atom', $_ ), @pdb_attributes;
+map has_attribute_ok( 'HackaMol::Atom', $_ ), @qm_attributes;
 
-my $atom1 = Atom->new(
+my $atom1 = HackaMol::Atom->new(
     name    => 'C',
     charges => [-1],
     coords  => [ V( 3.12618, -0.06060, 0.05453 ) ],
     Z       => 6
 );
-my $atom2 = Atom->new(
+my $atom2 = HackaMol::Atom->new(
     name    => 'Hg',
     charges => [2],
     coords  => [ V( 1.04508, -0.06088, 0.05456 ) ],
     symbol  => 'HG'
 );
-my $atom3 = Atom->new(
+my $atom3 = HackaMol::Atom->new(
     name    => 'H1',
     charges => [0],
     coords  => [ V( 3.50249, 0.04320, -0.98659 ) ],
     symbol  => 'H'
 );
-my $atom4 = Atom->new(
+my $atom4 = HackaMol::Atom->new(
     name    => 'H2',
     charges => [0],
     coords  => [ V( 3.50252, 0.78899, 0.66517 ) ],
     Z       => 1
 );
-my $atom5 = Atom->new(
+my $atom5 = HackaMol::Atom->new(
     name    => 'H3',
     charges => [0],
     coords  => [ V( 3.50247, -1.01438, 0.48514 ) ],
@@ -201,7 +201,7 @@ sub elemental_analysis {
     my $atom_bin = shift;
     my $label    = shift;
     my @atoms =
-      map { Atom->new( symbol => $_, iatom => $atom_bin->{$_} ) }
+      map { HackaMol::Atom->new( symbol => $_, iatom => $atom_bin->{$_} ) }
       keys %{$atom_bin};
 
     @atoms = sort { $a->mass <=> $b->mass } @atoms;

@@ -1,4 +1,4 @@
-package AtomGroupRole;
+package HackaMol::AtomGroupRole;
 #ABSTRACT: Role for a group of atoms   
 use Moose::Role;
 use Carp;
@@ -12,7 +12,7 @@ my $angste_debye = 4.80320;
 has 'atoms' => (
     traits  => ['Array'],
     is      => 'ro',
-    isa     => 'ArrayRef[Atom]',
+    isa     => 'ArrayRef[HackaMol::Atom]',
     default => sub { [] },
     handles => {
         push_atoms            => 'push',

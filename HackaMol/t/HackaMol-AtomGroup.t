@@ -13,19 +13,19 @@ name
 my @methods = qw(
 Rg
 );
-my @roles = qw(AtomGroupRole);
+my @roles = qw(HackaMol::AtomGroupRole);
 
-map has_attribute_ok( 'AtomGroup', $_ ), @attributes;
-map can_ok (          'AtomGroup', $_ ), @methods;
-map does_ok(          'AtomGroup', $_ ), @roles;
+map has_attribute_ok( 'HackaMol::AtomGroup', $_ ), @attributes;
+map can_ok (          'HackaMol::AtomGroup', $_ ), @methods;
+map does_ok(          'HackaMol::AtomGroup', $_ ), @roles;
 
 my $radius = 16;
 my $natoms = int(0.0334*($radius**3)*4*pi/3);
 
-my @atoms = map {Atom->new(Z => 8, charges=> [0], coords => [$_]) } 
+my @atoms = map {HackaMol::Atom->new(Z => 8, charges=> [0], coords => [$_]) } 
             map {Math::Vector::Real->random_in_sphere(3,$radius)} 1 .. $natoms;
 
-my $group = AtomGroup->new(name => 'biggroup', atoms=> [@atoms]);
+my $group = HackaMol::AtomGroup->new(name => 'biggroup', atoms=> [@atoms]);
 
 is($group->count_atoms, $natoms, "atom count: $natoms");
 is($group->count_unique_atoms, 1, 'unique atoms in sphere is 1');

@@ -1,12 +1,11 @@
-package Dihedral;
+package HackaMol::Dihedral;
 #ABSTRACT: Dihedral Angle class for HackaMol
 use Moose;
 use namespace::autoclean;
-use lib 'lib/roles';
 use Carp;
 use MooseX::Storage;
 use Math::Trig;
-with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
+with Storage( 'io' => 'StorableFile' ),'HackaMol::AtomGroupRole';
 
 has 'name' => (
     is   => 'rw',

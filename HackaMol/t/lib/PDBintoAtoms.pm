@@ -5,7 +5,7 @@ require Exporter;
 our @ISA=qw(Exporter);
 our @EXPORT_OK = qw(readinto_atoms);
 use lib 'lib/HackaMol';
-use Atom;
+use HackaMol::Atom;
 use FileHandle;
 
 sub readinto_atoms{
@@ -48,7 +48,7 @@ sub readinto_atoms{
             my $xyz = V($x, $y, $z);
 
             if ( $t == 0 ) {
-                $atoms[$n] = Atom->new(
+                $atoms[$n] = HackaMol::Atom->new(
                     name        => $name,
                     record_name => $record_name,
                     serial      => $serial,

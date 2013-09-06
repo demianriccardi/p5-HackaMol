@@ -15,13 +15,13 @@ my @methods = qw(
 ang ang_normvec angle_energy clear_ang_eq clear_ang_fc has_ang_eq has_ang_fc
 );
 
-my @roles = qw(AtomGroupRole);
+my @roles = qw(HackaMol::AtomGroupRole);
 
-map has_attribute_ok( 'Angle', $_ ), @attributes;
-map can_ok ( 'Angle', $_ ), @methods;
-map does_ok( 'Angle', $_ ), @roles;
+map has_attribute_ok( 'HackaMol::Angle', $_ ), @attributes;
+map can_ok ( 'HackaMol::Angle', $_ ), @methods;
+map does_ok( 'HackaMol::Angle', $_ ), @roles;
 
-my $atom1 = Atom->new(
+my $atom1 = HackaMol::Atom->new(
     name    => 'Hg',
     charges => [2,2,2,2,2,2,2,2,2,2],
     coords  => [ 
@@ -38,7 +38,7 @@ my $atom1 = Atom->new(
                ],
     Z       => 80
 );
-my $atom2 = Atom->new(
+my $atom2 = HackaMol::Atom->new(
     name    => 'C1',
     charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [ 
@@ -57,7 +57,7 @@ my $atom2 = Atom->new(
 );
 
 
-my $atom3 = Atom->new(
+my $atom3 = HackaMol::Atom->new(
     name    => 'C3',
     charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [
@@ -75,7 +75,7 @@ my $atom3 = Atom->new(
     Z => 6,
 );
 
-my $atom4 = Atom->new(
+my $atom4 = HackaMol::Atom->new(
     name    => 'C2',
     charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [
@@ -93,7 +93,7 @@ my $atom4 = Atom->new(
     Z => 6,
 );
 
-my $atom5 = Atom->new(
+my $atom5 = HackaMol::Atom->new(
     name    => 'C3',
     charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [
@@ -111,9 +111,9 @@ my $atom5 = Atom->new(
     Z => 6,
 );
 
-my $angle1 = Angle->new(atoms => [$atom2,$atom1,$atom3]);
-my $angle2 = Angle->new(atoms => [$atom2,$atom1,$atom4]);
-my $angle3 = Angle->new(atoms => [$atom2,$atom1,$atom5]);
+my $angle1 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom3]);
+my $angle2 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom4]);
+my $angle3 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom5]);
 
 foreach my $t (0 .. 9){
   $angle1->do_forall('t',$t);

@@ -1,11 +1,10 @@
-package Bond;
+package HackaMol::Bond;
 #ABSTRACT: HackaMol Bond class
 use Moose;
-use lib 'lib/roles';
 use Carp;
 use namespace::autoclean;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
+with Storage( 'io' => 'StorableFile' ),'HackaMol::AtomGroupRole';
 
 has 'name' => (
     is   => 'rw',

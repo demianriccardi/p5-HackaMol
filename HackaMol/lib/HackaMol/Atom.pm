@@ -1,13 +1,12 @@
-package Atom;
+package HackaMol::Atom;
 #ABSTRACT: HackaMol Atom Class
 use Moose;
 use namespace::autoclean;
-use lib 'lib/roles', 'lib/HackaMol/lib';
 use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ), 
-     'PhysVecMVRRole', 'PdbRole', 'QmRole';
-use PeriodicTable
+     'HackaMol::PhysVecMVRRole', 'HackaMol::PdbRole', 'HackaMol::QmRole';
+use HackaMol::PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 
 my @delta_attrs = qw(Z symbol mass vdw_radius covalent_radius);
@@ -125,20 +124,17 @@ sub _build_mass {
 };
 
 sub _symbol_to_Z {
-    use PeriodicTable qw(%ELEMENTS);
     my $symbol = shift;
     $symbol = ucfirst( lc($symbol) );
     return $ELEMENTS{$symbol};
 }
 
 sub _Z_to_symbol {
-    use PeriodicTable qw(@ELEMENTS);
     my $Z = shift;
     return $ELEMENTS[$Z];
 }
 
 sub _symbol_to_mass {
-    use PeriodicTable qw(%ATOMIC_MASSES);
     my $symbol = shift;
     return $ATOMIC_MASSES{$symbol};
 }

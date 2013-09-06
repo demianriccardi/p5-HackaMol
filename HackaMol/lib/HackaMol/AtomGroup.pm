@@ -1,10 +1,9 @@
-package AtomGroup;
+package HackaMol::AtomGroup;
 #ABSTRACT: HackaMol AtomGroup class 
 use Moose;
 use namespace::autoclean;
-use lib 'lib/roles';
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'AtomGroupRole';
+with Storage( 'io' => 'StorableFile' ),'HackaMol::AtomGroupRole';
 
 has 'name' => (
     is  => 'rw',

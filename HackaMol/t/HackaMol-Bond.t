@@ -16,13 +16,13 @@ my @methods = qw(
 bond_length bond_vector 
 );
 
-my @roles = qw(AtomGroupRole);
+my @roles = qw(HackaMol::AtomGroupRole);
 
-map has_attribute_ok( 'Bond', $_ ), @attributes;
-map can_ok( 'Bond', $_ ), @methods;
-map does_ok( 'Bond', $_ ), @roles;
+map has_attribute_ok( 'HackaMol::Bond', $_ ), @attributes;
+map can_ok( 'HackaMol::Bond', $_ ), @methods;
+map does_ok( 'HackaMol::Bond', $_ ), @roles;
 
-my $atom1 = Atom->new(
+my $atom1 = HackaMol::Atom->new(
     name    => 'Hg',
     charges => [2,2,2,2,2,2,2,2,2,2],
     coords  => [ 
@@ -40,7 +40,7 @@ my $atom1 = Atom->new(
     symbol  => 'HG'
 );
 
-my $atom2 = Atom->new(
+my $atom2 = HackaMol::Atom->new(
     name    => 'C1',
     charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [ 
@@ -58,7 +58,7 @@ my $atom2 = Atom->new(
     Z       => 6
 );
 
-my $atom3 = Atom->new(
+my $atom3 = HackaMol::Atom->new(
     name    => 'C2',
     charges => [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     coords  => [
@@ -77,8 +77,8 @@ my $atom3 = Atom->new(
 );
 
 
-my $bond1 = Bond->new(atoms => [$atom1,$atom2]);
-my $bond2 = Bond->new(atoms => [$atom1,$atom3]);
+my $bond1 = HackaMol::Bond->new(atoms => [$atom1,$atom2]);
+my $bond2 = HackaMol::Bond->new(atoms => [$atom1,$atom3]);
 
 foreach my $t (0 .. 9){
   $bond1->gt($t);

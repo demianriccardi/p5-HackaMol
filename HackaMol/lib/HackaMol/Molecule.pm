@@ -1,23 +1,22 @@
-package Molecule;
+package HackaMol::Molecule;
 
 #ABSTRACT: Molecule class for HackaMol
 use Moose;
-use lib 'roles';
 use namespace::autoclean;
 use HackaMol::AtomGroup;
 use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ), 'PhysVecMVRRole',
-  'BondsAnglesDihedralsRole', 'QmRole';
+with Storage( 'io' => 'StorableFile' ), 'HackaMol::PhysVecMVRRole',
+  'HackaMol::BondsAnglesDihedralsRole', 'HackaMol::QmRole';
 
-extends 'AtomGroup';
+extends 'HackaMol::AtomGroup';
 
 has 'atomgroups' => (
     traits  => ['Array'],
     is      => 'ro',
-    isa     => 'ArrayRef[AtomGroup]',
+    isa     => 'ArrayRef[HackaMol::AtomGroup]',
     default => sub { [] },
     lazy    => 1,
     handles => {
@@ -80,14 +79,14 @@ sub push_groups_by_atom_attr {
 
     my $self = shift;
     my $attr = shift;
-
+    
     my %group;
     foreach my $atom ( $self->all_atoms ) {
         push @{ $group{ $atom->$attr } }, $atom;
     }
 
     my @atomsgroups =
-      map { AtomGroup->new( atoms => $group{$_} ) } sort keys(%group);
+      map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort keys(%group);
 
     $self->push_groups(@atomsgroups);
 

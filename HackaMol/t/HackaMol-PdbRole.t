@@ -2,7 +2,7 @@ use Test::Most;
 use Test::Warnings;
 use Test::Moose;
 use MooseX::ClassCompositor;    #use this for testing roles
-use roles::PdbRole;                # v0.001;#To test for version availability
+use HackaMol::PdbRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 record_name
@@ -23,7 +23,7 @@ my @methods = qw(
 
 my $class = MooseX::ClassCompositor->new( { 
                                             class_basename => 'Test', 
-                                          } )->class_for('PdbRole');
+                                          } )->class_for('HackaMol::PdbRole');
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;

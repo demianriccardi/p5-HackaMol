@@ -2,7 +2,7 @@ use Test::Most;
 use Test::Warnings;
 use Test::Moose;
 use MooseX::ClassCompositor;    #use this for testing roles
-use roles::QmRole;                # v0.001;#To test for version availability
+use HackaMol::QmRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 basis
@@ -16,7 +16,7 @@ my @methods = qw(
 
 my $class = MooseX::ClassCompositor->new( { 
                                             class_basename => 'Test', 
-                                          } )->class_for('QmRole');
+                                          } )->class_for('HackaMol::QmRole');
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;

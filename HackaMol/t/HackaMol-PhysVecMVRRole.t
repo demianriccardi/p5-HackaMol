@@ -19,7 +19,7 @@ use Test::Most;
 use Test::Warnings;
 use Test::Moose;
 #use MooseX::ClassCompositor;    #use this for testing roles
-use roles::PhysVecMVRRole;                # v0.001;#To test for version availability
+use HackaMol::PhysVecMVRRole;                # v0.001;#To test for version availability
 use Math::Vector::Real;           
 use Scalar::Util qw(refaddr);
 use Time::HiRes qw(time);
@@ -43,7 +43,7 @@ my %methods = ('_build_mass' => sub{return 0}); # this is from the above
 
 my $class = MooseX::ClassCompositor::ReqRole->new( { 
                                             class_basename => 'Test', 
-                                          } )->class_for('PhysVecMVRRole',\%methods);
+                                          } )->class_for('HackaMol::PhysVecMVRRole',\%methods);
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;

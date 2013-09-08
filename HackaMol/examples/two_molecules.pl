@@ -14,9 +14,9 @@ my $mol3 = Molecule->new(name=> 'both', atoms=>[@atoms1,@atoms2]);
 $mol1->translate(-$mol1->COM);
 $mol2->translate(-$mol2->COM+V(30,0,0));
 $mol3->print_xyz;
-foreach (1 .. 360){
-  $mol1->rotate(V(1,1,1), 1, $mol2->COM);
-  $mol1->rotate(V(1,1,1), 1, $mol1->COM);
+foreach (1 .. 36){
+  $mol1->rotate(V(1,1,1), 10, $mol2->COM);
+  $mol1->rotate(V(1,1,1), 10, $mol1->COM);
   $mol3->print_xyz;
 }  
 

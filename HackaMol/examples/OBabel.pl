@@ -23,9 +23,13 @@ my %aas = (
           Tyr => 'N[C@@H](CC1=CC=C(O)C=C1)C(O)=O',
             );
 
+use Data::Dumper;
 foreach my $aa (keys (%aas)) {
   my $smiles = $aas{$aa};
-  system ("obabel -:\"$smiles\" -oxyz -O $aa.xyz --gen3D ");
+  my @a = `obabel -:\"$smiles\" -oxyz --gen3D`;
+  chomp @a;
+  print Dumper \@a;
+  #system ("obabel -:\"$smiles\" -oxyz -O $aa.xyz --gen3D ");
 }
 #[Hg2+][CH3-]
 #obabel -:"C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C))))))))))))))))))))C" -oxyz --gen3D

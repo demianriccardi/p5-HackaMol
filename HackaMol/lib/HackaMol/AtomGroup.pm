@@ -3,19 +3,12 @@ package HackaMol::AtomGroup;
 use Moose;
 use namespace::autoclean;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ), 'HackaMol::PhysVecMVRRole', 'HackaMol::AtomGroupRole';
+with Storage( 'io' => 'StorableFile' ), 'HackaMol::AtomGroupRole';
 
 has 'name' => (
     is  => 'rw',
     isa => 'Str',
 );
-
-sub _build_mass {
-    my $self = shift;
-    my $mass = 0;
-    $mass += $_->mass foreach $self->all_atoms;
-    return ($mass);
-}
 
 sub Rg {
  #radius of gyration. 

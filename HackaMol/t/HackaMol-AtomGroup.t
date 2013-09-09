@@ -30,7 +30,7 @@ my $group = HackaMol::AtomGroup->new(name => 'biggroup', atoms=> [@atoms]);
 is($group->count_atoms, $natoms, "atom count: $natoms");
 is($group->count_unique_atoms, 1, 'unique atoms in sphere is 1');
 is($group->canonical_name, "O$natoms", "sphere atoms named O$natoms");
-cmp_ok(1-abs($group->COM), '>',0, 'center of mass within 1 angstrom of 0,0,0');
+cmp_ok(2-abs($group->COM), '>',0, 'center of mass within 2 angstrom of 0,0,0');
 cmp_ok(abs($group->COZ - $group->COM), '<',1E-6, 'COM ~ COZ');
 cmp_ok($group->total_charge, '==', 0, 'total charges 0');
 cmp_ok($group->dipole_moment, '==',0, 'dipole moment is zero, no charges');

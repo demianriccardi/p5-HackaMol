@@ -31,6 +31,15 @@ has 'atomgroups' => (
     },
 );
 
+sub BUILD {
+    my $self = shift;
+    foreach my $bond ($self->all_bonds){
+      $_->inc_bond_count foreach $bond->all_atoms;
+    }
+    return;
+}
+
+
 # need to increase atom bond_count when push
 before 'push_bonds' => sub {
     my $self = shift;

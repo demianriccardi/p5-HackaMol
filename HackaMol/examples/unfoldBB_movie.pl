@@ -16,7 +16,7 @@ my $t1 = time;
 my $angle = shift ;
 $angle = 180 unless (defined($angle));
 
-my @all_atoms = readinto_atoms("t/lib/1L2Y.pdb");
+my @all_atoms = readinto_atoms("t/lib/2CBA.pdb");
 #to keep example simple, keep only the backbone
 my @atoms = grep {
                $_->name eq 'N'  or

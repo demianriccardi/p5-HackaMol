@@ -149,14 +149,15 @@ sub translate {
   my @atoms = $self->all_atoms; 
   $tf = $atoms[0]->t unless(defined($tf));
 
-  $_->set_coords($tf, $_->xyz+$tvec) foreach ($self->all_atoms);
+  foreach my $at (@atoms){
+    my $v = $at->xyz + $tvec;
+    $at->set_coords($tf, $v);
+  }
 }
 
 sub rotate {
-  #rotate about origin. having origin allow rotation of subgroup
-  #without having to translate everything.  the origin could be taken
-  #as that of the atoms, but this may be tricky and needs some thinking
-  #wrt to API
+  #rotate about origin. having origin allows rotation of subgroup
+  #without having to translate everything. 
   my $self = shift;
   my $rvec = shift or croak "pass MVR rotation vector";
   my $ang  = shift or croak "pass rotation angle";
@@ -177,9 +178,10 @@ sub rotate {
 sub print_xyz {
   my $self = shift;
   my $t    = shift;
-  $t = $self->t unless (defined($t));
+  my @atoms = $self->all_atoms;
+  $t = $atoms[0]->t unless(defined($t));
   print $self->count_atoms . "\n\n";
-  printf ("%3s %10.6f %10.6f %10.6f\n", $_->symbol, @{$_->get_coords($t)}) foreach $self->all_atoms;
+  printf ("%3s %10.6f %10.6f %10.6f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
 }
 
 no Moose::Role;

@@ -14,7 +14,7 @@ use HackaMol::Molecule;
 use PDBintoAtoms qw(readinto_atoms);
 
 my @attributes = qw(
-  atoms mass name
+  atomgroups atoms mass name
 );
 my @methods = qw(
   push_groups set_groups get_groups all_groups clear_groups

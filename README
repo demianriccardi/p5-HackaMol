@@ -30,3 +30,6 @@ This ensures to have a vanilla perl library path as clean as possible.
 
 When you build a new project that you want to manage dependencies via Carton, turn off the devel local::lib and create a new one, like carton. Install Carton and all of its dependencies to the carton local::lib path. Then run carton install like you normally do.
 Becuase devel and carton are isolated, the modules you installed into devel doesn't affect the process when carton builds the dependency tree for your new project at all. This could often be critical when you have a conditional dependency in your tree, like Any::Moose.
+
+
+perl -MDevel::Cover -Ilib t/HackaMol-Molecule.t 

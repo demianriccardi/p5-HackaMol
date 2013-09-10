@@ -7,6 +7,7 @@ use HackaMol::Bond;
 use HackaMol::Angle;
 use HackaMol::Dihedral;
 use Math::Vector::Real;
+use 5.008;
 
 #use Exporter;
 #our @ISA = 'Exporter';

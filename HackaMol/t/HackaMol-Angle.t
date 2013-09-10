@@ -114,6 +114,7 @@ my $atom5 = HackaMol::Atom->new(
 my $angle1 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom3]);
 my $angle2 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom4]);
 my $angle3 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom5]);
+my $angle4 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom2]);
 
 foreach my $t (0 .. 9){
   $angle1->do_forall('t',$t);
@@ -121,13 +122,17 @@ foreach my $t (0 .. 9){
   cmp_ok($angle1->ang,'==', 180.0, "antiparallel t dependent angle: 180");
   cmp_ok($angle2->ang,'==', 90.0, "xz t dependent ang: 90");
   is_deeply($angle1->ang_normvec, V(0,0,0), "antiparallel t dependent ang_normvec: V (0, 0, 0)");
+  is_deeply($angle4->ang_normvec, V(0,0,0), "parallel t dependent ang_normvec: V (0, 0, 0)");
   is_deeply($angle1->COM, $atom1->get_coords($t), "antiparallel COM at Hg");
   is_deeply($angle2->ang_normvec, V(0,-1,0), "xz t dependent ang_normvec: V (0, 1, 0)");
 }
 
-$angle1->ang_fc(1.0);
 $angle1->ang_eq($angle1->ang - 0.5);
 
+$angle1->ang_fc(0.0);
+cmp_ok (abs(0.0-$angle1->angle_energy),'<',1E-7, 'no force constant -> energy 0') ;
+
+$angle1->ang_fc(1.0);
 cmp_ok (abs(0.25-$angle1->angle_energy),'<',1E-7, 'simple angle energy test') ;
 
 $angle1->angle_energy_func(

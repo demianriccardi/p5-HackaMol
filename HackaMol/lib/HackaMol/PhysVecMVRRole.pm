@@ -75,6 +75,7 @@ has 'xyzfree' => (
     default => sub { [ 1, 1, 1 ] },
     lazy    => 1,
     trigger => \&_freedom,
+    clearer => 'clear_xyzfree',
 );
 
 has 'mass' => (
@@ -87,9 +88,11 @@ has 'mass' => (
 
 sub _freedom {
     my ($self, $new,$old) = @_;
-    
-    if (@_ > 2) {
-      $self->is_fixed(1) if (grep {$_ == 0} @{$new});
+    if (grep {$_ == 0} @{$new}) {
+      $self->is_fixed(1) ;
+    }
+    else {
+      $self->is_fixed(0) ;
     }
 }    
 
@@ -269,19 +272,19 @@ sub inter_dforces {
 
 sub charge {
   my $self = shift;
-  carp "charge> takes no arguments. returns get_charges(t)\n" if (@_);
+  carp "charge> takes no arguments. returns get_charges(t)" if (@_);
   return($self->get_charges($self->t));
 }
 
 sub xyz {
   my $self = shift;
-  carp "xyz> takes no arguments. returns get_coords(t)\n" if (@_);
+  carp "xyz> takes no arguments. returns get_coords(t)" if (@_);
   return($self->get_coords($self->t));
 }
 
 sub force {
   my $self = shift;
-  carp "force> takes no arguments. returns get_forces(t)\n" if (@_);
+  carp "force> takes no arguments. returns get_forces(t)" if (@_);
   return($self->get_forces($self->t));
 }
 

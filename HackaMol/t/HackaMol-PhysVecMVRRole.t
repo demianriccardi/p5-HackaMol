@@ -16,6 +16,7 @@
 }
 
 use Test::Most;
+use Test::Fatal qw(dies_ok);
 use Test::Warnings;
 use Test::Moose;
 #use MooseX::ClassCompositor;    #use this for testing roles
@@ -72,6 +73,15 @@ is_deeply($obj1->xyzfree, [0,1,1], "x fixed");
 is($obj1->is_fixed, 1, "atom is now fixed");
 $obj1->is_fixed(0);
 is_deeply($obj1->xyzfree, [0,1,1], "xyzfree does not depend on is_fixed");
+
+$obj1->xyzfree([1,1,0]);
+is_deeply($obj1->xyzfree, [1,1,0], "z now fixed");
+is($obj1->is_fixed, 1, "atom is now fixed");
+
+$obj1->clear_xyzfree;
+$obj1->xyzfree([1,1,1]);
+is_deeply($obj1->xyzfree, [1,1,1], "xyzfree again");
+is($obj1->is_fixed, 0, "atom is now free");
 
 is_deeply($obj1->origin, V(0,0,0), "origin defaults to 0 0 0");
 
@@ -171,7 +181,58 @@ lives_ok {
 'Test creation of an obj3';
 
 is_deeply( $obj3->intra_dcoords( 0, 1 ), V( 1, 1, 1 ), 'intra_dcoords' );
-is_deeply( $obj3->intra_dcharges( 0, 9 ), 9, 'intra_dcharges' );
+is( $obj3->intra_dcharges( 0, 9 ), 9, 'intra_dcharges' );
+dies_ok{$obj3->intra_dcharges} "intra_dcharges dies with 0 arg";
+dies_ok{$obj3->intra_dcharges(0)} "intra_dcharges dies with 1 arg";
+dies_ok{$obj3->intra_dcharges(0,1,3)} "intra_dcharges dies with 3 arg";
+
+dies_ok{$obj3->intra_dcoords} "intra_dcoords dies with 0 arg";
+dies_ok{$obj3->intra_dcoords(0)} "intra_dcoords dies with 1 arg";
+dies_ok{$obj3->intra_dcoords(0,1,3)} "intra_dcoords dies with 3 arg";
+
+dies_ok{$obj3->intra_dforces} "intra_dforces dies with 0 arg";
+dies_ok{$obj3->intra_dforces(0)} "intra_dforces dies with 1 arg";
+dies_ok{$obj3->intra_dforces(0,1,3)} "intra_dforces dies with 3 arg";
+
+$obj3->t(9);
+$obj1->set_charges(9,8);
+$obj1->t(0);
+dies_ok{$obj3->inter_dcoords} "inter_dcoords dies with 0 arg";
+warning_is { $obj3->inter_dcoords($obj1) }
+"comparing objects with different times",
+  "carp warning about obj1 and obj2 distance with different t";
+
+dies_ok{$obj3->inter_dforces} "inter_dforces dies with 0 arg";
+warning_is { $obj3->inter_dforces($obj1) }
+"comparing objects with different times",
+  "carp warning about obj1 and obj2 distance with different t";
+
+dies_ok{$obj3->inter_dcharges} "inter_dcharges dies with 0 arg";
+warning_is { $obj3->inter_dcharges($obj1) }
+"comparing objects with different times",
+  "carp warning about obj1 and obj2 distance with different t";
+
+warning_is { $obj3->charge(0) }
+"charge> takes no arguments. returns get_charges(t)",
+  "charge method get_charge(t) not setter";
+
+warning_is { $obj3->xyz(V(0,0,0)) }
+"xyz> takes no arguments. returns get_coords(t)",
+  "xyz method get_coords(t) not setter";
+
+warning_is { $obj3->force(V(0,0,0)) }
+"force> takes no arguments. returns get_forces(t)",
+  "force method get_forces(t) not setter";
+
+dies_ok{$obj3->copy_ref_from_t1_through_t2} "copy_ref_from_t1_through_t2 dies with 0 arg";
+dies_ok{$obj3->copy_ref_from_t1_through_t2('charges')} "copy_ref_from_t1_through_t2 dies with 1 arg";
+dies_ok{$obj3->copy_ref_from_t1_through_t2('charges',0)} "copy_ref_from_t1_through_t2 dies with 2 arg";
+
+$obj1->t(9);
+
+cmp_ok( abs($obj3->inter_dcharges($obj1) + 1),'<', 1E-7, 'inter_dcharges'); 
+$obj1->set_forces(9,V(10,10,10));
+cmp_ok( abs($obj3->inter_dforces($obj1) - V(1,1,1)),'<', 1E-7, 'inter_dforces'); 
 
 for my $t ( 0 .. $obj3->count_coords - 1 ) {
     $obj3->t($t);
@@ -199,6 +260,8 @@ is($obj3->msd_forces, 24.75, "mean square deviation forces");
 is($obj3->mean_charges, 4.5, "average charges");
 is($obj3->msd_charges, 8.25, "mean square deviation charges");
 
+
+
 my $obj4;
 lives_ok {
     $obj4 = $class->new( name => 'somephysvec', t => 0, coords => [ V(1,2,3.0) ]  );
@@ -209,6 +272,35 @@ $obj4->copy_ref_from_t1_through_t2('coords', 0, 10);
 
 cmp_ok($obj4->get_coords(0) , '==' , $obj4->get_coords($_),
 "copy_ref_from_t1_through_t2(coords, 0 , 10): $_") foreach 1 .. 10;
+
+my @objs = ($obj1,$obj2,$obj3,$obj4);
+$_->t(0) foreach (@objs);
+
+$_->clear_coords  foreach @objs;
+$_->clear_forces  foreach @objs;
+$_->clear_charges foreach @objs;
+$obj1->push_coords(V(1,1,0));
+$obj2->push_coords(V(1,0,0));
+$obj3->push_coords(V(0,0,0));
+$obj4->push_coords(V(0,-1,0));
+
+dies_ok{$obj1->distance} "distance dies with 0 arg";
+dies_ok{$obj1->angle} "angle dies with 0 arg";
+dies_ok{$obj1->angle($obj1)} "angle dies with 1 arg";
+dies_ok{$obj1->dihedral} "dihedral dies with 0 arg";
+dies_ok{$obj1->dihedral($obj2)} "dihedral dies with 1 arg";
+dies_ok{$obj1->dihedral($obj2,$obj3)} "dihedral dies with 2 arg";
+dies_ok{$obj1->dihedral($obj2,$obj3,$obj4,$obj1)} "dihedral dies with 4 arg";
+cmp_ok(abs(1.0 - $obj1->distance($obj2)),'<',1E-7, "distance " );
+cmp_ok(abs(90.0 - $obj2->angle($obj1,$obj3)),'<',1E-7, "angle" );
+cmp_ok(abs(180.0 - $obj1->dihedral($obj2,$obj3,$obj4)),'<',1E-7, "dihedral" );
+
+$obj1->set_coords(0, V(1,0,0));
+cmp_ok(abs(0.0 - $obj2->angle($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
+$obj1->set_coords(0, V(1,1,0));
+$obj3->set_coords(0, V(1,0,0));
+cmp_ok(abs(0.0 - $obj2->angle($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
+$obj1->set_coords(0, V(1,1,0));
 
 
 done_testing();

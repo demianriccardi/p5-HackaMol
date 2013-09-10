@@ -1,5 +1,6 @@
 use Modern::Perl;
 use Test::Most;
+use Test::Fatal qw(dies_ok);
 use Test::Warnings;
 use Test::Moose;
 use Test::More;
@@ -106,30 +107,29 @@ is( sprintf( "%.3f", $atom3->dihedral($atom1,$atom2,$atom4)), -120.018, "dihedra
 is( sprintf( "%.3f", $atom4->dihedral($atom1,$atom2,$atom3)),  120.018, "dihedral angle atom4-atom1-atom2-atom3");
 is( sprintf( "%.3f", $atom4->dihedral($atom2,$atom1,$atom3)), -120.018, "dihedral angle atom4-atom2-atom1-atom3");
 
-my $cnt = 1000;
-my $t1 = time;
-$atom1->distance($atom2) foreach 1 .. $cnt;
-my $t2 = time;
+#my $cnt = 1000;
+#my $t1 = time;
+#$atom1->distance($atom2) foreach 1 .. $cnt;
+#my $t2 = time;
 
-my $tt1 = $cnt/($t2-$t1);
-cmp_ok( $tt1, '>', 1E4, "> 10000 distance calculations s^-1");
+#my $tt1 = $cnt/($t2-$t1);
+#cmp_ok( $tt1, '>', 1E4, "> 10000 distance calculations s^-1");
 
+#$t1 = time;
+#$atom1->angle($atom2,$atom3) foreach 1 .. $cnt;
+#$t2 = time;
 
-$t1 = time;
-$atom1->angle($atom2,$atom3) foreach 1 .. $cnt;
-$t2 = time;
-
-my $tt2 = $cnt/($t2-$t1);
+#my $tt2 = $cnt/($t2-$t1);
 #print "time ! $tt per s\n";
-cmp_ok( $tt2, '>', 1E4, "> 10000 angle calculations s^-1");
+#cmp_ok( $tt2, '>', 1E4, "> 10000 angle calculations s^-1");
 
-$t1 = time;
-$atom3->dihedral($atom1,$atom2,$atom4) foreach 1 .. $cnt;
-$t2 = time;
+#$t1 = time;
+#$atom3->dihedral($atom1,$atom2,$atom4) foreach 1 .. $cnt;
+#$t2 = time;
 
-my $tt3 = $cnt/($t2-$t1);
+#my $tt3 = $cnt/($t2-$t1);
 #print "time ! $tt per s\n";
-cmp_ok( $tt3, '>', 1E4, "> 10000 dihedral calculations s^-1");
+#cmp_ok( $tt3, '>', 1E4, "> 10000 dihedral calculations s^-1");
 
 #print "distances: $tt1 angles: $tt2 dihedrals $tt3 per s\n"; exit;
 
@@ -157,12 +157,25 @@ is(
     "Hg in elemental analysis as expected"
 );
 ok( !$atom2->is_dirty, "atom 2 is clean" );
-warning_is { $atom2->change_Z(30) }
+warning_is { $atom2->change_Z(22) }
 "cleaning atom attributes for in place change. setting atom->is_dirty",
   "warning from changing Z";
+
+warning_is { $atom2->change_symbol("Zn") }
+"cleaning atom attributes for in place change. setting atom->is_dirty",
+  "warning from changing symbol";
+
+dies_ok {HackaMol::Atom->new(name=>"noZ noSymbol")} "Croak unless Z or symbol passed";
+
 is( $atom2->symbol, 'Zn', "atom 2 changed from Hg to Zn" );
 is( sprintf("%.2f", $atom2->mass), 65.38 , "atom 2 mass changed from Hg to Zn" );
+is( sprintf("%.2f", $atom2->covalent_radius), 1.18 , "Zn atom covalent radius" );
+is( sprintf("%.2f", $atom2->vdw_radius), 1.39 , "Zn atom vdw radius" );
 ok( $atom2->is_dirty, "atom 2 is now dirty" );
+
+
+dies_ok {$atom2->change_symbol} "croak if no argument passed to change_symbol";
+dies_ok {$atom2->change_Z}      "croak if no argument passed to change_Z";
 
 ( $bin, $elname ) = bin_atoms( \@atoms );
 ( $prnts, $sum_mass ) = elemental_analysis( $bin, $elname );
@@ -185,6 +198,7 @@ is(
     "Zn    65.3820     1  81.30\n",
     "Zn in elemental analysis as expected"
 );
+
 
 done_testing();
 

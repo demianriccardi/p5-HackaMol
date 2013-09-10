@@ -3,7 +3,6 @@ package HackaMol::Atom;
 use Moose;
 use namespace::autoclean;
 use Carp;
-use 5.008;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ), 
      'HackaMol::PhysVecMVRRole', 'HackaMol::PdbRole', 'HackaMol::QmRole';
@@ -107,16 +106,17 @@ sub _clean_atom {
 sub BUILD {
     my $self = shift;
 
-    return if ($self->has_Z); 
-
-    if ($self->has_symbol){
-      $self->symbol( _fix_symbol( $self->symbol ) ) ;
-      return;
-    }  
-
     unless ( $self->has_Z or $self->has_symbol ) {
         croak "Either Z or Symbol must be set when calling Atom->new()";
     }
+
+    if($self->has_Z) {
+      #clear out the symbol if Z is passed.  Z is faster and takes precedence
+      $self->clear_symbol;
+      return;
+    }
+
+    $self->symbol( _fix_symbol( $self->symbol ) ) ;
     return;
 }
 

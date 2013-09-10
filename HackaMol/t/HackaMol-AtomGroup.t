@@ -37,6 +37,10 @@ cmp_ok($group->dipole_moment, '==',0, 'dipole moment is zero, no charges');
 my $exp_Rg = sqrt($radius*$radius*3/5);
 cmp_ok(abs($exp_Rg-$group->Rg), '<',0.75, 'numerical Rg within 0.75 Angs of theoretical');
 
+$group->clear_atoms;
+is($group->count_atoms, 0, "cleared atom count: 0");
+cmp_ok(abs(0-$group->Rg), '<',1E-7, 'Rg return 0 with no atoms');
+
 done_testing();
 
 

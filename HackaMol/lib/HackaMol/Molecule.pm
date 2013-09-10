@@ -185,24 +185,25 @@ sub angle_bend_atoms {
 
 sub dihedral_rotate_atoms {
     my $self = shift;
-    croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ == 3;
+    croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ > 2;
     my $t = $self->t;
-    my ( $dihe, $dang, $atoms ) = @_;
+    my ( $dihe, $dang ) = (shift,shift);
     my ( $atom0, $ratom1, $ratom2, $atom3 ) = $dihe->all_atoms;
     my $rvec   = ( $ratom2->inter_dcoords($ratom1) )->versor;
     my $origin = $ratom1->xyz;
+     my @atoms  = @_;
     my @cor =
-      map { $_->get_coords($t) - $origin } @$atoms;    #shift origin too
+      map { $_->get_coords($t) - $origin } @atoms;    #shift origin too
     my @rcor = $rvec->rotate_3d( deg2rad($dang), @cor );
 
     #shift origin back
-    $atoms->[$_]->set_coords( $t, $rcor[$_] + $origin ) foreach 0 .. $#rcor;
+    $atoms[$_]->set_coords( $t, $rcor[$_] + $origin ) foreach 0 .. $#rcor;
 
 }
 
 sub dihedral_rotate_groups {
     my $self = shift;
-    croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ == 3;
+    croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ > 2;
     my $t = $self->t;
     my ( $dihe, $dang ) = ( shift, shift );
     my ( $atom0, $ratom1, $ratom2, $atom3 ) = $dihe->all_atoms;

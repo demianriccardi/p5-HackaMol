@@ -100,9 +100,11 @@ $bond1->bond_order(1.5);
 is($bond1->bond_order, 1.5, "bond order set to num");
 
 
-$bond1->bond_fc(1.0);
 $bond1->bond_length_eq($bond1->bond_length - 0.5);
 
+$bond1->bond_fc(0.0);
+cmp_ok (abs(0.0-$bond1->bond_energy),'<',1E-7, ' force constant 0 returns energy of 0') ;
+$bond1->bond_fc(1.0);
 cmp_ok (abs(0.25-$bond1->bond_energy),'<',1E-7, 'simple bond energy test') ;
 
 $bond1->bond_energy_func(

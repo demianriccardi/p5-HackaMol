@@ -116,6 +116,7 @@ my $pdihe = sprintf(
                 $dihe->name, 
                 $dihe->dihe_deg, 
                      );
+
 print $pdihe;
 
 my $COM_atom = HackaMol::Atom->new(
@@ -130,11 +131,8 @@ my $COM_atom = HackaMol::Atom->new(
 The HackaMol Dihedral class provides a set of methods and attributes for working 
 with three connections between four atoms.  Like the Bond and Angle classes, the 
 Dihedral class consumes the AtomGroupRole providing methods to determine the 
-center of mass, total charge, etc. (see AtomGroupRole). The Dihedral class is 
-flexible.   Instantiation of a Dihedral object also adds that Dihedral to the 
-atoms in the dihedral (during the BUILD phase). In contrast, pushing or resetting 
-atoms for a Dihedral instance will not add that Dihedral object to the 
-atoms. A $dihedral containing (atom1,atom2,atom3,atom4) produces the angle 
+center of mass, total charge, etc. (see AtomGroupRole). 
+A $dihedral containing (atom1,atom2,atom3,atom4) produces the angle 
 ($dihedral->dihe_deg) between the planes containing (atom1, atom2, atom3) and 
 (atom2, atom3, atom4).
 

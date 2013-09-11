@@ -108,6 +108,7 @@ foreach my $angle ($angle1, $angle2){
                 $angle->ang, 
                 @{$angle->ang_normvec},
                      );
+
   print $pangle;
 }
 
@@ -121,30 +122,13 @@ my @COM_ats = map {HackaMol::Atom->new(
 my @ang_w_HH = grep { $_->get_atoms(0)->Z == 1 and
                       $_->get_atoms(1)->Z == 1} ($angle1, $angle2);
 
-#atoms knows which angles it is in
-
-foreach my $angle ($atom1->all_angles) {
-
-  my $pangle = sprintf(
-                "Angle: %s, angle: %.2f, vector normal to angle plane:".
-                " %.5 %.5 %.5 \n",
-                $angle->name, 
-                $angle->ang, 
-                @{$angle->ang_normvec},
-                     );
-  print $pangle;
-
-}
 
 =head1 DESCRIPTION
 
 The HackaMol Angle class provides a set of methods and attributes for working with 
 two connections between three atoms.  Like the Bond, the Angle class consumes the 
 AtomGroupRole providing methods to determine the center of mass, total charge, etc (see 
-AtomGroupRole). The Angle class is flexible.   Instantiation of a Angle object also
-adds the Angle to the atoms in the angle (during the BUILD phase). 
-In contrast, pushing or resetting atoms for an Angle instance will not add 
-that Angle object to the atoms. An Angle containing (atom1,atom2,atom3) 
+AtomGroupRole). An Angle containing (atom1,atom2,atom3) 
 produce angles between the atom21 atom23 interatomic vectors.
 
 The Angle class also provides attributes and methods to set force_constants and 

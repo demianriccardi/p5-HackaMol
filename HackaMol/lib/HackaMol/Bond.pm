@@ -107,6 +107,7 @@ foreach my $bond ( @bonds ){
                 $bond->bond_length, 
                 @{$bond->bond_vector},
                      );
+
   print $pbond;
 
 }
@@ -122,29 +123,12 @@ my @COM_ats = map {HackaMol::Atom->new(
 my @HH_bonds = grep { $_->get_atoms(0)->Z == 1 and
                       $_->get_atoms(1)->Z == 1} @bonds;
 
-#atoms knows which bonds it is in
-
-foreach my $bond ($atom1->all_bonds) {
-
-  my $pbond = sprintf(
-                "Bond: %s, Length: %.2f, Vector: %.5 %.5 %.5 \n",
-                $bond->name, 
-                $bond->bond_length, 
-                @{$bond->bond_vector},
-                     );
-  print $pbond;
-
-}
-
 =head1 DESCRIPTION
 
 The HackaMol Bond class provides a set of methods and attributes for working with 
 connections between two atoms.  The Bond class consumes the AtomGroupRole providing
 Bond objects with methods to determine the center of mass, total charge, etc (see 
-AtomGroupRole). The Bond class is flexible.  Place any two atoms in a Bond to 
-measure their interatomic distance or vector.  Instantiation of a Bond object also
-pushes the Bond on to the atoms in the bond (See SYNOPSIS). In contrast, pushing (atom1, atom2) 
-on to an instance of Bond or resetting atoms will not add the Bond to the atoms.    
+AtomGroupRole). 
 
 The Bond class also provides attributes and methods to set force_constants and 
 measure energy.  The bond_energy method calls on a CodeRef attribute that the 

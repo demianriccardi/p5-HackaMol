@@ -45,8 +45,8 @@ is( $group->count_atoms,        $natoms, "group atom count: $natoms" );
 is( $mol->count_atoms,          $natoms, "mol atom count: $natoms" );
 is( $group->count_unique_atoms, 1,       'group unique atoms in sphere is 1' );
 is( $mol->count_unique_atoms,   1,       "mol unique atoms in sphere is 1" );
-is( $group->canonical_name, "O$natoms", "group sphere atoms named O$natoms" );
-is( $mol->canonical_name,   "O$natoms", "mol sphere atoms named O$natoms" );
+is( $group->bin_atoms_name, "O$natoms", "group sphere atoms named O$natoms" );
+is( $mol->bin_atoms_name,   "O$natoms", "mol sphere atoms named O$natoms" );
 cmp_ok( 2 - abs( $group->COM ),
     '>', 0, 'group center of mass within 2 angstrom of 0,0,0' );
 cmp_ok( abs( $mol->COM - $group->COM ),

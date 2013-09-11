@@ -127,7 +127,7 @@ sub count_unique_atoms {
     return (scalar(keys %{$bin_hr}));
 }
 
-sub canonical_name {
+sub bin_atoms_name {
     # return something like C4H10 sort in order of descending Z
     my $self = shift;
     my ($bin_hr,$z_hr) = $self->bin_atoms;
@@ -235,7 +235,7 @@ $group->gt(1); # same as $group->do_forall('t',1);
 
 print $group->dipole_moment . "\n";
 
-print $group->canonical_name . "\n";
+print $group->bin_atoms_name . "\n";
 
 print $group->unique_atoms . "\n";
 
@@ -342,7 +342,7 @@ keys.  The second hash reference was added, to be able to sort by Z in the absen
 
 no arguments. returns the number of keys in each hash returned by bin_atoms
 
-=method canonical_name
+=method bin_atoms_name
 
 no arguments. returns a string summary of the atoms in the group.  Take the bin_atoms hashes, sorts
 by Z and generates something like OH2 for water or O2H2 for peroxide.

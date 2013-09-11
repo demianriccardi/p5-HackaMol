@@ -30,7 +30,7 @@ atoms
 my @methods = qw(
 bin_atoms dipole COM COZ dipole_moment total_charge
 count_unique_atoms  
-canonical_name 
+bin_atoms_name 
 all_atoms push_atoms get_atoms delete_atoms count_atoms
 clear_atoms
 rotate translate print_xyz
@@ -167,13 +167,13 @@ warning_is { $group->do_forall('set_charges') }
 is_deeply($group->dipole,     V(0,0,0), 
           'dipole (0,0,0) atoms [1,1,1]...[10,10,10]');
 #cmp_ok(abs($group->Rg-4.97493), '<', 0.0001, "Rg for the ten atoms, double check" );
-is($group->canonical_name, "H10", "canonical name is H10");
+is($group->bin_atoms_name, "H10", "bin_atoms name is H10");
 
 $group->delete_atoms(0) foreach 0 .. 4 ;
 
 is_deeply($group->COM,     V(8,8,8), 
           'center of mass delete first 5 of 10 atoms [1,1,1]...[10,10,10]');
-is($group->canonical_name, "H5", "canonical name is H5");
+is($group->bin_atoms_name, "H5", "bin_atoms name is H5");
 
 $group->clear_atoms;
 
@@ -182,11 +182,11 @@ $group->push_atoms($atom2);
 $group->push_atoms($atom3);
 
 is($group->count_unique_atoms, 2, 'unique atoms in water is 2');
-is($group->canonical_name, 'OH2', 'water named OH2');
+is($group->bin_atoms_name, 'OH2', 'water named OH2');
 
 $group->push_atoms($atom1);
 is($group->count_unique_atoms, 2, 'push O1 again, unique atoms still 2');
-is($group->canonical_name, 'O2H2', 'now named O2H2');
+is($group->bin_atoms_name, 'O2H2', 'now named O2H2');
 
 cmp_ok (abs(-0.834-$group->total_charge), '<', 1E-7, 'total charge'  );
 cmp_ok (abs(34.01468-$group->total_mass), '<', 1E-7, 'total mass'  );

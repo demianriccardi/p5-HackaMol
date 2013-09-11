@@ -180,9 +180,13 @@ if interested in changing the function form.
 no arguments. returns Math::Vector::Real object from the normalized cross product of the atom21 and 
 atom23 interatomic vectors.
 
-=method ang 
+=method ang_deg 
 
-no arguments. returns the angle between the atom21 and atom23 vectors. 
+no arguments. returns the angle (degrees) between the atom21 and atom23 vectors. 
+
+=method ang_rad 
+
+no arguments. returns the angle (radians) between the atom21 and atom23 vectors. 
 
 =method angle_energy
 

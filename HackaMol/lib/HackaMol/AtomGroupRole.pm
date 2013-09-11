@@ -5,7 +5,6 @@ use Carp;
 use MooseX::Storage;
 use Math::Trig;
 use Math::Vector::Real;
-with Storage( 'io' => 'StorableFile' );
 
 my $angste_debye = 4.80320;
 

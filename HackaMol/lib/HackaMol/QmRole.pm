@@ -1,7 +1,6 @@
 package HackaMol::QmRole;
 #ABSTRACT: simple role that provides attributes needed for setting up quantum chemistry calculations
 use Moose::Role;
-use namespace::autoclean;
 
 has 'basis' => (
                 is        => 'rw',

@@ -12,7 +12,7 @@ my @attributes = qw(
 atoms ang_eq ang_fc  
 );
 my @methods = qw(
-ang ang_normvec angle_energy clear_ang_eq clear_ang_fc has_ang_eq has_ang_fc
+ang_deg ang_rad ang_normvec angle_energy clear_ang_eq clear_ang_fc has_ang_eq has_ang_fc
 );
 
 my @roles = qw(HackaMol::AtomGroupRole);
@@ -119,15 +119,16 @@ my $angle4 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom2]);
 foreach my $t (0 .. 9){
   $angle1->do_forall('t',$t);
   $angle2->do_forall('t',$t);
-  cmp_ok($angle1->ang,'==', 180.0, "antiparallel t dependent angle: 180");
-  cmp_ok($angle2->ang,'==', 90.0, "xz t dependent ang: 90");
+  cmp_ok($angle1->ang_deg,'==', 180.0, "antiparallel t dependent angle_deg: 180");
+  cmp_ok(abs(3.14159265359-$angle1->ang_rad),'<', 1E-7, "antiparallel t dependent angle_rad: pi");
+  cmp_ok($angle2->ang_deg,'==', 90.0, "xz t dependent ang: 90");
   is_deeply($angle1->ang_normvec, V(0,0,0), "antiparallel t dependent ang_normvec: V (0, 0, 0)");
   is_deeply($angle4->ang_normvec, V(0,0,0), "parallel t dependent ang_normvec: V (0, 0, 0)");
   is_deeply($angle1->COM, $atom1->get_coords($t), "antiparallel COM at Hg");
   is_deeply($angle2->ang_normvec, V(0,-1,0), "xz t dependent ang_normvec: V (0, 1, 0)");
 }
 
-$angle1->ang_eq($angle1->ang - 0.5);
+$angle1->ang_eq($angle1->ang_deg - 0.5);
 
 $angle1->ang_fc(0.0);
 cmp_ok (abs(0.0-$angle1->angle_energy),'<',1E-7, 'no force constant -> energy 0') ;
@@ -139,13 +140,13 @@ $angle1->angle_energy_func(
                           sub {
                                my $a = shift;
                                my $sum = 0;
-                               $sum += $_*$a->ang foreach (@_);
+                               $sum += $_*$a->ang_deg foreach (@_);
                                return($sum);
                               }
                         );
 
 cmp_ok (
-        abs($angle1->angle_energy(1,2,3,4) - 10*$angle1->ang),
+        abs($angle1->angle_energy(1,2,3,4) - 10*$angle1->ang_deg),
         '<', 1E-7, 'new nonsense energy'
        );
 

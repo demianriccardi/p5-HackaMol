@@ -98,14 +98,14 @@ is( sprintf( "%.2f", $atom3->distance($atom4) ),
     1.81, 'MeHg+ : H to H distance' );
 is( sprintf( "%.2f", $atom3->distance($atom5) ),
     1.81, 'MeHg+ : H to H distance' );
-is( sprintf( "%.3f", $atom1->angle($atom2,$atom3)), 109.783, "angle atom2-atom1-atom3");
-is( sprintf( "%.3f", $atom1->angle($atom2,$atom4)), 109.789, "angle atom2-atom1-atom4");
-is( sprintf( "%.3f", $atom1->angle($atom2,$atom5)), '109.770', "angle atom2-atom1-atom5");
-is( sprintf( "%.3f", $atom2->angle($atom3,$atom5)), 39.665, "angle atom3-atom2-atom5");
-is( sprintf( "%.3f", $atom3->dihedral($atom2,$atom1,$atom4)),  120.018, "dihedral angle atom3-atom2-atom1-atom4");
-is( sprintf( "%.3f", $atom3->dihedral($atom1,$atom2,$atom4)), -120.018, "dihedral angle atom3-atom1-atom2-atom4");
-is( sprintf( "%.3f", $atom4->dihedral($atom1,$atom2,$atom3)),  120.018, "dihedral angle atom4-atom1-atom2-atom3");
-is( sprintf( "%.3f", $atom4->dihedral($atom2,$atom1,$atom3)), -120.018, "dihedral angle atom4-atom2-atom1-atom3");
+is( sprintf( "%.3f", $atom1->angle_deg($atom2,$atom3)), 109.783, "angle atom2-atom1-atom3");
+is( sprintf( "%.3f", $atom1->angle_deg($atom2,$atom4)), 109.789, "angle atom2-atom1-atom4");
+is( sprintf( "%.3f", $atom1->angle_deg($atom2,$atom5)), '109.770', "angle atom2-atom1-atom5");
+is( sprintf( "%.3f", $atom2->angle_deg($atom3,$atom5)), 39.665, "angle atom3-atom2-atom5");
+is( sprintf( "%.3f", $atom3->dihedral_deg($atom2,$atom1,$atom4)),  120.018, "dihedral angle atom3-atom2-atom1-atom4");
+is( sprintf( "%.3f", $atom3->dihedral_deg($atom1,$atom2,$atom4)), -120.018, "dihedral angle atom3-atom1-atom2-atom4");
+is( sprintf( "%.3f", $atom4->dihedral_deg($atom1,$atom2,$atom3)),  120.018, "dihedral angle atom4-atom1-atom2-atom3");
+is( sprintf( "%.3f", $atom4->dihedral_deg($atom2,$atom1,$atom3)), -120.018, "dihedral angle atom4-atom2-atom1-atom3");
 
 #my $cnt = 1000;
 #my $t1 = time;

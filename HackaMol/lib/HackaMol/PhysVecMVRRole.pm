@@ -200,7 +200,7 @@ sub distance {
     return ( $vs->dist( $v2 ) );
 }
 
-sub angle {
+sub angle_rad {
     # obj2    obj3
     #   \ Ang /
     #    \   /
@@ -212,7 +212,13 @@ sub angle {
     my $v1 = $self->inter_dcoords($obj2);
     my $v2 = $self->inter_dcoords($obj3);
     return (0) if (abs($v1) == 0 or abs($v2) == 0);
-    return ( rad2deg( atan2($v1,$v2) ) );
+    return (atan2($v1,$v2));
+}
+
+sub angle_deg {
+    my $self = shift;
+    my $angle = $self->angle_rad(@_);
+    return ( rad2deg($angle) );
 }
 
 sub dihedral_rad {
@@ -237,7 +243,7 @@ sub dihedral_rad {
     return $dihe;
 }
 
-sub dihedral {
+sub dihedral_deg {
     my $self = shift;
     my $dihe = $self->dihedral_rad(@_);
     return ( rad2deg($dihe) );
@@ -506,12 +512,36 @@ Takes one argument ($obj2) and calculates the distance using Math::Vector::Real
 
   $obj1->distance($obj2);
 
-=method angle
+=method angle_deg
 
 Takes two arguments ($obj2,$obj3) and calculates the angle (degrees) between 
 the vectors with $obj1 as orgin using Math::Vector::Real.  
 
-  $obj1->angle($obj2,$obj3);
+  $obj1->angle_deg($obj2,$obj3);
+
+=method angle_rad
+
+Takes two arguments ($obj2,$obj3) and calculates the angle (radians) between 
+the vectors with $obj1 as orgin using Math::Vector::Real.  
+
+  $obj1->angle_rad($obj2,$obj3);
+
+=method dihedral_deg
+
+Takes three arguments ($obj2,$obj3,obj4) and calculates the angle 
+(degrees) between the vectors normal to the planes containing the first three
+and last three objects using Math::Vector::Real.  
+
+  $obj1->dihedral_deg($obj2,$obj3,$obj4);
+
+=method dihedral_rad
+
+Takes three arguments ($obj2,$obj3,obj4) and calculates the angle 
+(radians) between the vectors normal to the planes containing the first three
+and last three objects using Math::Vector::Real.  
+
+  $obj1->dihedral_rad($obj2,$obj3,$obj4);
+
 
 =method intra_dcharges
 

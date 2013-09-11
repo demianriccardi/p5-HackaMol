@@ -13,7 +13,7 @@ my @attributes = qw(
 atoms dihe_eq dihe_mult dihe_dphase dihe_fc 
 );
 my @methods = qw(
-torsion_energy improper_dihe_energy dihe
+torsion_energy improper_dihe_energy dihe_deg dihe_rad
 );
 
 my @roles = qw(HackaMol::AtomGroupRole);
@@ -57,16 +57,16 @@ my $atom3 = HackaMol::Atom->new(
 
 my $dihe= HackaMol::Dihedral->new(atoms => [$atom0,$atom1,$atom2,$atom3]);
 
-cmp_ok($dihe->dihe,'==', 180.0, "180 dihedral");
+cmp_ok($dihe->dihe_deg,'==', 180.0, "180 dihedral");
 is_deeply($dihe->COM, V(0,0,0), "COM at 0,0,0");
 
 $atom3->set_coords(0,V(-1.0,sqrt(2)/2,sqrt(2)/2));
-cmp_ok($dihe->dihe,'==', -45.0, "-45 dihedral");
+cmp_ok($dihe->dihe_deg,'==', -45.0, "-45 dihedral");
 
 $atom3->set_coords(0,V(-1.0,-sqrt(2)/2,-sqrt(2)/2));
-cmp_ok($dihe->dihe,'==', 135.0, "135 dihedral");
+cmp_ok($dihe->dihe_deg,'==', 135.0, "135 dihedral");
 
-$dihe->dihe_eq($dihe->dihe - 0.5);
+$dihe->dihe_eq($dihe->dihe_deg - 0.5);
 
 $dihe->dihe_fc(0.0);
 cmp_ok (abs(0.0-$dihe->improper_dihe_energy),'<',1E-7, 'improper force constant 0 returns energy of 0') ;
@@ -82,7 +82,7 @@ $dihe->torsion_energy_func(
                           sub {
                                my $a = shift;
                                my $sum = 0;
-                               $sum += $_*$a->dihe foreach (@_);
+                               $sum += $_*$a->dihe_deg foreach (@_);
                                return($sum);
                               }
                           );
@@ -90,12 +90,12 @@ $dihe->torsion_energy_func(
 $dihe->improper_dihe_energy_func($dihe->torsion_energy_func);
 
 cmp_ok (
-        abs($dihe->torsion_energy(1,2,3,4) - 10*$dihe->dihe),
+        abs($dihe->torsion_energy(1,2,3,4) - 10*$dihe->dihe_deg),
         '<', 1E-7, 'new nonsense torsion energy'
        );
 
 cmp_ok (
-        abs($dihe->improper_dihe_energy(1,2,3,4) - 10*$dihe->dihe),
+        abs($dihe->improper_dihe_energy(1,2,3,4) - 10*$dihe->dihe_deg),
         '<', 1E-7, 'new nonsense improper dihedral energy'
        );
 

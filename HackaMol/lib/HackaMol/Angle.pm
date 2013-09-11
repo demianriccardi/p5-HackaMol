@@ -24,7 +24,7 @@ has $_ => (
 sub ang_normvec{
   my $self  = shift;
   my @atoms = $self->all_atoms;
-  my $ang  = $self->ang;
+  my $ang  = $self->ang_deg;
   return V(0,0,0) if ($ang == 0 or $ang == 180);
   my $vec1 = $atoms[1]->inter_dcoords($atoms[0]);
   my $vec2 = $atoms[1]->inter_dcoords($atoms[2]);
@@ -32,10 +32,16 @@ sub ang_normvec{
   return ($v1xv2->versor);
 }
 
-sub ang{
+sub ang_deg{
   my $self  = shift;
   my @atoms = $self->all_atoms;
-  return ($atoms[1]->angle($atoms[0],$atoms[2]));
+  return ($atoms[1]->angle_deg($atoms[0],$atoms[2]));
+}
+
+sub ang_rad{
+  my $self  = shift;
+  my @atoms = $self->all_atoms;
+  return ($atoms[1]->angle_rad($atoms[0],$atoms[2]));
 }
 
 has 'angle_energy_func' => (
@@ -50,7 +56,7 @@ sub _build_angle_energy_func {
     #my $self = shift; #self is passed by moose, but we don't use it here
     my $subref = sub {
         my $angle = shift;
-        my $val = ( $angle->ang - $angle->ang_eq )**2;
+        my $val = ( $angle->ang_deg - $angle->ang_eq )**2;
         return ($angle->ang_fc*$val);
     };
     return ($subref);

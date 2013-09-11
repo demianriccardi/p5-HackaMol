@@ -20,10 +20,10 @@ has $_ => (
             clearer => "clear_$_",
           ) foreach qw(dihe_fc dihe_dphase dihe_eq dihe_mult);
 
-sub dihe{
+sub dihe_deg{
   my $self  = shift;
   my @atoms = $self->all_atoms;
-  return ($atoms[0]->dihedral($atoms[1],$atoms[2],$atoms[3]));
+  return ($atoms[0]->dihedral_deg($atoms[1],$atoms[2],$atoms[3]));
 }
 
 sub dihe_rad{
@@ -43,7 +43,7 @@ has 'improper_dihe_energy_func' => (
 sub _build_improper_dihe_energy_func {
     my $subref = sub {
         my $dihedral = shift;
-        my $val = ( $dihedral->dihe - $dihedral->dihe_eq )**2;
+        my $val = ( $dihedral->dihe_deg - $dihedral->dihe_eq )**2;
         return ($dihedral->dihe_fc*$val);
     };
     return ($subref);
@@ -114,7 +114,7 @@ my $dihe = HackaMol::Dihedral->new(name=>'disulfide',
 my $pdihe = sprintf(
                 "Dihedral: %s, angle: %.2f\n"
                 $dihe->name, 
-                $dihe->ang, 
+                $dihe->dihe_deg, 
                      );
 print $pdihe;
 
@@ -135,7 +135,7 @@ flexible.   Instantiation of a Dihedral object also adds that Dihedral to the
 atoms in the dihedral (during the BUILD phase). In contrast, pushing or resetting 
 atoms for a Dihedral instance will not add that Dihedral object to the 
 atoms. A $dihedral containing (atom1,atom2,atom3,atom4) produces the angle 
-($dihedral->dihe) between the planes containing (atom1, atom2, atom3) and 
+($dihedral->dihe_deg) between the planes containing (atom1, atom2, atom3) and 
 (atom2, atom3, atom4).
 
 The Dihedral class also provides attributes and methods to set parameters and  
@@ -165,18 +165,23 @@ isa Num that is lazy and rw. default = 0.  force constant for harmonic bond pote
 
 =attr dihe_eq
 
-isa Num that is lazy and rw. default = 0.  Equilibrium dihedral angle.  The dihe 
-method returns dihedral angle in degrees.
+isa Num that is lazy and rw. default = 0.  Equilibrium dihedral angle.  
 
 =attr improper_dihe_energy_func torsion_energy_func
 
 isa CodeRef that is lazy and rw. default uses builder to generate a 
 harmonic potential for the improper_dihedral and a torsion potential. 
 
-=method dihe 
+=method dihe_deg 
 
-no arguments. returns the angle between the planes containing (atom1,atom2,atom3) 
-and (atom2, atom3, atom4). 
+no arguments. returns the angle (degrees) between the planes containing 
+(atom1,atom2,atom3) and (atom2, atom3, atom4). 
+
+=method dihe_rad
+
+no arguments. returns the angle (radians) between the planes containing 
+(atom1,atom2,atom3) and (atom2, atom3, atom4). 
+
 
 =method improper_dihe_energy torsion_energy
 

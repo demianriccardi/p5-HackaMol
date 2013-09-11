@@ -281,7 +281,7 @@ is(
 );
 
 my @bond_lengths = map { $_->bond_length } $mol2->all_bonds;
-my @angs         = map { $_->ang } $mol2->all_angles;
+my @angs         = map { $_->ang_deg } $mol2->all_angles;
 
 $mol2->push_groups_by_atom_attr('resid');
 is( $mol2->count_groups, 22, "group_by_atom_resid yields 22 groups" );
@@ -304,7 +304,7 @@ foreach my $dihe (@bbdihedrals) {
     $r_these = \@cterm if ( @nterm > @cterm );
 
     #set angle to rotate
-    my $rang = -1 * ( $dihe->dihe + 180 );
+    my $rang = -1 * ( $dihe->dihe_deg + 180 );
 
     #switch nterm to cterm switches sign on angle
     $rang *= -1 if ( @nterm > @cterm );
@@ -316,7 +316,7 @@ foreach my $dihe (@bbdihedrals) {
 }
 
 my @bond_lengths_n = map { $_->bond_length } $mol2->all_bonds;
-my @angs_n         = map { $_->ang } $mol2->all_angles;
+my @angs_n         = map { $_->ang_deg } $mol2->all_angles;
 
 foreach my $i ( 0 .. $#bond_lengths ) {
     cmp_ok( abs( $bond_lengths[$i] - $bond_lengths_n[$i] ),
@@ -330,7 +330,7 @@ foreach my $i ( 0 .. $#angs ) {
 
 foreach my $i ( 0 .. $#bbdihedrals ) {
     my $dihe = $bbdihedrals[$i];
-    cmp_ok( abs( abs( $dihe->dihe ) - 180 ),
+    cmp_ok( abs( abs( $dihe->dihe_deg ) - 180 ),
         '<', 1E-6, "dihedral $i rotated to 180" );
 }
 
@@ -358,18 +358,18 @@ my $new_angle = HackaMol::Angle->new(name=>'quick', atoms=>[
                                  $bond3->all_atoms,
                                                  ]);
 
-my $angi = $new_angle->ang;
+my $angi = $new_angle->ang_deg;
 $mol2->angle_bend_groups($new_angle,-50,$group);
 dies_ok{$mol2->angle_bend_groups($new_angle,-50)} "angle_bend_groups dies <3 args";
 dies_ok{$mol2->angle_bend_atoms($new_angle,-50)} "angle_bend_atoms dies <3 args";
-my $angf = $new_angle->ang;
+my $angf = $new_angle->ang_deg;
 cmp_ok(abs($angf-$angi+50), '<', 1E-6, "angle bend -50 group");
 $mol2->angle_bend_groups($new_angle,+50,$group);
-$angf = $new_angle->ang;
+$angf = $new_angle->ang_deg;
 cmp_ok(abs($angf-$angi), '<', 1E-6, "angle bend +50 group");
 
 $mol2->angle_bend_atoms($new_angle,-50,@slice);
-$angf = $new_angle->ang;
+$angf = $new_angle->ang_deg;
 cmp_ok(abs($angf-$angi+50), '<', 1E-6, "angle bend -50 atoms");
 
 my $new_dihe = HackaMol::Dihedral->new(name=>'quick', atoms =>[
@@ -377,11 +377,11 @@ my $new_dihe = HackaMol::Dihedral->new(name=>'quick', atoms =>[
                                   $new_angle->all_atoms,
                                                     ]);
 
-my $dihei = $new_dihe->dihe;
+my $dihei = $new_dihe->dihe_deg;
 $mol2->dihedral_rotate_groups($new_dihe,360,$group);
 dies_ok{$mol2->dihedral_rotate_groups($new_angle,-50)} "dihedral_rotate_groups dies <3 args";
 dies_ok{$mol2->dihedral_rotate_atoms($new_angle,-50)} "dihedral_rotate_atoms dies <3 args";
-my $dihef = $new_dihe->dihe;
+my $dihef = $new_dihe->dihe_deg;
 
 cmp_ok(abs($dihef-$dihei), '<', 1E-6, "dihedral rotate 360 group");
 

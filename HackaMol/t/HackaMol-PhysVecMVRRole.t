@@ -285,21 +285,21 @@ $obj3->push_coords(V(0,0,0));
 $obj4->push_coords(V(0,-1,0));
 
 dies_ok{$obj1->distance} "distance dies with 0 arg";
-dies_ok{$obj1->angle} "angle dies with 0 arg";
-dies_ok{$obj1->angle($obj1)} "angle dies with 1 arg";
-dies_ok{$obj1->dihedral} "dihedral dies with 0 arg";
-dies_ok{$obj1->dihedral($obj2)} "dihedral dies with 1 arg";
-dies_ok{$obj1->dihedral($obj2,$obj3)} "dihedral dies with 2 arg";
-dies_ok{$obj1->dihedral($obj2,$obj3,$obj4,$obj1)} "dihedral dies with 4 arg";
+dies_ok{$obj1->angle_deg} "angle_deg dies with 0 arg";
+dies_ok{$obj1->angle_deg($obj1)} "angle_deg dies with 1 arg";
+dies_ok{$obj1->dihedral_deg} "dihedral dies with 0 arg";
+dies_ok{$obj1->dihedral_deg($obj2)} "dihedral dies with 1 arg";
+dies_ok{$obj1->dihedral_deg($obj2,$obj3)} "dihedral dies with 2 arg";
+dies_ok{$obj1->dihedral_deg($obj2,$obj3,$obj4,$obj1)} "dihedral dies with 4 arg";
 cmp_ok(abs(1.0 - $obj1->distance($obj2)),'<',1E-7, "distance " );
-cmp_ok(abs(90.0 - $obj2->angle($obj1,$obj3)),'<',1E-7, "angle" );
-cmp_ok(abs(180.0 - $obj1->dihedral($obj2,$obj3,$obj4)),'<',1E-7, "dihedral" );
+cmp_ok(abs(90.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "angle" );
+cmp_ok(abs(180.0 - $obj1->dihedral_deg($obj2,$obj3,$obj4)),'<',1E-7, "dihedral" );
 
 $obj1->set_coords(0, V(1,0,0));
-cmp_ok(abs(0.0 - $obj2->angle($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
+cmp_ok(abs(0.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
 $obj1->set_coords(0, V(1,1,0));
 $obj3->set_coords(0, V(1,0,0));
-cmp_ok(abs(0.0 - $obj2->angle($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
+cmp_ok(abs(0.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
 $obj1->set_coords(0, V(1,1,0));
 
 

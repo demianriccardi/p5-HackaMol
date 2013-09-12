@@ -2,7 +2,6 @@ package HackaMol::AtomGroupRole;
 #ABSTRACT: Role for a group of atoms   
 use Moose::Role;
 use Carp;
-use MooseX::Storage;
 use Math::Trig;
 use Math::Vector::Real;
 

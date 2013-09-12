@@ -1,10 +1,11 @@
 package HackaMol::Angle;
 #ABSTRACT: Angle class for HackaMol
+use 5.008;
 use Moose;
 use namespace::autoclean;
 use Carp;
-use MooseX::Storage;
 use Math::Vector::Real;
+use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ),'HackaMol::AtomGroupRole';
 
 has 'name' => (

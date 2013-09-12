@@ -62,5 +62,15 @@ cmp_ok( abs( $exp_Rg - $group->Rg ),
     '<', 0.75, 'group numerical Rg within 0.75 Angs of theoretical' );
 cmp_ok( abs( $mol->Rg - $group->Rg ), '<', 1E-10, 'group and Mol Rg same' );
 
+#$mol->push_groups_by_atom_attr('resid');
+#is( $mol->count_groups, 22, "group_by_atom_resid yields 22 groups" );
+#$mol->clear_groups;
+#is( $mol->count_groups, 0, "clear->groups yields 0 groups" );
+#$mol->push_groups_by_atom_attr('symbol');
+#is( $mol->count_groups, 4, "group_by_atom_symbol yields 4 (ONCH) groups" );
+#$mol->clear_groups;
+#$mol->push_groups_by_atom_attr('name');
+#is( $mol->count_groups, 60, "group_by_atom_name yields 60 groups" );
+
 done_testing();
 

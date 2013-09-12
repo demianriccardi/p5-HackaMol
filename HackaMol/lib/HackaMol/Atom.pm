@@ -1,5 +1,6 @@
 package HackaMol::Atom;
 #ABSTRACT: HackaMol Atom Class
+use 5.008;
 use Moose;
 use namespace::autoclean;
 use Carp;

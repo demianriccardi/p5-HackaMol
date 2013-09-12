@@ -1,4 +1,5 @@
   package HackaMol::PeriodicTable;
+  use 5.008;
   require Exporter;
   our @ISA=qw(Exporter);
   our @EXPORT_OK = qw(%ATOM_MULTIPLICITY @EXHEAT @ELEMENTS 

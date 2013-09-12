@@ -1,13 +1,11 @@
 package HackaMol::Molecule;
-
 #ABSTRACT: Molecule class for HackaMol
+use 5.008;
 use Moose;
 use namespace::autoclean;
-use HackaMol::AtomGroup;
 use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);
-use 5.008;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ), 'HackaMol::PhysVecMVRRole',
   'HackaMol::BondsAnglesDihedralsRole', 'HackaMol::QmRole';
@@ -85,22 +83,22 @@ sub _build_mass {
     return ($mass);
 }
 
-sub push_groups_by_atom_attr {
-
-    my $self = shift;
-    my $attr = shift;
-    
-    my %group;
-    foreach my $atom ( $self->all_atoms ) {
-        push @{ $group{ $atom->$attr } }, $atom;
-    }
-
-    my @atomsgroups =
-      map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort keys(%group);
-
-    $self->push_groups(@atomsgroups);
-
-}
+#sub push_groups_by_atom_attr {
+#
+#    my $self = shift;
+#    my $attr = shift;
+#    
+#    my %group;
+#    foreach my $atom ( $self->all_atoms ) {
+#        push @{ $group{ $atom->$attr } }, $atom;
+#    }
+#
+#    my @atomsgroups =
+#      map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort keys(%group);
+#
+#    $self->push_groups(@atomsgroups);
+#
+#}
 
 sub all_bonds_atoms  { return ( shift->_all_these_atoms( 'bonds',  @_ ) ) }
 sub all_angles_atoms { return ( shift->_all_these_atoms( 'angles', @_ ) ) }

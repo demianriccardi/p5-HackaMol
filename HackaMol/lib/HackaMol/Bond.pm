@@ -1,8 +1,9 @@
 package HackaMol::Bond;
 #ABSTRACT: HackaMol Bond class
+use 5.008;
 use Moose;
-use Carp;
 use namespace::autoclean;
+use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ),'HackaMol::AtomGroupRole';
 

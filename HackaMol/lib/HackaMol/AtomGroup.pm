@@ -1,9 +1,10 @@
 package HackaMol::AtomGroup;
 #ABSTRACT: HackaMol AtomGroup class 
+use 5.008;
 use Moose;
 use namespace::autoclean;
+use Carp;
 use MooseX::Storage;
-use 5.008;
 with Storage( 'io' => 'StorableFile' ), 'HackaMol::AtomGroupRole';
 
 has 'name' => (

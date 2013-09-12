@@ -1,5 +1,6 @@
 package HackaMol::Dihedral;
 #ABSTRACT: Dihedral Angle class for HackaMol
+use 5.008;
 use Moose;
 use namespace::autoclean;
 use Carp;

@@ -1,7 +1,6 @@
 package HackaMol::BondsAnglesDihedralsRole;
 # ABSTRACT: Array traits for containers of HackaMol Bonds, Angles, Dihedrals.
 use Moose::Role;
-use Carp;
 
 has 'bonds'  => (
     traits   => ['Array'],

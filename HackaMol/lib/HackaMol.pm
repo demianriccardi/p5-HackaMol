@@ -1,19 +1,14 @@
 package HackaMol::Molecule;
 #ABSTRACT: HackaMol: Object-Oriented Library for Molecular Hacking
+use 5.008;
 use HackaMol::AtomGroup;
 use HackaMol::Molecule;
 use HackaMol::Atom;
 use HackaMol::Bond;
 use HackaMol::Angle;
 use HackaMol::Dihedral;
-use Math::Vector::Real;
-use 5.008;
 
-#use Exporter;
-#our @ISA = 'Exporter';
-#our @EXPORT = qw(V);
-
-__PACKAGE__->meta->make_immutable;
+#__PACKAGE__->meta->make_immutable;
 
 1;
 

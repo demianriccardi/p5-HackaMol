@@ -1,17 +1,10 @@
 # Demian Riccardi August, 22, 2013
 #
-# Description
-# grep out the backbone atoms and rotate the dihedrals to the angle read in
-# adding the sidechains shouldn't be too difficult.  Just have to identify which
-# atoms are moving
 use Modern::Perl;
-use lib 'lib/HackaMol','t/lib';
-use Molecule;
-use Dihedral;
+use lib 'lib','t/lib';
+use HackaMol;
 use PDBintoAtoms qw(readinto_atoms);
 use Math::Vector::Real;
-use Time::HiRes qw(time);
-use Scalar::Util qw(refaddr);
 
 my $t1 = time; 
 my $angle = shift ;
@@ -19,7 +12,7 @@ $angle = 180 unless (defined($angle));
 
 my @atoms = readinto_atoms("t/lib/1L2Y.pdb");
 my $max_t = $atoms[0]->count_coords -1;
-my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
+my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
 $mol->push_groups_by_atom_attr('resid');
 $_->translate(-$_->COM,1) foreach $mol->all_groups; 

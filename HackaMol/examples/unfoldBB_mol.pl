@@ -6,8 +6,7 @@
 # atoms are moving
 use Modern::Perl;
 use lib 'lib','t/lib';
-use HackaMol::Molecule;
-use HackaMol::Dihedral;
+use HackaMol;
 use PDBintoAtoms qw(readinto_atoms);
 use Time::HiRes qw(time);
 use Scalar::Util qw(refaddr);
@@ -28,7 +27,7 @@ my @atoms = grep {
 $atoms[$_]->iatom($_) foreach 0 .. $#atoms;
 
 my $max_t = $atoms[0]->count_coords -1;
-my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
+my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
 my @dihedrals ; 
 
@@ -37,7 +36,7 @@ my $k = 0;
 while ($k+3 <= $#atoms){
   my $name; 
   $name .= $_->name.$_->resid foreach (@atoms[$k .. $k+3]);
-  push @dihedrals, Dihedral->new(name=>$name, atoms=>[ @atoms[$k .. $k+3] ]);
+  push @dihedrals, HackaMol::Dihedral->new(name=>$name, atoms=>[ @atoms[$k .. $k+3] ]);
   $k++;
 }
 
@@ -61,12 +60,12 @@ foreach my $dihe (@dihedrals){
   $r_these = \@cterm if (@nterm > @cterm);
  
   #set angle to rotate
-  my $rang = -1*($dihe->dihe + $angle) ;
+  my $rang = -1*($dihe->dihe_deg + $angle) ;
   #switch nterm to cterm switches sign on angle
   $rang *= -1 if (@nterm>@cterm); 
   my @slice = @atoms[@{ $r_these}]; 
   #ready to rotate!
-  $mol->dihedral_rotate_atoms($dihe,$rang,\@slice);
+  $mol->dihedral_rotate_atoms($dihe,$rang,@slice);
 
 }
  

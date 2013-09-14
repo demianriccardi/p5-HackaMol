@@ -1,12 +1,12 @@
 use Modern::Perl;
 use lib 'lib','t/lib';
-use HackaMol::Molecule;
+use HackaMol;
 use PDBintoAtoms qw(readinto_atoms);
 use Math::Vector::Real;
 
 
 my @atoms = readinto_atoms("t/lib/1L2Y.pdb");
-my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
+my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
 $mol->translate(-$mol->COM);
 $mol->translate(V(90,0,0));

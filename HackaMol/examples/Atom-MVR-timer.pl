@@ -1,17 +1,17 @@
 use Modern::Perl;
 use Math::Vector::Real;
-use lib 'lib/HackaMol';
+use lib 'lib';
 use Time::HiRes qw(time);
 use Benchmark qw(cmpthese);
 use Scalar::Util qw(refaddr);
-use Atom;
+use HackaMol::Atom;
 
 my $natoms = 100000;
 print
 "Atom-timer will time the construction of and array of  $natoms atoms to give idea about speed\n";
 
 my $t1 = time;
-my @atoms = map { Atom->new( Z => 80 ) } 1 .. $natoms;
+my @atoms = map { HackaMol::Atom->new( Z => 80 ) } 1 .. $natoms;
 
 my $t2 = time;
 printf( "time to Atom->new(Z => 80) for $natoms atoms: %10.3f\n", $t2 - $t1 );
@@ -69,8 +69,8 @@ print "   min attributes, many attributes, min attr with 100 coordinates\n";
 cmpthese(
     50000,
     {
-        'symb_min____attr' => sub { my $atom = Atom->new( symbol => "HG" ) },
-        'Z____min____attr' => sub { my $atom = Atom->new( Z      => 80 ) },
+        'symb_min____attr' => sub { my $atom = HackaMol::Atom->new( symbol => "HG" ) },
+        'Z____min____attr' => sub { my $atom = HackaMol::Atom->new( Z      => 80 ) },
   #      'Zmin push    100' => sub {
   #          my $atom = Atom->new( Z => 80 );
   #          $atom->push_coords( [ 1, 0, 3 ] ) foreach ( 1 .. 100 );
@@ -85,7 +85,7 @@ cmpthese(
   #          );
   #      },
         'Z____many___attr' => sub {
-            my $atom = Atom->new(
+            my $atom = HackaMol::Atom->new(
                 Z      => 80,
                 mass   => 200.59,
                 charge => [2],
@@ -94,7 +94,7 @@ cmpthese(
             );
         },
         'Z____100__coords' => sub {
-            my $atom = Atom->new(
+            my $atom = HackaMol::Atom->new(
                 name   => 'something',
                 coords => [
                     V( 1, 0, 3 ),

@@ -1,15 +1,15 @@
 use Modern::Perl;
-use lib 'lib/HackaMol','t/lib';
-use Molecule;
-use Dihedral;
+use lib 'lib','t/lib';
+use HackaMol;
 use PDBintoAtoms qw(readinto_atoms);
 use Time::HiRes qw(time);
 
 my $t1 = time; 
 #my @atoms = readinto_atoms("t/lib/2CBA.pdb");
 my @atoms = readinto_atoms("t/lib/1L2Y.pdb");
-my $max_t = $atoms[0]->count_coords -1;
-my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
+my $max_t = 5;
+#my $max_t = $atoms[0]->count_coords -1;
+my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
 #backbone
 my @N_CA_C = grep {
@@ -25,14 +25,14 @@ my $k = 0;
 while ($k+3 <= $#N_CA_C){
   my $name; 
   $name .= $_->name.$_->resid foreach (@N_CA_C[$k .. $k+3]);
-  push @dihedrals, Dihedral->new(name=>$name, atoms=>[ @N_CA_C[$k .. $k+3] ]);
+  push @dihedrals, HackaMol::Dihedral->new(name=>$name, atoms=>[ @N_CA_C[$k .. $k+3] ]);
   $k++;
 }
 
 foreach my $dihe (@dihedrals){
   #my @vals = map{$dihe->gt($_); $dihe->dihe} 0 .. $max_t;
   printf("%20s ", $dihe->name);
-  do{$dihe->gt($_); printf("%7.2f ", $dihe->dihe) } foreach 0 .. $max_t/2;
+  do{$dihe->gt($_); printf("%7.2f ", $dihe->dihe_deg) } foreach 0 .. $max_t/2;
   print "\n";
   # %10.2f (%.2f)\n", $dihe->name , avg_rmsd(@vals));
 }

@@ -288,10 +288,28 @@ sub xyz {
   return($self->get_coords($self->t));
 }
 
+sub clone_xyz {
+# returns a new MVR 
+# optionally takes t
+  my $self = shift;
+  my $t    = shift;
+  $t = $self->t unless (defined($t));
+  return(V(@{$self->get_coords($t)}));
+}
+
 sub force {
   my $self = shift;
   carp "force> takes no arguments. returns get_forces(t)" if (@_);
   return($self->get_forces($self->t));
+}
+
+sub clone_force {
+# returns a new MVR 
+# optionally takes t
+  my $self = shift;
+  my $t    = shift;
+  $t = $self->t unless (defined($t));
+  return(V(@{$self->get_forces($t)}));
 }
 
 sub copy_ref_from_t1_through_t2 {
@@ -588,9 +606,26 @@ called with no arguments.  returns $self->get_charges($self->t);
 
 called with no arguments.  returns $self->get_coords($self->t);
 
+=method clone_xyz
+
+optionally called with t. t set to $self->t if not passed. 
+This method is intended for mapping from one atom to another, where the 
+coordinates are expected to be distinct. A copy of the xyz 
+coordinates with a new memory location is returned via 
+V( @{$self->get_coords($t)});  
+
+  my @Aus = map {
+                 HackaMol::Atom->new(Z=>79, coords=>[$_->clone_xyz])
+                } grep {$_->Z == 80} @atoms;
+
 =method force
 
 called with no arguments.  returns $self->get_forces($self->t);
+
+=method clone_force
+
+optionally called with t. t set to $self->t if not passed. Analagous to 
+clone_xyz.
 
 =method copy_ref_from_t1_through_t2
 

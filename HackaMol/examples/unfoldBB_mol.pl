@@ -69,9 +69,11 @@ foreach my $dihe (@dihedrals){
 
 }
  
-print "$natoms \n\n"; 
-printf("%5s %14.8f %14.8f %14.8f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
 
+print "$natoms \n\n"; 
+printf("%5s %15.8f %15.8f %15.8f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
+
+say $_->dihe_deg foreach (@dihedrals);
 my $t2 = time;
 
 printf("time: %10.6f\n", $t2-$t1);

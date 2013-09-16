@@ -1,21 +1,20 @@
-# Demian Riccardi August, 22, 2013
+# Demian Riccardi 2013/09/16
 #
 # Description
-# grep out the backbone atoms and rotate the dihedrals to the angle read in
-# adding the sidechains shouldn't be too difficult.  Just have to identify which
-# atoms are moving
+# grep out the backbone atoms and rotate the dihedrals by increment until 
+# they are close to 180 degrees
 use Modern::Perl;
-use lib 'lib','t/lib';
 use HackaMol;
-use PDBintoAtoms qw(readinto_atoms);
 use Time::HiRes qw(time);
-use Scalar::Util qw(refaddr);
 
 my $t1 = time; 
 my $angle = shift ;
 $angle = 180 unless (defined($angle));
 
-my @all_atoms = readinto_atoms("t/lib/1L2Y.pdb");
+my $hack = HackaMol->new(name=> "hackitup");
+
+my @all_atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
+
 #to keep example simple, keep only the backbone
 my @atoms = grep {
                $_->name eq 'N'  or
@@ -25,20 +24,14 @@ my @atoms = grep {
 #reset iatom
 $atoms[$_]->iatom($_) foreach 0 .. $#atoms;
 
+my @dihedrals = $hack->build_dihedrals(@atoms); 
+
 my $max_t = $atoms[0]->count_coords -1;
-my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
-
-my @dihedrals ; 
-
-# build the dihedrals 
-my $k = 0;
-while ($k+3 <= $#atoms){
-  my $name; 
-  $name .= $_->name.$_->resid foreach (@atoms[$k .. $k+3]);
-  push @dihedrals, HackaMol::Dihedral->new(name=>$name, atoms=>[ @atoms[$k .. $k+3] ]);
-  $k++;
-}
-$mol->push_dihedrals(@dihedrals);
+my $mol = HackaMol::Molecule->new(
+                               name      => 'trp-cage', 
+                               atoms     => [@atoms], 
+                               dihedrals => [@dihedrals],
+                                );
 
 my $natoms = $mol->count_atoms;
 my $t = 0;

@@ -8,8 +8,6 @@ use Carp;
 
 requires '_build_mass';
 
-has 'name', is => 'rw', isa => 'Str';
-
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
 
 my @t_dep = qw(coords forces);
@@ -466,9 +464,6 @@ $self->t and $obj->t; a warning is carped if the ts are different
     print $_ . " " foreach $obj->all_coords; # does nothing 
     print $obj->count_coords # prints 0
 
-=attr name
-
-isa Str that is rw. useful for labeling, bookkeeping...
 
 =attr t 
 

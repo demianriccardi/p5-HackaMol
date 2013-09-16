@@ -25,7 +25,7 @@ use Math::Vector::Real;
 use Scalar::Util qw(refaddr);
 use Time::HiRes qw(time);
 
-my @attributes = qw( name t mass xyzfree is_fixed);
+my @attributes = qw( t mass xyzfree is_fixed coords forces charges);
 my @methods = qw(
   push_charges get_charges set_charges all_charges clear_charges
   push_coords get_coords set_coords all_coords clear_coords
@@ -50,13 +50,9 @@ map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;
 
 lives_ok {
-    $obj1 = $class->new( name => 'somephysvec', t => 1 );
+    $obj1 = $class->new( t => 1 );
 }
 'Test creation of an obj1';
-
-is($obj1->name, 'somephysvec', "name set ok");
-$obj1->name('newname');
-is($obj1->name, 'newname', "name change ok");
 
 is($obj1->t, 1, "t set ok");
 $obj1->t(0);
@@ -100,7 +96,7 @@ cmp_ok( $obj1->get_charges(4),
     '==', 1.0, '5th _tcharges set to 1.0 and get_charges as expected' );
 
 lives_ok {
-    $obj2 = $class->new( name => 'someotherphysvec', t => 0 );
+    $obj2 = $class->new( t => 0 );
 }
 'Test creation of an obj2';
 
@@ -149,7 +145,6 @@ is_deeply( $obj1->intra_dforces( 0, 1 ), V(@vec), 'intra_dforces' );
 
 lives_ok {
     $obj3 = $class->new(
-        name    => 'somephysvec3',
         t       => 0,
         charges => [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
         coords  => [
@@ -264,7 +259,7 @@ is($obj3->msd_charges, 8.25, "mean square deviation charges");
 
 my $obj4;
 lives_ok {
-    $obj4 = $class->new( name => 'somephysvec', t => 0, coords => [ V(1,2,3.0) ]  );
+    $obj4 = $class->new( t => 0, coords => [ V(1,2,3.0) ]  );
 }
 'Test creation of an obj1';
 

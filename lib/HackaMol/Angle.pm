@@ -6,12 +6,7 @@ use namespace::autoclean;
 use Carp;
 use Math::Vector::Real;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'HackaMol::AtomGroupRole';
-
-has 'name' => (
-    is   => 'rw',
-    isa  => 'Str',
-); 
+with Storage( 'io' => 'StorableFile' ),'HackaMol::NameRole','HackaMol::AtomGroupRole';
 
 has $_ => (
             is  => 'rw'  ,

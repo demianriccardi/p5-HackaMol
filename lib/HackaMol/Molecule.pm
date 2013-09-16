@@ -7,7 +7,7 @@ use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ), 'HackaMol::PhysVecMVRRole',
+with Storage( 'io' => 'StorableFile' ), 'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole',
   'HackaMol::BondsAnglesDihedralsRole', 'HackaMol::QmRole';
 
 extends 'HackaMol::AtomGroup';

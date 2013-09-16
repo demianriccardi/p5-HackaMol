@@ -60,7 +60,7 @@ foreach my $dihe (@dihedrals){
   $r_these = \@cterm if (@nterm > @cterm);
  
   #set angle to rotate
-  my $rang = -1*($dihe->dihe_deg + $angle) ;
+  my $rang = -1*($dihe->dihe_deg - $angle) ;
   #switch nterm to cterm switches sign on angle
   $rang *= -1 if (@nterm>@cterm); 
   my @slice = @atoms[@{ $r_these}]; 
@@ -70,7 +70,7 @@ foreach my $dihe (@dihedrals){
 }
  
 print "$natoms \n\n"; 
-printf("%5s %8.3f %8.3f %8.3f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
+printf("%5s %14.8f %14.8f %14.8f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
 
 my $t2 = time;
 

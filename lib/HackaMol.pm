@@ -9,8 +9,70 @@ use HackaMol::Atom;
 use HackaMol::Bond;
 use HackaMol::Angle;
 use HackaMol::Dihedral;
+use Carp;
 
 with 'HackaMol::NameRole','HackaMol::MolReadRole';
+
+sub build_bonds {
+#take a list of n, atoms; walk down list and generate bonds 
+  my $self  = shift;
+  my @atoms = @_;
+  croak "<2 atoms passed to build_dihedrals" unless (@atoms > 1);
+  my @bonds ;
+
+  # build the dihedrals 
+  my $k = 0;
+  while ($k+1 <= $#atoms){
+    my $name;
+    $name .= $_->name.$_->resid foreach (@atoms[$k, $k+1]);
+    push @bonds, HackaMol::Bond->new(
+                        name => $name,
+                        atoms=>[ @atoms[$k, $k+1] ] );
+    $k++;
+  }
+  return (@bonds);
+}
+
+sub build_angles {
+#take a list of n, atoms; walk down list and generate angels 
+  my $self  = shift;
+  my @atoms = @_;
+  croak "<3 atoms passed to build_dihedrals" unless (@atoms > 2);
+  my @angles ;
+
+  # build the dihedrals 
+  my $k = 0;
+  while ($k+2 <= $#atoms){
+    my $name;
+    $name .= $_->name.$_->resid foreach (@atoms[$k .. $k+2]);
+    push @angles, HackaMol::Angle->new(
+                        name => $name,
+                        atoms=>[ @atoms[$k .. $k+2] ] );
+    $k++;
+  }
+  return (@angles);
+}
+
+sub build_dihedrals {
+#take a list of n, atoms; walk down list and generate dihedrals 
+  my $self  = shift;
+  my @atoms = @_;
+  croak "<4 atoms passed to build_dihedrals" unless (@atoms > 3);
+  my @dihedrals ;
+
+  # build the dihedrals 
+  my $k = 0;
+  while ($k+3 <= $#atoms){
+    my $name;
+    $name .= $_->name.$_->resid foreach (@atoms[$k .. $k+3]);
+    push @dihedrals, HackaMol::Dihedral->new(
+                        name => $name, 
+                        atoms=>[ @atoms[$k .. $k+3] ] );
+    $k++;
+  }
+  return (@dihedrals);
+}
+
 
 __PACKAGE__->meta->make_immutable;
 

@@ -1,13 +1,13 @@
 use Modern::Perl;
-use lib 't/lib';
 use HackaMol;
-use PDBintoAtoms qw(readinto_atoms);
 use Math::Vector::Real;
 
+my $hack = HackaMol->new(name=>'hackitup');
+my @atoms1 = $hack->read_file_atoms("t/lib/1L2Y.pdb");
 
-my @atoms1 = readinto_atoms("t/lib/1L2Y.pdb");
 my $mol1 = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms1]);
-my @atoms2 = readinto_atoms("t/lib/2cba.pdb");
+my @atoms2 = $hack->read_file_atoms("t/lib/2cba.pdb");
+
 my $mol2 = HackaMol::Molecule->new(name=> 'CAII', atoms=>[@atoms2]);
 my $mol3 = HackaMol::Molecule->new(name=> 'both', atoms=>[@atoms1,@atoms2]);
 

@@ -2,6 +2,7 @@ package HackaMol::MolReadRole;
 # ABSTRACT: Read XYZ and PDB files 
 use Moose::Role;
 use Carp;
+use Math::Vector::Real;
 use FileHandle;
 
 sub read_file_atoms {
@@ -23,6 +24,7 @@ sub read_file_atoms {
 
 sub read_pdb_atoms {
 #read pdb file and generate list of Atom objects
+  my $self  = shift;
   my $file  = shift;
   my $segid = $file;
   $segid =~ s/\.pdb//;

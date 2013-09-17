@@ -49,5 +49,5 @@ DESCRIPTION
        intuitive attributes and methods that may be harnessed to coerce
        computational chemistry through a common core.
 
-The library is inspired by PerlMol, BioPerl, and MMTSB (a Perl library developed
-by Michael Feig and coworkers), my own experiences as a researcher.
+The library is inspired by PerlMol, BioPerl, MMTSB (a Perl library developed
+by Michael Feig and coworkers), and my own experiences as a researcher.

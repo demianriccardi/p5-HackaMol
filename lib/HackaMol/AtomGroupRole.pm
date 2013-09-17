@@ -1,5 +1,6 @@
 package HackaMol::AtomGroupRole;
-#ABSTRACT: Role for a group of atoms   
+
+#ABSTRACT: Role for a group of atoms
 use Moose::Role;
 use Carp;
 use Math::Trig;
@@ -13,70 +14,72 @@ has 'atoms' => (
     isa     => 'ArrayRef[HackaMol::Atom]',
     default => sub { [] },
     handles => {
-        push_atoms            => 'push',
-        get_atoms             => 'get',
-        set_atoms             => 'set',
-        delete_atoms          => 'delete',
-        all_atoms             => 'elements',
-        count_atoms           => 'count',
-        clear_atoms           => 'clear',
+        push_atoms   => 'push',
+        get_atoms    => 'get',
+        set_atoms    => 'set',
+        delete_atoms => 'delete',
+        all_atoms    => 'elements',
+        count_atoms  => 'count',
+        clear_atoms  => 'clear',
     },
-    lazy     => 1,
+    lazy => 1,
 );
 
 sub dipole {
-    my $self    = shift;
-    return(V(0)) unless ($self->count_atoms);
+    my $self = shift;
+    return ( V(0) ) unless ( $self->count_atoms );
     my @atoms   = $self->all_atoms;
-    my @vectors = grep {defined} map { $_->get_coords(  $_->t ) } @atoms;
-    my @charges = grep {defined} map { $_->get_charges( $_->t ) } @atoms;
-    my $dipole = V( 0, 0, 0 );
-    if ( $#vectors != $#charges ){
-      carp "build_dipole> mismatch number of coords and charges. all defined?";
-      return $dipole;
+    my @vectors = grep { defined } map { $_->get_coords( $_->t ) } @atoms;
+    my @charges = grep { defined } map { $_->get_charges( $_->t ) } @atoms;
+    my $dipole  = V( 0, 0, 0 );
+    if ( $#vectors != $#charges ) {
+        carp
+          "build_dipole> mismatch number of coords and charges. all defined?";
+        return $dipole;
     }
     $dipole += $vectors[$_] * $charges[$_] foreach 0 .. $#charges;
     return ($dipole);
 }
 
 sub COM {
-    my $self      = shift;
-    return(V(0)) unless ($self->count_atoms);
+    my $self = shift;
+    return ( V(0) ) unless ( $self->count_atoms );
     my @atoms     = $self->all_atoms;
     my @m_vectors = map { $_->mass * $_->get_coords( $_->t ) } @atoms;
     my $com       = V( 0, 0, 0 );
     $com += $_ foreach @m_vectors;
-    return ($com/$self->total_mass);
+    return ( $com / $self->total_mass );
 }
 
 sub COZ {
-    my $self      = shift;
-    return(V(0)) unless ($self->count_atoms);
+    my $self = shift;
+    return ( V(0) ) unless ( $self->count_atoms );
     my @atoms     = $self->all_atoms;
     my @z_vectors = map { $_->Z * $_->get_coords( $_->t ) } @atoms;
     my $coz       = V( 0, 0, 0 );
     $coz += $_ foreach @z_vectors;
-    return ($coz/$self->total_Z);
+    return ( $coz / $self->total_Z );
 }
 
 sub gt {
-#set group time
-  my $self = shift;
-  my $t    = shift;
-  $self->do_forall('t',$t);
+
+    #set group time
+    my $self = shift;
+    my $t    = shift;
+    $self->do_forall( 't', $t );
 }
 
-sub do_forall{
-  my $self   = shift;
-  my $method = shift;
-  do{carp "doing nothing for all"; return} unless(@_);
-  my @atoms = $self->all_atoms;
-  $_->$method(@_) foreach @atoms;
+sub do_forall {
+    my $self   = shift;
+    my $method = shift;
+    do { carp "doing nothing for all"; return } unless (@_);
+    my @atoms = $self->all_atoms;
+    $_->$method(@_) foreach @atoms;
 }
 
 sub total_charge {
-    my $self    = shift;
-    return(0) unless ($self->count_atoms);
+    my $self = shift;
+    return (0) unless ( $self->count_atoms );
     my @atoms   = $self->all_atoms;
     my @charges = map { $_->get_charges( $_->t ) } @atoms;
     my $sum     = 0;
@@ -85,101 +88,105 @@ sub total_charge {
 }
 
 sub total_mass {
-    my $self   = shift;
-    return(0) unless ($self->count_atoms);
+    my $self = shift;
+    return (0) unless ( $self->count_atoms );
     my @masses = map { $_->mass } $self->all_atoms;
-    my $sum    = 0;
+    my $sum = 0;
     $sum += $_ foreach @masses;
     return ($sum);
 }
 
 sub total_Z {
     my $self = shift;
-    return(0) unless ($self->count_atoms);
-    my @Zs   = map { $_->Z } $self->all_atoms;
-    my $sum  = 0;
-    $sum    += $_ foreach @Zs;
+    return (0) unless ( $self->count_atoms );
+    my @Zs = map { $_->Z } $self->all_atoms;
+    my $sum = 0;
+    $sum += $_ foreach @Zs;
     return ($sum);
 }
 
 sub dipole_moment {
     my $self = shift;
-    return ( abs( $self->dipole )*$angste_debye );
+    return ( abs( $self->dipole ) * $angste_debye );
 }
 
 sub bin_atoms {
-    my $self  = shift;
+    my $self   = shift;
     my $bin_hr = {};
     my $z_hr   = {};
-    return ($bin_hr,$z_hr) unless $self->count_atoms;
-    foreach my $atom ($self->all_atoms){
-      $bin_hr->{$atom->symbol}++;
-      $z_hr->{$atom->symbol}=$atom->Z;
+    return ( $bin_hr, $z_hr ) unless $self->count_atoms;
+    foreach my $atom ( $self->all_atoms ) {
+        $bin_hr->{ $atom->symbol }++;
+        $z_hr->{ $atom->symbol } = $atom->Z;
     }
-    return ($bin_hr,$z_hr);
+    return ( $bin_hr, $z_hr );
 }
 
 sub count_unique_atoms {
     my $self = shift;
-    my ($bin_hr,$z_hr) = $self->bin_atoms;
-    return (scalar(keys %{$bin_hr}));
+    my ( $bin_hr, $z_hr ) = $self->bin_atoms;
+    return ( scalar( keys %{$bin_hr} ) );
 }
 
 sub bin_atoms_name {
+
     # return something like C4H10 sort in order of descending Z
     my $self = shift;
-    my ($bin_hr,$z_hr) = $self->bin_atoms;
-    my @names = map { 
-                     my $name = $_ . $bin_hr->{$_}; 
-                     $name =~ s/(\w+)1$/$1/; $name; # substitue 1 away? 
-                    }
-                    sort {
-                          $z_hr->{$b} <=> $z_hr->{$a}    # sort by Z!  see above...
-                         } keys %{$bin_hr};
-                return join( '', @names );
+    my ( $bin_hr, $z_hr ) = $self->bin_atoms;
+    my @names = map {
+        my $name = $_ . $bin_hr->{$_};
+        $name =~ s/(\w+)1$/$1/;
+        $name;    # substitue 1 away?
+      }
+      sort {
+        $z_hr->{$b} <=> $z_hr->{$a}    # sort by Z!  see above...
+      } keys %{$bin_hr};
+    return join( '', @names );
 }
 
 sub translate {
-  my $self = shift;
-  my $tvec = shift or croak "pass MVR translation vector";
-  my $tf   = shift;
+    my $self = shift;
+    my $tvec = shift or croak "pass MVR translation vector";
+    my $tf   = shift;
 
-  my @atoms = $self->all_atoms; 
-  $tf = $atoms[0]->t unless(defined($tf));
+    my @atoms = $self->all_atoms;
+    $tf = $atoms[0]->t unless ( defined($tf) );
 
-  foreach my $at (@atoms){
-    my $v = $at->xyz + $tvec;
-    $at->set_coords($tf, $v);
-  }
+    foreach my $at (@atoms) {
+        my $v = $at->xyz + $tvec;
+        $at->set_coords( $tf, $v );
+    }
 }
 
 sub rotate {
-  #rotate about origin. having origin allows rotation of subgroup
-  #without having to translate everything. 
-  my $self = shift;
-  my $rvec = shift or croak "pass MVR rotation vector";
-  my $ang  = shift or croak "pass rotation angle";
-  my $orig = shift or croak "pass MVR origin";
-  my $tf   = shift;
 
-  my @atoms = $self->all_atoms;
-  my $t = $atoms[0]->t;
-  $tf = $t unless(defined($tf));
-  $rvec = $rvec->versor; #unit vector
+    #rotate about origin. having origin allows rotation of subgroup
+    #without having to translate everything.
+    my $self = shift;
+    my $rvec = shift or croak "pass MVR rotation vector";
+    my $ang  = shift or croak "pass rotation angle";
+    my $orig = shift or croak "pass MVR origin";
+    my $tf   = shift;
 
-  my @cor  = map{$_->get_coords($t)-$orig} @atoms; 
-  my @rcor = $rvec->rotate_3d( deg2rad($ang), @cor );
+    my @atoms = $self->all_atoms;
+    my $t     = $atoms[0]->t;
+    $tf = $t unless ( defined($tf) );
+    $rvec = $rvec->versor;    #unit vector
 
-  $atoms[$_]->set_coords($tf, $rcor[$_]+$orig) foreach 0 .. $#rcor;
+    my @cor = map { $_->get_coords($t) - $orig } @atoms;
+    my @rcor = $rvec->rotate_3d( deg2rad($ang), @cor );
+
+    $atoms[$_]->set_coords( $tf, $rcor[$_] + $orig ) foreach 0 .. $#rcor;
 }
 
 sub print_xyz {
-  my $self = shift;
-  my $t    = shift;
-  my @atoms = $self->all_atoms;
-  $t = $atoms[0]->t unless(defined($t));
-  print $self->count_atoms . "\n\n";
-  printf ("%3s %10.6f %10.6f %10.6f\n", $_->symbol, @{$_->get_coords($t)}) foreach @atoms;
+    my $self  = shift;
+    my @atoms = $self->all_atoms;
+    print $self->count_atoms . "\n\n";
+    foreach my $at (@atoms) {
+        printf( "%3s %10.6f %10.6f %10.6f\n",
+            $at->symbol, @{ $at->get_coords( $_->t ) } );
+    }
 }
 
 no Moose::Role;

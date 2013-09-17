@@ -114,22 +114,38 @@ $mol->translate(-$mol->COM);
 
 $mol->rotate(V(1,0,0), 180, V(10,10,10));
 
-say $mol->count_atoms;
-
-print "\n";
-
-printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
+$mol->print_xyz;
 
 my @groups = $hack->group_by_atom_attr('resid'); #populate groups by atom resid attr
 $mol->push_groups(@groups); 
 
 $_->rotate(V(1,1,1),60,$_->COM,1) foreach $mol->all_groups; # mess up all the amino acids
 
-print $mol->count_atoms . "\n";
+$mol->print_xyz;
 
-print "\n";
+my $radius = 30;
+my $natoms = int(0.0334*($radius**3)*4*pi/3);
 
-printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms; 
+my @sphatoms = map {
+                     HackaMol::Atom->new(
+                                Z       =>  8  , 
+                                charges => [0] , 
+                                coords  => [$_]) }
+               map {
+                     Math::Vector::Real->random_in_sphere(3,$radius)
+                   } 1 .. $natoms;
+
+my $sphere = HackaMol::Molecule->new(
+                          name=>"ball",
+                          atoms=>[ @sphatoms]);
+
+$sphere->print_xyz;
+
+my $bigmol = HackaMol::Molecule->new(
+                         name  => "bigoverlap",
+                         atoms => [ $mol->all_atoms, $sphere->all_atoms],
+                          );
+$bigmol->print_xyz;
 
 =head1 DESCRIPTION
 

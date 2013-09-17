@@ -138,7 +138,7 @@ atoms within molecules using groups, bonds, angles, and dihedrals.  HackaMol see
 intuitive attributes and methods that may be harnessed to coerce computational chemistry 
 through a common core. 
 
-The HackaMol class uses the core HackaMol classes to provide some object building
+The HackaMol class uses the core classes to provide some object building
 utilities described below.  This class consumes HackaMol::MolReadRole to provide
 structure readers for xyz and pdb coordinates.  Additional formats are pretty
 easy to add, but using open babel to do so may be a more robust approach.

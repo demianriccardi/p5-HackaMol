@@ -76,11 +76,12 @@ sub build_dihedrals {
 sub group_by_atom_attr {
 # group atoms by attribute
 # Z, name, bond_count, etc. 
-  my $self = shift;
-  my $attr = shift;
-  
+  my $self  = shift;
+  my $attr  = shift;
+  my @atoms = @_; 
+ 
   my %group;
-  foreach my $atom ( $self->all_atoms ) {
+  foreach my $atom ( @atoms ) {
       push @{ $group{ $atom->$attr } }, $atom;
   }
 

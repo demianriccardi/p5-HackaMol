@@ -1,20 +1,23 @@
 # Demian Riccardi August, 22, 2013
 #
 use Modern::Perl;
-use lib 'lib','t/lib';
 use HackaMol;
-use PDBintoAtoms qw(readinto_atoms);
 use Math::Vector::Real;
 
 my $t1 = time; 
 my $angle = shift ;
 $angle = 180 unless (defined($angle));
 
-my @atoms = readinto_atoms("t/lib/1L2Y.pdb");
+my $hack  = HackaMol->new(name => "hackitup");
+
+my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
 my $max_t = $atoms[0]->count_coords -1;
+
 my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
-$mol->push_groups_by_atom_attr('resid');
+my @groups = $hack->group_by_atom_attr('resid',$mol->all_atoms);
+$mol->push_groups(@groups);
+
 $_->translate(-$_->COM,1) foreach $mol->all_groups; 
 
 $mol->print_xyz(0);

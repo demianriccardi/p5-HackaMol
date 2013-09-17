@@ -1,10 +1,7 @@
-use Modern::Perl;
-use Test::Most;
-use Test::Warnings;
 use Test::Moose;
 use Test::More;
+use Test::Warn;
 use Math::Vector::Real;
-use Time::HiRes qw(time);
 use HackaMol::Atom;
 use HackaMol::Dihedral;
 

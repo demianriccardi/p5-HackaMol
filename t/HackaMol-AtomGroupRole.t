@@ -15,10 +15,10 @@
   };
 }
 
-use Test::Most;
-use Test::Warnings;
+use Test::More;
+use Test::Warn;
 use Test::Output;
-use Test::Fatal qw(dies_ok);
+use Test::Fatal qw(lives_ok dies_ok);
 use Test::Moose;
 use Math::Vector::Real;
 use HackaMol::Atom;

@@ -1,6 +1,7 @@
-use Test::Most;
-use Test::Warnings;
 use Test::Moose;
+use Test::More;
+use Test::Warn;
+use Test::Fatal qw(lives_ok);
 use MooseX::ClassCompositor;    #use this for testing roles
 use HackaMol::PdbRole;                # v0.001;#To test for version availability
 

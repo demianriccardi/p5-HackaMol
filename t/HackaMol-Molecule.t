@@ -1,17 +1,11 @@
-use Test::Most;
-use Test::Warnings;
 use Test::Moose;
+use Test::More;
+use Test::Warn;
 use Test::Fatal qw(dies_ok);
-use lib 't/lib';
 use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
-use HackaMol::AtomGroup;
-use HackaMol::Bond;
-use HackaMol::Angle;
-use HackaMol::Dihedral;
-use HackaMol::Molecule;
-use PDBintoAtoms qw(readinto_atoms);
+use HackaMol;
 
 my @attributes = qw(
   atomgroups atoms mass name
@@ -27,7 +21,9 @@ map has_attribute_ok( 'HackaMol::Molecule', $_ ), @attributes;
 map can_ok( 'HackaMol::Molecule', $_ ), @methods;
 map does_ok( 'HackaMol::Molecule', $_ ), @roles;
 
-my @atoms = readinto_atoms("t/lib/2LL5.pdb");
+my $hack  = HackaMol->new(name => "hackitup");
+my @atoms = $hack->read_file_atoms("t/lib/2LL5.pdb"); 
+
 my $max_t = $atoms[0]->count_coords - 1;
 
 my $mol = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms] );

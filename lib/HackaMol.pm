@@ -20,7 +20,7 @@ sub build_bonds {
   croak "<2 atoms passed to build_dihedrals" unless (@atoms > 1);
   my @bonds ;
 
-  # build the dihedrals 
+  # build the bonds 
   my $k = 0;
   while ($k+1 <= $#atoms){
     my $name;
@@ -34,13 +34,13 @@ sub build_bonds {
 }
 
 sub build_angles {
-#take a list of n, atoms; walk down list and generate angels 
+#take a list of n, atoms; walk down list and generate angles 
   my $self  = shift;
   my @atoms = @_;
   croak "<3 atoms passed to build_dihedrals" unless (@atoms > 2);
   my @angles ;
 
-  # build the dihedrals 
+  # build the angles 
   my $k = 0;
   while ($k+2 <= $#atoms){
     my $name;
@@ -71,6 +71,25 @@ sub build_dihedrals {
     $k++;
   }
   return (@dihedrals);
+}
+
+sub group_by_atom_attr {
+# group atoms by attribute
+# Z, name, bond_count, etc. 
+  my $self = shift;
+  my $attr = shift;
+  
+  my %group;
+  foreach my $atom ( $self->all_atoms ) {
+      push @{ $group{ $atom->$attr } }, $atom;
+  }
+
+  my @atomgroups =
+    map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort
+    keys(%group);
+
+  return(@atomgroups);
+
 }
 
 

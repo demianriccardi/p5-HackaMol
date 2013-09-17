@@ -1,5 +1,5 @@
-use Test::Most;
-use Test::Warnings;
+use Test::More;
+use Test::Warn;
 use Test::Moose;
 use Math::Vector::Real;
 use Math::Vector::Real::Random;

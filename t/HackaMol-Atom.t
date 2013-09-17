@@ -1,11 +1,8 @@
-use Modern::Perl;
-use Test::Most;
-use Test::Fatal qw(dies_ok);
-use Test::Warnings;
 use Test::Moose;
 use Test::More;
+use Test::Fatal qw(dies_ok);
+use Test::Warn;
 use Math::Vector::Real;
-use Time::HiRes qw(time);
 use HackaMol::Atom;
 
 my @attributes = qw( name t mass xyzfree is_fixed
@@ -106,32 +103,6 @@ is( sprintf( "%.3f", $atom3->dihedral_deg($atom2,$atom1,$atom4)),  120.018, "dih
 is( sprintf( "%.3f", $atom3->dihedral_deg($atom1,$atom2,$atom4)), -120.018, "dihedral angle atom3-atom1-atom2-atom4");
 is( sprintf( "%.3f", $atom4->dihedral_deg($atom1,$atom2,$atom3)),  120.018, "dihedral angle atom4-atom1-atom2-atom3");
 is( sprintf( "%.3f", $atom4->dihedral_deg($atom2,$atom1,$atom3)), -120.018, "dihedral angle atom4-atom2-atom1-atom3");
-
-#my $cnt = 1000;
-#my $t1 = time;
-#$atom1->distance($atom2) foreach 1 .. $cnt;
-#my $t2 = time;
-
-#my $tt1 = $cnt/($t2-$t1);
-#cmp_ok( $tt1, '>', 1E4, "> 10000 distance calculations s^-1");
-
-#$t1 = time;
-#$atom1->angle($atom2,$atom3) foreach 1 .. $cnt;
-#$t2 = time;
-
-#my $tt2 = $cnt/($t2-$t1);
-#print "time ! $tt per s\n";
-#cmp_ok( $tt2, '>', 1E4, "> 10000 angle calculations s^-1");
-
-#$t1 = time;
-#$atom3->dihedral($atom1,$atom2,$atom4) foreach 1 .. $cnt;
-#$t2 = time;
-
-#my $tt3 = $cnt/($t2-$t1);
-#print "time ! $tt per s\n";
-#cmp_ok( $tt3, '>', 1E4, "> 10000 dihedral calculations s^-1");
-
-#print "distances: $tt1 angles: $tt2 dihedrals $tt3 per s\n"; exit;
 
 my ( $bin, $elname ) = bin_atoms( \@atoms );
 is( $elname, 'C1H3Hg1',

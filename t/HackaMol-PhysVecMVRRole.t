@@ -15,11 +15,10 @@
   };
 }
 
-use Test::Most;
-use Test::Fatal qw(dies_ok);
-use Test::Warnings;
 use Test::Moose;
-#use MooseX::ClassCompositor;    #use this for testing roles
+use Test::More;
+use Test::Fatal qw(lives_ok dies_ok);
+use Test::Warn;
 use HackaMol::PhysVecMVRRole;                # v0.001;#To test for version availability
 use Math::Vector::Real;           
 use Scalar::Util qw(refaddr);

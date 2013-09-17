@@ -1,11 +1,10 @@
 use Modern::Perl;
-use lib 'lib','t/lib';
 use HackaMol;
-use PDBintoAtoms qw(readinto_atoms);
 use Math::Vector::Real;
 
+my $hack  = HackaMol->new( name=>"hackitup" );
+my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
 
-my @atoms = readinto_atoms("t/lib/1L2Y.pdb");
 my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
 
 $mol->translate(-$mol->COM);
@@ -21,5 +20,7 @@ sub print_xyz {
   my $mol = shift;
   print $mol->count_atoms;
   print "\n\n";
-  printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
+  foreach my $atom ($mol->all_atoms) {
+    printf("%5s %12.6f %12.6f %12.6f\n", $atom->Z, @{$atom->xyz});
+  }
 }

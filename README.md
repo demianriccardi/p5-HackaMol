@@ -20,15 +20,15 @@ SYNOPSIS
 
        $mol->rotate(V(1,0,0), 180, V(10,10,10));
 
-       say $mol->count_atoms;
+       print $mol->count_atoms;
 
        print "\n";
 
        printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach
        $mol->all_atoms;
 
-       my @groups = $hack->group_by_atom_attr('resid'); #populate groups by
-       atom resid attr $mol->push_groups(@groups);
+       my @groups = $hack->group_by_atom_attr('resid'); #group by atom resid attr 
+       $mol->push_groups(@groups);
 
        $_->rotate(V(1,1,1),60,$_->COM,1) foreach $mol->all_groups; # mess up
        all the amino acids
@@ -49,3 +49,5 @@ DESCRIPTION
        intuitive attributes and methods that may be harnessed to coerce
        computational chemistry through a common core.
 
+The library is inspired by PerlMol, BioPerl, and MMTSB (a Perl library developed
+by Michael Feig and coworkers), my own experiences as a researcher.

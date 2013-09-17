@@ -1,6 +1,5 @@
 use Modern::Perl;
 use Math::Vector::Real;
-use lib 'lib';
 use Time::HiRes qw(time);
 use Benchmark qw(cmpthese);
 use Scalar::Util qw(refaddr);

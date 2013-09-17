@@ -1,11 +1,29 @@
 use strict;
 use warnings;
+use Test::Moose;
 use Test::More;
+use Test::Fatal qw(dies_ok);
 use Test::Warn;
 use Math::Vector::Real;
 use Math::Vector::Real::Random;
 use Math::Trig;
 use HackaMol;
+
+my @attributes = qw( 
+                    name 
+                   );
+my @methods = qw(
+  build_bonds build_angles build_dihedrals 
+  group_by_atom_attr read_file_atoms read_pdb_atoms 
+  read_xyz_atoms
+);
+
+my @roles = qw(HackaMol::MolReadRole HackaMol::NameRole);
+
+map has_attribute_ok( 'HackaMol', $_ ), @attributes;
+map can_ok( 'HackaMol', $_ ), @methods;
+map does_ok( 'HackaMol', $_ ), @roles;
+
 
 my $merc = HackaMol::Atom->new(
     name    => "Mercury",
@@ -62,6 +80,48 @@ cmp_ok( abs( $exp_Rg - $group->Rg ),
     '<', 0.75, 'group numerical Rg within 0.75 Angs of theoretical' );
 cmp_ok( abs( $mol->Rg - $group->Rg ), '<', 1E-10, 'group and Mol Rg same' );
 
+#test hackamol class
+
+my $hack = HackaMol->new( name => "hackitup" );
+is ($hack->name, "hackitup", "HackaMol name attr");
+
+my @atoms1 = $hack->read_file_atoms("t/lib/1L2Y.pdb");
+my $mol1 = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms1] );
+is ($mol1->count_atoms, 304 , "read atoms in from pdb");
+
+unlink("t/lib/1L2Y.xyz");
+my $fh = $mol1->print_xyz( "t/lib/1L2Y.xyz" );
+$fh->close;
+#foreach my $t ( 1 .. $atoms1[0]->count_coords - 1 ) {
+#       $mol1->t($t);
+#       $mol1->print_xyz($fh);
+#}
+
+my @atoms2 = $hack->read_file_atoms("t/lib/1L2Y.xyz");
+my $mol2 = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms2] );
+
+is ($mol2->count_atoms, 304 , "read atoms in from xyz");
+
+my @Z1 = map {$_->Z} $mol1->all_atoms;
+my @Z2 = map {$_->Z} $mol2->all_atoms;
+
+is_deeply(\@Z1,\@Z2, "xyz and pdb give same atoms");
+
+dies_ok {$hack->read_file_atoms("bah.mol")} "Croak on unsupported file type";
+
+dies_ok {$hack->read_file_atoms("t/lib/bad1.xyz")} "xyz Croak change symbol";
+dies_ok {$hack->read_file_atoms("t/lib/bad2.xyz")} "xyz Croak change Z";
+dies_ok {$hack->read_file_atoms("t/lib/bad3.xyz")} "xyz Croak change number of atoms";
+dies_ok {$hack->read_file_atoms("t/lib/bad1.pdb")}  "pdb Croak change atom name";
+dies_ok {$hack->read_file_atoms("t/lib/bad2.pdb")}  "pdb Croak change element";
+
+my @wats1 = $hack->read_file_atoms("t/lib/byZ.xyz");  
+my @wats2 = $hack->read_file_atoms("t/lib/byZSym.xyz");  
+
+my @Zw1 = map {$_->Z} @wats1;
+my @Zw2 = map {$_->Z} @wats2;
+
+is_deeply(\@Z1,\@Z2, "different Z/Symbol formatted xyz give same");
 
 #$mol->push_groups_by_atom_attr('resid');
 #is( $mol->count_groups, 22, "group_by_atom_resid yields 22 groups" );

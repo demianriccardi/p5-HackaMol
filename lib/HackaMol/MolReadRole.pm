@@ -80,7 +80,10 @@ sub read_pdb_atoms {
           }
           else {
               croak "atoms have changed from last model to current: $t\n"
-                if ( $name ne $atoms[$n]->name );
+                if ( 
+                    $name    ne $atoms[$n]->name   or 
+                    $element ne $atoms[$n]->symbol
+                    );
 
               $atoms[$n]->set_coords( $t, $xyz );
           }
@@ -101,19 +104,17 @@ sub read_xyz_atoms {
   $segid =~ s/\.xyz//;
   $segid =~ s/t\/lib\///;
   my $fh = FileHandle->new("<$file");
-
+use Data::Dumper;
   my @atoms;
   my ( $n, $t ) = ( 0, 0 );
 
   my $nat  = undef;
   while (<$fh>) {
 
-    $_ = &{$self->matchdo}($_) if ($self->has_matchdo) ;
-
     if (/^(\s*\d+\s*)$/){
       $n = (split)[0];
       if (defined($nat)){
-        die "number of atoms has changed\n" unless ($nat == $n);
+        croak "number of atoms has changed\n" unless ($nat == $n);
         $t++;
       }
       $nat  = $n;
@@ -123,15 +124,26 @@ sub read_xyz_atoms {
       my @stuff = split;
       my $sym = $stuff[0];
       my $xyz = V( @stuff[1,2,3] );
-
       if ( $t == 0 ) {
         if ($sym =~ /\d/)
-             {$atoms[$n] = Atom->new( Z           => $sym,coords      => $xyz)}
-        else {$atoms[$n] = Atom->new( symbol      => $sym,coords      => $xyz)}
+             {
+         $atoms[$n] = HackaMol::Atom->new( Z      => $sym,coords => [$xyz])
+        }
+        else {
+         $atoms[$n] = HackaMol::Atom->new( symbol => $sym,coords => [$xyz])
+        }
       }
       else {
+        if ($sym =~ /\d/){
+          croak "atoms have changed from last model to current: $t\n"
+                if ( $sym != $atoms[$n]->Z );
+        }
+        else {
+          croak "atoms have changed from last model to current: $t\n"
+                if ( $sym ne $atoms[$n]->symbol );
+        }
         $atoms[$n]->set_coords( $t, $xyz );
-        $atoms[$n]->nt($t);
+
       }
       $n++;
     }

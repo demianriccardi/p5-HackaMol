@@ -7,8 +7,6 @@ use Math::Vector::Real::Random;
 use Math::Trig;
 use HackaMol;
 
-
-
 my $merc = HackaMol::Atom->new(
     name    => "Mercury",
     Z       => 80,

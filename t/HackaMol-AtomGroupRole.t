@@ -14,8 +14,11 @@
     $self->$orig(@roles);
   };
 }
-
+use warnings;
+use strict;
 use Test::More;
+use File::Slurp;
+use Cwd;
 use Test::Warn;
 use Test::Output;
 use Test::Fatal qw(lives_ok dies_ok);
@@ -217,8 +220,22 @@ my $xyz1 =
   H   2.330920   0.060980  -1.003320
 ';
 
+#print_xyz tests
 stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz no arg");
-stdout_is(sub{$group->print_xyz(0)},$xyz1,"print_xyz(0)");
+my $dir = getcwd;
+my $tfl = $dir."/t/lib/tmp.xyz"; 
+unlink($tfl);
+is(-e $tfl, undef, 'no xyz_file');
+my $fh  = $group->print_xyz($tfl);
+is(-e $tfl, 1, 'xyz_file written');
+$group->print_xyz($fh);
+$fh->close;
+my $tmp = read_file($tfl);
+is($tmp,$xyz1.$xyz1,"printed twice");
+
+warning_is { $group->print_xyz($tfl) }
+"overwrite $tfl",
+  "carp warning> overwrite xyz ";
 
 my $xyz2 = 
 '3
@@ -227,11 +244,15 @@ my $xyz2 =
   H   1.083880   0.022401  -0.139792
   H   2.330920  -0.016939   0.740498
 ';
+
 $group->rotate(V(1,0,0), 180, $COM,1);
+$group->gt(1);
+
+#some rotation tests
 cmp_ok(abs($group->COM-$COM), '<', 1E-7, "COM after rotation ");
-stdout_is(sub{$group->print_xyz(1)},$xyz2,"print_xyz(1) after rotation 180");
+stdout_is(sub{$group->print_xyz},$xyz2,"print_xyz after rotation 180");
 $group->rotate(V(1,0,0), 180, $COM);
-stdout_is(sub{$group->print_xyz},$xyz2,"print_xyz after rotation 180 no t spec");
+stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
 
 $group->clear_atoms;
 cmp_ok (abs(0-$group->total_charge), '<', 1E-7, 'cleared total charge'  );

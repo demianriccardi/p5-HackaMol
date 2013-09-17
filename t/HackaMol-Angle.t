@@ -1,4 +1,3 @@
-use Modern::Perl;
 use Test::More;
 use Test::Moose;
 use Math::Vector::Real;

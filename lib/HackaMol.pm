@@ -103,7 +103,7 @@ __END__
 
 use HackaMol;
 
-my $hack  = HackaMol->new(name => "nofunnystuff");
+my $hack  = HackaMol->new(name => "hackitup");
 
 @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
 
@@ -119,11 +119,12 @@ print "\n";
 
 printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
-$mol->push_groups_by_atom_attr('resid'); #populate groups by atom resid attr
+my @groups = $hack->group_by_atom_attr('resid'); #populate groups by atom resid attr
+$mol->push_groups(@groups); 
 
 $_->rotate(V(1,1,1),60,$_->COM,1) foreach $mol->all_groups; # mess up all the amino acids
 
-say $mol->count_atoms;
+print $mol->count_atoms . "\n";
 
 print "\n";
 
@@ -131,143 +132,64 @@ printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
 
 =head1 DESCRIPTION
 
-The Molecule class provides methods and attributes for collections of atoms that may be divided
-into groups, placed into bonds, angles, and dihedrals. The Molecule class extends the AtomGroup 
-parent class, which consumes the AtomGroupRole, and consumes PhysVecMVRRole, QmRole, and 
-BondsAnglesDihedralsRole. See the documentation of those classes and roles for details.  
+The HackaMol library enables users to build simple, yet powerful scripts for carrying out 
+computational work on molecules at multiple scales. The molecular object system organizes 
+atoms within molecules using groups, bonds, angles, and dihedrals.  HackaMol seeks to provide 
+intuitive attributes and methods that may be harnessed to coerce computational chemistry 
+through a common core. 
 
-In addition to Bonds, Angles, and Dihedrals, which also consume the AtomGroupRole, the Molecule
-class has the atomgroups attr.  The atomgroups attr is an ArrayRef[AtomGroup] with native array
-traits that allows all the atoms in the Molecule to be grouped and regroup at will. Thus, the 
-Molecule class provides a suite of methods and attributes that is very powerful. For example,
-a HackaMolX extension for proteins could group the atoms by sidechains and backbones, populate bonds,
-and then use Math::Vector::Real objects to sample alternative conformations of the sidechains and 
-backbone. 
+The HackaMol class uses the core HackaMol classes to provide some object building
+utilities described below.  This class consumes HackaMol::MolReadRole to provide
+structure readers for xyz and pdb coordinates.  Additional formats are pretty
+easy to add, but using open babel to do so may be a more robust approach.
 
-=array_method push_groups, get_groups, set_groups, all_groups, count_groups, delete_groups, clear_groups
+=attr name 
 
-ARRAY traits for the groups attribute, respectively: push, get, set, elements, count, delete, clear
+name is a rw str provided by HackaMol::NameRole.
 
-=array_method push_groups
+=method build_bonds
 
-push bond on to groups array
+takes a list of atoms and returns a list of bonds.  The bonds are generated for
+"list neighbors" by simply stepping through the atom list one at a time. e.g.
 
-$group->push_groups($bond1, $bond2, @othergroups);
+  my @bonds = $hack->build_bonds(@atoms[1,3,5]);
 
-=array_method all_groups
+  will return two bonds: B13 and B35 
 
-returns array of all elements in groups array
+=method build_angles
 
-print $_->bond_order, "\n" foreach $group->all_groups; 
+takes a list of atoms and returns a list of angles. The angles are generated for
+"list neighbors" by simply stepping through the atom list one at a time. e.g.
 
-=array_method get_groups
+  my @angles = $hack->build_angles(@atoms[1,3,5]);
 
-return element by index from groups array
+  will return one angle: A135
 
-print $group->get_groups(1); # returns $bond2 from that pushed above
+=method build_dihedrals
 
-=array_method set_groups
+takes a list of atoms and returns a list of dihedrals. The dihedrals are generated for
+"list neighbors" by simply stepping through the atom list one at a time. e.g.
 
-set groups array by index
+  my @dihedral = $hack->build_dihedrals(@atoms[1,3,5]);
 
-$group->set_groups(1, $bond1);
+  will croak!  you need atleast four atoms.
 
-=array_method count_groups
+  my @dihedral = $hack->build_dihedrals(@atoms[1,3,5,6,9]);
 
-return number of groups in the array  
-  
-print $group->count_groups; 
+  will return two dihedrals: D1356 and D3569
 
-=array_method has_groups
+=method group_by_atom_attr
 
-same as count_groups, allows clearer conditional code. i.e.  doing something if $mol->has_groups;
-
-=array_method push_bonds, set_bonds, delete_bonds, clear_bonds
-
-MODIFIED ARRAY traits for the bonds attribute provided by BondsAnglesDihedralsRole
-
-=array_method push_bonds
-
-before push_bonds, bond_count is incremented for all atoms in all bonds to be pushed.
-
-=array_method set_bonds
-
-around set_bonds, bound_count decremented for all atoms in bond being replaced. Then, bond_count is 
-incremented for all atoms in new bond
-
-=array_method delete_bonds
-
-before deleting bond, bond_count decremented for all atoms in bond.
-
-=array_method clear_bonds
-
-before clearing bonds, bond_count decremented for all atoms in all bonds.
-
-=method t 
-
-t is the same attr as before.  Molecule modifies t.  the $mol->t accessor behaves as before.  The $mol->(1)
-setter $self->gt(1) to set t for all atoms in the molecule.
-
-=method push_groups_by_atom_attr
-
-takes atom attribute as argument.  pushes the atoms into the atomgroup array by attribute
-
-=method all_bonds_atoms  
-
-takes array of atoms as argument, returns array of bonds that includes 1 or more of those atoms
-
-=method all_angles_atoms  
-
-takes array of atoms as argument, returns array of angles that includes 1 or 
-more of those atoms
-
-=method all_dihedrals_atoms  
-
-takes array of atoms as argument, returns array of dihedrals that includes 1 or 
-more of those atoms 
-
-=method bond_stretch_atoms
-
-takes Bond object, a distance (angstroms, typically), and active atoms as arguments. 
-translates the active atoms along the bond_vector by the distance and stores coordinates 
-in place ($atom->set_coords($mol->t,$translated_coors)).
-
-=method bond_stretch_groups
-
-takes Bond object, a distance (angstroms, typically), and active groups as arguments. 
-translates the atoms in the active groups along the bond_vector by the distance and 
-stores coordinates in place.
-
-=method angle_bend_atoms
-
-takes Angle object, an angle (degress), and active atoms as arguments. rotates the active atoms
-about the vector normal to be angle and stores rotated coordinates in place 
-($atom->set_coords($mol->t,$rotated_coor)).
-
-=method angle_bend_groups
-
-takes Angle object, an angle (degress), and active groups as arguments. rotates the atoms
-in the active groups about the vector normal to be angle and stores rotated coordinates 
-in place ($atom->set_coords($mol->t,$rotated_coor)).
-
-=method dihedral_rotate_atoms
-
-takes Dihedral object, an angle (degress), and active atoms as arguments. rotates the active atoms
-about the dihedral and stores rotated coordinates in place 
-($atom->set_coords($mol->t,$rotated_coor)).
-
-=method dihedral_rotate_groups
-
-takes Dihedral object, an angle (degress), and active groups as arguments. rotates atoms in 
-groups about the dihedral and stores rotated coordinates in place 
-($atom->set_coords($mol->t,$rotated_coor)).
+takes atom attribute as argument and builds AtomGroup objects by attribute
 
 =head1 SEE ALSO
 
 =for :list
-* L<PhysVecMVRRole>
-* L<BondsAnglesDihedralsRole>
-* L<PdbRole>
-* L<QmRole>
+* L<HackaMol::Atom>
+* L<HackaMol::Bond>
+* L<HackaMol::Angle>
+* L<HackaMol::Dihedral>
+* L<HackaMol::AtomGroup>
+* L<HackaMol::Molecule>
 * L<PerlMol>
 

@@ -289,6 +289,21 @@ cmp_ok(abs(1.0 - $obj1->distance($obj2)),'<',1E-7, "distance " );
 cmp_ok(abs(90.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "angle" );
 cmp_ok(abs(180.0 - $obj1->dihedral_deg($obj2,$obj3,$obj4)),'<',1E-7, "dihedral" );
 
+#test cloning of coordinates and forces
+my $mvrc0= $obj4->clone_xyz;
+my $mvrc1= $obj4->clone_xyz(1);
+is_deeply($mvrc0,$obj4->xyz, "clone_xyz no arg");
+is_deeply($mvrc1,$obj4->get_coords(1), "clone_xyz test arg");
+
+$obj1->push_forces(V(1,1,0));
+$obj1->push_forces(V(-1,1,0));
+
+my $mvrf0 = $obj4->clone_force;
+my $mvrf1 = $obj4->clone_force(1);
+
+is_deeply($mvrc0,$obj4->xyz, "clone_xyz no arg");
+is_deeply($mvrc1,$obj4->get_coords(1), "clone_xyz test arg");
+
 $obj1->set_coords(0, V(1,0,0));
 cmp_ok(abs(0.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );
 $obj1->set_coords(0, V(1,1,0));

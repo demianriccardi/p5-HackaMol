@@ -20,8 +20,9 @@ $mol->push_groups(@groups);
 
 $_->translate( -$_->COM, 1 ) foreach $mol->all_groups;
 
-$mol->print_xyz(0);
-$mol->print_xyz(1);
+$mol->print_xyz;
+$mol->t(1);
+$mol->print_xyz;
 
 my %Z;
 foreach my $atom ( $mol->all_atoms ) {
@@ -30,9 +31,12 @@ foreach my $atom ( $mol->all_atoms ) {
     $atom->push_coords( V( 3 * $z, $Z{$z} / 4, 0 ) );
 }
 
-$mol->print_xyz( $max_t + 1 );
+$mol->t($max_t+1);
+$mol->print_xyz;
 $_->push_coords( V( 3 * $_->Z, 0, 0 ) ) foreach $mol->all_atoms;
-$mol->print_xyz( $max_t + 2 );
+$mol->t($max_t+2);
+$mol->print_xyz;
 $_->push_coords( V( 0, 0, 0 ) ) foreach $mol->all_atoms;
-$mol->print_xyz( $max_t + 3 );
+$mol->t($max_t+3);
+$mol->print_xyz;
 

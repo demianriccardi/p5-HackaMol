@@ -13,14 +13,6 @@ $mol->translate( V( 90, 0, 0 ) );
 foreach ( 1 .. 360 ) {
     $mol->translate( V( -0.5, 0, 0 ) );
     $mol->rotate( V( 1, 1, 1 ), 10, $mol->COM );
-    print_xyz($mol);
+    $mol->print_xyz;
 }
 
-sub print_xyz {
-    my $mol = shift;
-    print $mol->count_atoms;
-    print "\n\n";
-    foreach my $atom ( $mol->all_atoms ) {
-        printf( "%5s %12.6f %12.6f %12.6f\n", $atom->Z, @{ $atom->xyz } );
-    }
-}

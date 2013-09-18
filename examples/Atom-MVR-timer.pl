@@ -17,7 +17,7 @@ printf( "time to Atom->new(Z => 80) for $natoms atoms: %10.3f\n", $t2 - $t1 );
 
 my $t3;
 foreach my $t ( 1 .. 3 ) {
-    $_->push_coords( V(2, 2, 2) ) foreach @atoms;
+    $_->push_coords( V( 2, 2, 2 ) ) foreach @atoms;
     $t3 = time;
     printf(
 "$t time to push_coords( V(2.000,2.000,2.000) ) for $natoms atoms: %10.3f\n",
@@ -26,7 +26,7 @@ foreach my $t ( 1 .. 3 ) {
 }
 
 foreach my $t ( 1 .. 3 ) {
-    $atoms[$t]->push_coords( V( 2, 2, 2 )) foreach 1 .. 100;
+    $atoms[$t]->push_coords( V( 2, 2, 2 ) ) foreach 1 .. 100;
     $t3 = time;
     printf(
 "Time to push_coords( V(2.000,2.000,2.000) ) 100 times for atom $t: %.3g\n",
@@ -53,36 +53,39 @@ my @ala_atoms2 = grep { $_->resname eq 'ALA' } @atoms;
 my $t6 = time;
 printf( "time to grep resname eq ALA already set: %10.3f\n", $t6 - $t5 );
 
-my $atoms_ala_atoms_match =1;
+my $atoms_ala_atoms_match = 1;
 foreach ( 0 .. $#ala_atoms ) {
-    $atoms_ala_atoms_match =0 unless( refaddr( $atoms[$_] ) == refaddr( $ala_atoms[$_] ) );
+    $atoms_ala_atoms_match = 0
+      unless ( refaddr( $atoms[$_] ) == refaddr( $ala_atoms[$_] ) );
 }
-if ($atoms_ala_atoms_match){
-  print 'references within @atoms and @ala_atoms match!'. "\n";
+if ($atoms_ala_atoms_match) {
+    print 'references within @atoms and @ala_atoms match!' . "\n";
 }
 else {
-  print 'references within @atoms and @ala_atoms do not match!'. "\n";
+    print 'references within @atoms and @ala_atoms do not match!' . "\n";
 }
 print "construction comparison benchmarks Z vs Symbol with: \n";
 print "   min attributes, many attributes, min attr with 100 coordinates\n";
 cmpthese(
     50000,
     {
-        'symb_min____attr' => sub { my $atom = HackaMol::Atom->new( symbol => "HG" ) },
-        'Z____min____attr' => sub { my $atom = HackaMol::Atom->new( Z      => 80 ) },
-  #      'Zmin push    100' => sub {
-  #          my $atom = Atom->new( Z => 80 );
-  #          $atom->push_coords( [ 1, 0, 3 ] ) foreach ( 1 .. 100 );
-  #      },
-  #      'symb many   attr' => sub {
-  #          my $atom = Atom->new(
-  #              symbol => "HG",
-  #              mass   => 200.59,
-  #              charge => [2],
-  #              coords => [ [ 0, 0, 0 ] ],
-  #              forces => [ [ 0, 0, 0 ] ],
-  #          );
-  #      },
+        'symb_min____attr' =>
+          sub { my $atom = HackaMol::Atom->new( symbol => "HG" ) },
+        'Z____min____attr' => sub { my $atom = HackaMol::Atom->new( Z => 80 ) },
+
+        #      'Zmin push    100' => sub {
+        #          my $atom = Atom->new( Z => 80 );
+        #          $atom->push_coords( [ 1, 0, 3 ] ) foreach ( 1 .. 100 );
+        #      },
+        #      'symb many   attr' => sub {
+        #          my $atom = Atom->new(
+        #              symbol => "HG",
+        #              mass   => 200.59,
+        #              charge => [2],
+        #              coords => [ [ 0, 0, 0 ] ],
+        #              forces => [ [ 0, 0, 0 ] ],
+        #          );
+        #      },
         'Z____many___attr' => sub {
             my $atom = HackaMol::Atom->new(
                 Z      => 80,

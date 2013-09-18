@@ -68,4 +68,3 @@ foreach my $ang ( 1 .. 36 ) {
     $bigmol->print_xyz($fh);
 }
 
-

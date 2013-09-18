@@ -30,10 +30,8 @@ my $max_t = $atoms[0]->count_coords -1;
 my $mol = HackaMol::Molecule->new(
                                name      => 'trp-cage', 
                                atoms     => [@atoms], 
-                           #    dihedrals => [@dihedrals],
+                               dihedrals => [@dihedrals],
                                 );
-say "shit ", $mol->count_dihedrals;
-exit;
 
 my $natoms = $mol->count_atoms;
 my $t = 0;

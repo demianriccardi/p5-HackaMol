@@ -23,8 +23,10 @@ sub build_bonds {
   # build the bonds 
   my $k = 0;
   while ($k+1 <= $#atoms){
-    my $name;
-    $name .= $_->name.$_->resid foreach (@atoms[$k, $k+1]);
+    my $name = join("_", map{ 
+                           $_->name.$_->resid  
+                            } @atoms[$k , $k+1] 
+    );
     push @bonds, HackaMol::Bond->new(
                         name => $name,
                         atoms=>[ @atoms[$k, $k+1] ] );
@@ -43,8 +45,10 @@ sub build_angles {
   # build the angles 
   my $k = 0;
   while ($k+2 <= $#atoms){
-    my $name;
-    $name .= $_->name.$_->resid foreach (@atoms[$k .. $k+2]);
+    my $name = join("_", map{ 
+                           $_->name.$_->resid  
+                            } @atoms[$k .. $k+2] 
+    );
     push @angles, HackaMol::Angle->new(
                         name => $name,
                         atoms=>[ @atoms[$k .. $k+2] ] );
@@ -63,8 +67,10 @@ sub build_dihedrals {
   # build the dihedrals 
   my $k = 0;
   while ($k+3 <= $#atoms){
-    my $name;
-    $name .= $_->name.$_->resid foreach (@atoms[$k .. $k+3]);
+    my $name = join("_", map{ 
+                           $_->name.$_->resid  
+                            } @atoms[$k .. $k+3] 
+    );
     push @dihedrals, HackaMol::Dihedral->new(
                         name => $name, 
                         atoms=>[ @atoms[$k .. $k+3] ] );

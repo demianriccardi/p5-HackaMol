@@ -290,19 +290,30 @@ cmp_ok(abs(90.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "angle" );
 cmp_ok(abs(180.0 - $obj1->dihedral_deg($obj2,$obj3,$obj4)),'<',1E-7, "dihedral" );
 
 #test cloning of coordinates and forces
-my $mvrc0= $obj4->clone_xyz;
-my $mvrc1= $obj4->clone_xyz(1);
-is_deeply($mvrc0,$obj4->xyz, "clone_xyz no arg");
-is_deeply($mvrc1,$obj4->get_coords(1), "clone_xyz test arg");
 
-$obj1->push_forces(V(1,1,0));
-$obj1->push_forces(V(-1,1,0));
+$obj4->push_coords(V(1,-1,0));
+foreach my $t (0,1){
+  $obj4->t($t);
+  my $mvrc1= $obj4->clone_xyz;
+  my $mvrc2= $obj4->clone_xyz($t);
+  is_deeply($mvrc1,$obj4->get_coords($t), "clone_xyz test noarg t$t");
+  is_deeply($mvrc2,$mvrc1, "clone_xyz test arg t$t");
+  cmp_ok(refaddr($mvrc1),'!=',refaddr($obj4->get_coords($t)), "refs not same");
+  cmp_ok(refaddr($mvrc1),'!=',refaddr($mvrc2), "refs not same");
+}
 
-my $mvrf0 = $obj4->clone_force;
-my $mvrf1 = $obj4->clone_force(1);
+$obj4->push_forces(V(1,1,0));
+$obj4->push_forces(V(-1,1,0));
 
-is_deeply($mvrc0,$obj4->xyz, "clone_xyz no arg");
-is_deeply($mvrc1,$obj4->get_coords(1), "clone_xyz test arg");
+foreach my $t (0,1){
+  $obj4->t($t);
+  my $mvrc1= $obj4->clone_force;
+  my $mvrc2= $obj4->clone_force($t);
+  is_deeply($mvrc1,$obj4->get_forces($t), "clone_force test noarg t$t");
+  is_deeply($mvrc2,$mvrc1, "clone_force test arg t$t");
+  cmp_ok(refaddr($mvrc1),'!=',refaddr($obj4->get_forces($t)), "refs not same");
+  cmp_ok(refaddr($mvrc1),'!=',refaddr($mvrc2), "refs not same");
+};
 
 $obj1->set_coords(0, V(1,0,0));
 cmp_ok(abs(0.0 - $obj2->angle_deg($obj1,$obj3)),'<',1E-7, "return zero if a vector length in angle calc is zero" );

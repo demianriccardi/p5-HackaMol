@@ -9,6 +9,7 @@ use HackaMol::Atom;
 use HackaMol::Bond;
 use HackaMol::Angle;
 use HackaMol::Dihedral;
+use Scalar::Util qw(refaddr);
 use Carp;
 
 with 'HackaMol::NameRole','HackaMol::MolReadRole';
@@ -99,7 +100,43 @@ sub group_by_atom_attr {
 
 }
 
+sub find_bonds_brute {
+  my $self       = shift;
+  my %args       = @_;
+  my @bond_atoms = @{ $args{bond_atoms} };
+  my @atoms      = @{ $args{candidates} };
 
+  my $fudge      = 0.45; 
+
+  $fudge = $args{fudge} if ( exists($args{fudge}) );
+
+  my @bonds;
+  my %name;
+
+  foreach my $at_i (@bond_atoms){
+    my $cov_i = $at_i->covalent_radius;
+    my $xyz_i = $at_i->xyz;
+
+    foreach my $at_j (@atoms){
+        next if (refaddr($at_i) == refaddr($at_j));
+        my $cov_j = $at_j->covalent_radius;
+        my $dist  = $at_j->distance( $at_i );
+
+        if ($dist <= $cov_i + $cov_j + $fudge){
+          my $nm=$at_i->symbol."-".$at_j->symbol;
+          $name{$nm}++;
+          push @bonds,
+            HackaMol::Bond->new(
+              name  => "$nm\_".$name{$nm},
+              atoms => [ $at_i, $at_j ],
+            );
+        }
+
+    }
+  }
+  return (@bonds);
+}
+ 
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -229,6 +266,21 @@ takes a list of atoms and returns a list of dihedrals. The dihedrals are generat
 =method group_by_atom_attr
 
 takes atom attribute as argument and builds AtomGroup objects by attribute
+
+=method find_bonds_brute 
+
+takes hash argument list and returns bonds.  Find bonds between bond_atoms and the candidates.
+
+  my @oxy_bonds = $hack->find_bonds_brute(
+                                    bond_atoms => [$hg],
+                                    candidates => [$mol->all_atoms],
+                                    fudge      => 0.45,
+                  );
+
+fudge is an optional argument. Default is 0.45 (open babel uses same default). find_bonds_brute
+uses a bruteforce algorithm that tests the interatomic separation against the sum of the 
+covalent radii + fudge. It does not return a self bond for an atom 
+( next if refaddr($ati) == refaddr($atj) ).
 
 =head1 SEE ALSO
 

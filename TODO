@@ -1,6 +1,0 @@
-subclassing Math::Vector::Real with MooseX::NonMoose
-http://www.perlmonks.org/?node_id=1053736
-
-I asked about subclassing MVR so that I could use Storage on the vectors, there must be a simpler way
-of serializing the MVR objects.
-

@@ -1,6 +1,8 @@
 use Modern::Perl;
+use Math::Trig;
 use HackaMol;
 
+my $radius = shift || 16;
 my $oxy = HackaMol::Atom->new( Z => 8 );
 my $hyd = HackaMol::Atom->new( Z => 1 );
 
@@ -19,3 +21,7 @@ say "rho (molecules/ang^3): ",
   ( $rho / $mass ) *
   ( $cm_ang**3 ) *
   $Na;    # g/cm3 * mol/g * cm3/ang3 * molecules/mol
+
+my $natoms = int( 0.0334 * ( $radius**3 ) * 4 * pi / 3 );
+
+say "$natoms in radius $radius Angstroms"; 

@@ -40,7 +40,7 @@ sub BUILD {
 
 
 # need to increase atom bond_count when push
-before 'push_bonds' => sub {
+after 'push_bonds' => sub {
     my $self = shift;
     foreach my $bond (@_) {
         $_->inc_bond_count foreach $bond->all_atoms;

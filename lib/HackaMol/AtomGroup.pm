@@ -29,38 +29,36 @@ __END__
 
 =head1 SYNOPSIS
 
-use HackaMol::AtomGroup;
-use Math::Vector::Real;
-use Math::Vector::Real::Random;
+   use HackaMol::AtomGroup;
+   use Math::Vector::Real;
+   use Math::Vector::Real::Random;
 
-my $radius = 16;
-my $natoms = int(0.0334*($radius**3)*4*pi/3);
+   my $radius = 16;
+   my $natoms = int(0.0334*($radius**3)*4*pi/3);
 
-my @atoms = map {Atom->new(Z => 8, charges=> [0], coords => [$_]) }
-            map {$_*$radius}
-            map {Math::Vector::Real->random_in_sphere(3)} 1 .. $natoms;
+   my @atoms = map {Atom->new(Z => 8, charges=> [0], coords => [$_]) }
+               map {$_*$radius}
+               map {Math::Vector::Real->random_in_sphere(3)} 1 .. $natoms;
 
-my $group = AtomGroup->new(gname => 'biggroup', atoms=> [@atoms]);
+   my $group = AtomGroup->new(gname => 'biggroup', atoms=> [@atoms]);
 
-print $group->count_atoms . "\n";
+   print $group->count_atoms . "\n";
 
-print $group->count_unique_atoms . "\n";
+   print $group->count_unique_atoms . "\n";
 
-print $group->canonical_name . "\n";
+   print $group->Rg . "\n";
 
-print $group->Rg . "\n";
-
-my $numerical_error = sqrt($radius*$radius*3/5) - $group->Rg;
+   my $numerical_error = $radius*sqrt($radius*3/5) - $group->Rg;
 
 =head1 DESCRIPTION
 
 The HackaMol AtomGroup class provides methods and attributes for groups of atoms.
 Atom groupings can be defined to mimic conventional forcefields or manipulated to 
-generate novel analytical tools.  For example, with a trajectory loaded (via 
-HackaMolX extensions), a dynamic cluster of atoms can be placed in a group and 
-monitored in time. Or, perhaps, track regional charges of a quantum mechanical
-molecule with changes in configuration or external field.  The AtomGroup class
-consumes the AtomGroupRole and provides the parent class for the Molecule class.
+generate novel analytical tools.  For example, with a trajectory loaded, a dynamic 
+cluster of atoms can be placed in a group and monitored in time. Or, perhaps, track 
+regional charges of a quantum mechanical molecule with changes in configuration or 
+external field.  The AtomGroup class consumes the AtomGroupRole and provides the 
+parent class for the Molecule class.
 
 =attr name
 

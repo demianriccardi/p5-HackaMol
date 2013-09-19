@@ -83,23 +83,6 @@ sub _build_mass {
     return ($mass);
 }
 
-#sub push_groups_by_atom_attr {
-#
-#    my $self = shift;
-#    my $attr = shift;
-#    
-#    my %group;
-#    foreach my $atom ( $self->all_atoms ) {
-#        push @{ $group{ $atom->$attr } }, $atom;
-#    }
-#
-#    my @atomsgroups =
-#      map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort keys(%group);
-#
-#    $self->push_groups(@atomsgroups);
-#
-#}
-
 sub all_bonds_atoms  { return ( shift->_all_these_atoms( 'bonds',  @_ ) ) }
 sub all_angles_atoms { return ( shift->_all_these_atoms( 'angles', @_ ) ) }
 
@@ -108,7 +91,6 @@ sub all_dihedrals_atoms {
 }
 
 sub _all_these_atoms {
-
     #these bonds, these angles, these dihedrals
     #this bond, this angle, this dihedral
     my $self      = shift;
@@ -220,36 +202,19 @@ __END__
 
 =head1 SYNOPSIS
 
-use HackaMol::Molecule;
-
-use Math::Vector::Real;
-
-use PDBintoAtoms qw(readinto_atoms); # barebones PDB reader 
-
-my @atoms = readinto_atoms("t/lib/1L2Y.pdb"); 
-
-my $mol = Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
-
-$mol->translate(-$mol->COM);
-
-$mol->rotate(V(1,0,0), 180, V(10,10,10));
-
-say $mol->count_atoms;
-
-print "\n";
-
-printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms;
-
-$mol->push_groups_by_atom_attr('resid'); #populate groups by atom resid attr
-
-$_->rotate(V(1,1,1),60,$_->COM,1) foreach $mol->all_groups; # mess up all the amino acids
-
-say $mol->count_atoms;
-
-print "\n";
-
-printf("%5s %8.3f %8.3f %8.3f\n", $_->Z, @{$_->xyz}) foreach $mol->all_atoms; 
-
+    use HackaMol;
+    use Math::Vector::Real;
+    
+    my $hack  = HackaMol->new(name => "hackitup");
+    my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb"); 
+    
+    my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
+    $mol->translate(-$mol->COM);
+    $mol->rotate(V(1,0,0), 180, V(10,10,10));
+    
+    $mol->print_xyz;
+    # see examples
+ 
 =head1 DESCRIPTION
 
 The Molecule class provides methods and attributes for collections of atoms that may be divided
@@ -261,9 +226,9 @@ In addition to Bonds, Angles, and Dihedrals, which also consume the AtomGroupRol
 class has the atomgroups attr.  The atomgroups attr is an ArrayRef[AtomGroup] with native array
 traits that allows all the atoms in the Molecule to be grouped and regroup at will. Thus, the 
 Molecule class provides a suite of methods and attributes that is very powerful. For example,
-a HackaMolX extension for proteins could group the atoms by sidechains and backbones, populate bonds,
-and then use Math::Vector::Real objects to sample alternative conformations of the sidechains and 
-backbone. 
+a HackaMolX extension for proteins could group the atoms by sidechains and backbones, populate 
+bonds, and then use Math::Vector::Real objects to sample alternative conformations of the 
+sidechains and backbone. 
 
 =array_method push_groups, get_groups, set_groups, all_groups, count_groups, delete_groups, clear_groups
 

@@ -70,16 +70,16 @@ cmp_ok( 2 - abs( $group->COM ),
     '>', 0, 'group center of mass within 2 angstrom of 0,0,0' );
 cmp_ok( abs( $mol->COM - $group->COM ),
     '<', 1E-10, 'mol com same as group com' );
-cmp_ok( abs( $group->COZ - $group->COM ), '<',  1E-6, 'COM ~ COZ' );
+cmp_ok( abs( $group->COZ - $group->COM ), '<',  1E-7, 'COM ~ COZ' );
 cmp_ok( $group->total_charge,             '==', 0,    'group total charges 0' );
 cmp_ok( $mol->total_charge,               '==', 0,    'mol total charges 0' );
-cmp_ok( $group->dipole_moment, '==', 0,
+cmp_ok( abs($group->dipole_moment), '<', 1E-7,
     'group dipole moment is zero, no charges' );
-cmp_ok( $mol->dipole_moment, '==', 0, 'mol dipole moment is zero, no charges' );
+cmp_ok( abs($mol->dipole_moment), '<', 1E-7, 'mol dipole moment is zero, no charges' );
 my $exp_Rg = sqrt( $radius * $radius * 3 / 5 );
 cmp_ok( abs( $exp_Rg - $group->Rg ),
     '<', 0.75, 'group numerical Rg within 0.75 Angs of theoretical' );
-cmp_ok( abs( $mol->Rg - $group->Rg ), '<', 1E-10, 'group and Mol Rg same' );
+cmp_ok( abs( $mol->Rg - $group->Rg ), '<', 1E-7, 'group and Mol Rg same' );
 
 #test hackamol class
 

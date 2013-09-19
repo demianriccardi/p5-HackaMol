@@ -12,6 +12,7 @@ use Test::Moose;
 use Math::Vector::Real;
 use HackaMol::Atom;
 use HackaMol::AtomGroup;                # v0.001;#To test for version availability
+use Scalar::Util qw(refaddr);
 
 my @attributes = qw(
 atoms 
@@ -62,7 +63,7 @@ $group->do_forall('copy_ref_from_t1_through_t2','coords', 0, 2);
 is($group->count_atoms, 3, 'atom count');
 
 foreach my $at ($group->all_atoms){
-  cmp_ok($at->get_coords(0) , '==' , $at->get_coords($_),
+  cmp_ok(refaddr($at->get_coords(0)) , '==' , refaddr($at->get_coords($_)),
   "do_forall(copy_ref_from_t1_through_t2, coords, 0 , 2): $_") foreach 1 .. 2;
 }
 

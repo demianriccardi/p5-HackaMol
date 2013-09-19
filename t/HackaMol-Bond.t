@@ -83,7 +83,7 @@ my $bond2 = HackaMol::Bond->new(atoms => [$atom1,$atom3]);
 
 foreach my $t (0 .. 9){
   $bond1->gt($t);
-  cmp_ok($bond1->bond_length,'==', $t, "t dependent bond length: $t");
+  cmp_ok(abs($bond1->bond_length-$t),'<', 1E-7, "t dependent bond length: $t");
   is_deeply($bond1->bond_vector, V($t,0,0), "t dependent bond vector: V ($t, 0, 0)");
 }
 

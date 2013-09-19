@@ -68,7 +68,7 @@ cmp_ok( $obj1->count_charges, '==', 6, 'pushed 6 _tcharges and we have 6' );
 
 my $sum_charges = 0;
 $sum_charges += $_ foreach $obj1->all_charges;
-cmp_ok( $sum_charges, '==', -0.06, 'sum of charges as expected' );
+cmp_ok( abs($sum_charges+0.06), '<', 1E-7, 'sum of charges as expected' );
 
 cmp_ok( $obj1->get_charges(4), '==', -0.2, '5th _tcharges as expected' );
 
@@ -91,16 +91,16 @@ $obj1->t(0);
 $obj1->set_coords( $obj1->t, V( 1, 0, 0 ) );
 
 my $sqrt_2 =
-  sprintf( "%.16f", 1.4142135623730951 );    # double precision from fortran 90
+  sprintf( "%.10f", 1.4142135623730951 );    # double precision from fortran 90
 
-cmp_ok( sprintf( "%.16f", $obj1->distance($obj2) ),
+cmp_ok( sprintf( "%.10f", $obj1->distance($obj2) ),
     '==',
-    $sqrt_2, "distance between 100 and 010 to 16 decimal places: $sqrt_2" );
+    $sqrt_2, "distance between 100 and 010 to 10 decimal places: $sqrt_2" );
 
-cmp_ok( sprintf( "%.16f", $obj2->distance($obj1) ),
+cmp_ok( sprintf( "%.10f", $obj2->distance($obj1) ),
     '==',
     $sqrt_2,
-    "default obj2 distance between 100 and 010 to 16 decimal places: $sqrt_2" );
+    "default obj2 distance between 100 and 010 to 10 decimal places: $sqrt_2" );
 
 my $dq = $obj1->get_charges(1) - $obj1->get_charges(0);
 
@@ -246,7 +246,7 @@ lives_ok {
 
 $obj4->copy_ref_from_t1_through_t2('coords', 0, 10);
 
-cmp_ok($obj4->get_coords(0) , '==' , $obj4->get_coords($_),
+cmp_ok(refaddr($obj4->get_coords(0)) , '==' , refaddr($obj4->get_coords($_)),
 "copy_ref_from_t1_through_t2(coords, 0 , 10): $_") foreach 1 .. 10;
 
 my @objs = ($obj1,$obj2,$obj3,$obj4);

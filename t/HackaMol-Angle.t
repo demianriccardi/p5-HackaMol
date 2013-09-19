@@ -119,9 +119,9 @@ my $angle4 = HackaMol::Angle->new(atoms => [$atom2,$atom1,$atom2]);
 foreach my $t (0 .. 9){
   $angle1->do_forall('t',$t);
   $angle2->do_forall('t',$t);
-  cmp_ok($angle1->ang_deg,'==', 180.0, "antiparallel t dependent angle_deg: 180");
+  cmp_ok(abs($angle1->ang_deg-180),'<', 1E-7, "antiparallel t dependent angle_deg: 180");
   cmp_ok(abs(3.14159265359-$angle1->ang_rad),'<', 1E-7, "antiparallel t dependent angle_rad: pi");
-  cmp_ok($angle2->ang_deg,'==', 90.0, "xz t dependent ang: 90");
+  cmp_ok(abs($angle2->ang_deg-90),'<', 1E-7, "xz t dependent ang: 90");
   is_deeply($angle1->ang_normvec, V(0,0,0), "antiparallel t dependent ang_normvec: V (0, 0, 0)");
   is_deeply($angle4->ang_normvec, V(0,0,0), "parallel t dependent ang_normvec: V (0, 0, 0)");
   is_deeply($angle1->COM, $atom1->get_coords($t), "antiparallel COM at Hg");

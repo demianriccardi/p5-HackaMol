@@ -58,14 +58,14 @@ my $atom3 = HackaMol::Atom->new(
 
 my $dihe= HackaMol::Dihedral->new(atoms => [$atom0,$atom1,$atom2,$atom3]);
 
-cmp_ok($dihe->dihe_deg,'==', 180.0, "180 dihedral");
-is_deeply($dihe->COM, V(0,0,0), "COM at 0,0,0");
+cmp_ok(abs($dihe->dihe_deg-180),'<', 1.0E-7, "180 dihedral");
+cmp_ok(abs(V(0,0,0)-$dihe->COM),'<', 1.0E-7, "COM at 0,0,0");
 
 $atom3->set_coords(0,V(-1.0,sqrt(2)/2,sqrt(2)/2));
-cmp_ok($dihe->dihe_deg,'==', -45.0, "-45 dihedral");
+cmp_ok(abs($dihe->dihe_deg+45),'<', 1.0E-7, "-45 dihedral");
 
 $atom3->set_coords(0,V(-1.0,-sqrt(2)/2,-sqrt(2)/2));
-cmp_ok($dihe->dihe_deg,'==', 135.0, "135 dihedral");
+cmp_ok(abs($dihe->dihe_deg-135),'<', 1.0E-7, "135 dihedral");
 
 $dihe->dihe_eq($dihe->dihe_deg - 0.5);
 

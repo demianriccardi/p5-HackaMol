@@ -85,52 +85,52 @@ __END__
 
 =head1 SYNOPSIS
 
-use HackaMol::Atom;
-use HackaMol::Dihedral;
+   use HackaMol::Atom;
+   use HackaMol::Dihedral;
 
-my ($atom1,$atom4) = map {
-                       Atom->new(
-                          name    => "C".($_+1),
-                          charges => [0],
-                          coords  => [ V( $_, $_, 0) ],
-                          Z       => 6, 
-                       )} (-1, 1);
-
-my ($atom2,$atom3) = map {
-                       Atom->new(
-                          name    => "S".($_+1),
-                          charges => [0],
-                          coords  => [ V( $_, 0, 0) ],
-                          Z       => 16, 
-                       )} (-1, 1);
-
-my $dihe = HackaMol::Dihedral->new(name=>'disulfide', 
-                                  atoms=>[$atom1,$atom2,$atom3,$atom4]);
-
-my $pdihe = sprintf(
-                "Dihedral: %s, angle: %.2f\n"
-                $dihe->name, 
-                $dihe->dihe_deg, 
-                     );
-
-print $pdihe;
-
-my $COM_atom = HackaMol::Atom->new(
-                                name    => "X".$_->name."X",
-                                coords  => [ $dihe->COM ],
-                                Z       => 1,
-                                  );
-
-
+   my ($atom1,$atom4) = map {
+                          Atom->new(
+                             name    => "C".($_+1),
+                             charges => [0],
+                             coords  => [ V( $_, $_, 0) ],
+                             Z       => 6, 
+                          )} (-1, 1);
+   
+   my ($atom2,$atom3) = map {
+                          Atom->new(
+                             name    => "S".($_+1),
+                             charges => [0],
+                             coords  => [ V( $_, 0, 0) ],
+                             Z       => 16, 
+                          )} (-1, 1);
+   
+   my $dihe = HackaMol::Dihedral->new(name=>'disulfide', 
+                                     atoms=>[$atom1,$atom2,$atom3,$atom4]);
+   
+   my $pdihe = sprintf(
+                   "Dihedral: %s, angle: %.2f\n"
+                   $dihe->name, 
+                   $dihe->dihe_deg, 
+   );
+   
+   print $pdihe;
+   
+   my $COM_atom = HackaMol::Atom->new(
+                                   name    => "X".$_->name."X",
+                                   coords  => [ $dihe->COM ],
+                                   Z       => 1,
+   );
+   
 =head1 DESCRIPTION
-
+   
 The HackaMol Dihedral class provides a set of methods and attributes for working 
-with three connections between four atoms.  Like the Bond and Angle classes, the 
-Dihedral class consumes the AtomGroupRole providing methods to determine the 
-center of mass, total charge, etc. (see AtomGroupRole). 
-A $dihedral containing (atom1,atom2,atom3,atom4) produces the angle 
-($dihedral->dihe_deg) between the planes containing (atom1, atom2, atom3) and 
-(atom2, atom3, atom4).
+with three connections between four atoms.  Like the L<HackaMol::Bond> and 
+L<HackaMol::Angle> classes, the Dihedral class consumes the 
+L<HackaMol::AtomGroupRole> 
+providing methods to determine the center of mass, total charge, etc. 
+(see AtomGroupRole). A $dihedral containing (atom1,atom2,atom3,atom4) produces 
+the angle ($dihedral->dihe_deg) between the planes containing (atom1, atom2, 
+atom3) and (atom2, atom3, atom4).
 
 The Dihedral class also provides attributes and methods to set parameters and  
 functions to measure energy.  The energy methods call on CodeRef attributes that 
@@ -183,7 +183,7 @@ arguments, as many as you want. Calculates energy using the
 improper_dihe_energy_func described below, if the attribute, dihe_fc > 0.  
 The improper_dihe_energy method calls the improper_dihe_energy_func as follows: 
 
-my $energy = &{$self->improper_dihe_energy_func}($self,@_);
+   my $energy = &{$self->improper_dihe_energy_func}($self,@_);
 
 which will pass $self and that in @_ array to improper_dihe_energy_func, which, similar to the Bond and Angle classes, can be redefined. torsion_energy is analogous.
 

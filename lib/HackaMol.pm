@@ -261,7 +261,7 @@ takes hash argument list and returns bonds.  Find bonds between bond_atoms and t
                                     bond_atoms => [$hg],
                                     candidates => [$mol->all_atoms],
                                     fudge      => 0.45,
-                  );
+  );
 
 fudge is an optional argument. Default is 0.45 (open babel uses same default). 
 find_bonds_brute uses a bruteforce algorithm that tests the interatomic 

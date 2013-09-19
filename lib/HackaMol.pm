@@ -291,5 +291,5 @@ covalent radii + fudge. It does not return a self bond for an atom
 * L<HackaMol::Dihedral>
 * L<HackaMol::AtomGroup>
 * L<HackaMol::Molecule>
-* L<PerlMol>
+* L<http://perlmol.org>
 

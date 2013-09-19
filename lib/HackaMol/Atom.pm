@@ -228,11 +228,11 @@ isa Num that is lazy and rw. _build_covalent_radius builds the default.
 the covalent radii are taken from those tabulated in:
 
 =for :list
-* P. Pyykkö, M. Atsumi (2009). 
-"Molecular Single-Bond Covalent Radii for Elements 1-118". Chemistry: A European Journal 15: 186.
-* P. Pyykkö, M. Atsumi (2009). 
-"Molecular Double-Bond Covalent Radii for Elements Li–E112". Chemistry: A European Journal 15 (46): 12770.
-* P. Pyykkö, S. Riedel, M. Patzschke (2005). 
+* P. Pyykkoe, M. Atsumi (2009). 
+"Molecular Single-Bond Covalent Radii for Elements 1 to 118". Chemistry: A European Journal 15: 186.
+* P. Pyykkoe, M. Atsumi (2009). 
+"Molecular Double-Bond Covalent Radii for Elements Li to E112". Chemistry: A European Journal 15 (46): 12770.
+* P. Pyykkoe, S. Riedel, M. Patzschke (2005). 
 "Triple-Bond Covalent Radii". Chemistry: A European Journal 11 (12): 3511. 
 
 =attr vdw_radius
@@ -252,10 +252,9 @@ no arguments.  Changes the atom type using symbol. Similar to change_Z, change_s
 sets calls is_dirty(1).
 
 =head1 SEE ALSO
-
 =for :list
-* L<PhysVecMVRRole>
-* L<PdbRole>
-* L<QmRole>
-* L<PerlMol>
+* L<HackaMol::PhysVecMVRRole>
+* L<HackaMol::PdbRole>
+* L<HackaMol::QmAtomRole>
+* L<Chemistry::Atom>
 

@@ -386,9 +386,8 @@ groups about the dihedral and stores rotated coordinates in place
 =head1 SEE ALSO
 
 =for :list
-* L<PhysVecMVRRole>
-* L<BondsAnglesDihedralsRole>
-* L<PdbRole>
-* L<QmRole>
-* L<PerlMol>
+* L<HackaMol::PhysVecMVRRole>
+* L<HackaMol::BondsAnglesDihedralsRole>
+* L<HackaMol::QmMolRole>
+* L<Chemistry::Molecule>
 

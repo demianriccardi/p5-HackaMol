@@ -51,4 +51,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+need to expand...  maybe drop refs into YAML, JSON... actually that would be a
+good module to have...
 

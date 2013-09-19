@@ -187,3 +187,9 @@ my $energy = &{$self->improper_dihe_energy_func}($self,@_);
 
 which will pass $self and that in @_ array to improper_dihe_energy_func, which, similar to the Bond and Angle classes, can be redefined. torsion_energy is analogous.
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::AtomGroupRole>
+* L<Chemistry::Bond>
+* L<HackaMol::Angle>

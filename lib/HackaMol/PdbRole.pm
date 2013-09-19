@@ -134,7 +134,7 @@ pdb cols 23-26. residue index. PDB calls is resSeq, but resid is more familiar
 =attr  icode
 
 pdb cols 27. see code comments or
-http://www.wwpdb.org/documentation/format23/sect9.html 
+L<http://www.wwpdb.org/documentation/format23/sect9.html>
                             
 =attr  pdbid        
 
@@ -149,5 +149,8 @@ a CHARMMish parameter that may not belong here. default = 'TIP3'
 this is a place for the actual index.  Segid does not have to start from 0 (cut
 and paste as above, etc). 
                               
-                              
+=head1 SEE ALSO
+
+=for :list
+* L<http://www.pdb.org>
                               

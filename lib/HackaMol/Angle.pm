@@ -178,4 +178,10 @@ my $energy = &{$self->angle_energy_func}($self,@_);
 
 which will pass $self and that in @_ array to angle_energy_func, which, similar to the Bond class, can be redefined.
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::AtomGroupRole>
+* L<HackaMol::Bond>
+* L<HackaMol::Dihedral>
 

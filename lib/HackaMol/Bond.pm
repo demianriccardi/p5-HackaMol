@@ -179,4 +179,11 @@ my $energy = &{$self->bond_energy_func}($self,@_);
 
 which will pass $self and that in @_ array to bond_energy_func, which can be redefined.
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::AtomGroupRole>
+* L<HackaMol::Angle>
+* L<HackaMol::Dihedral>
+* L<Chemistry::Bond>
 

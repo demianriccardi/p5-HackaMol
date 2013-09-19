@@ -70,3 +70,8 @@ isa Str that is lazy and rw. useful for labeling, bookkeeping...
 
 no arguments. returns the scalar radius of gyration for the group of atoms
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::Molecule>
+* L<HackaMol::AtomGroupRole>

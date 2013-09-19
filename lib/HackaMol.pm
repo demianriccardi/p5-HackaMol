@@ -146,8 +146,11 @@ __END__
 =head1 SYNOPSIS
 
 use HackaMol;
+
 use Math::Vector::Real;
+
 use Math::Vector::Real::Random;
+
 use Math::Trig;
 
 my $hack = HackaMol->new( name => "hackitup" );

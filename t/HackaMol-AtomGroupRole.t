@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+
 {
   # see node_id=1049328 on perlmonks. This hack allows the required subroutine
   # to be included in the ClassCompositor
@@ -14,6 +16,7 @@
     $self->$orig(@roles);
   };
 }
+
 use warnings;
 use strict;
 use Test::More;

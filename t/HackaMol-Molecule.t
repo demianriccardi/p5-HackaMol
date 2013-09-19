@@ -1,3 +1,7 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
 use Test::Moose;
 use Test::More;
 use Test::Warn;

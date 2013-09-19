@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 #examples with references
 use Modern::Perl;
 use Scalar::Util qw(refaddr);

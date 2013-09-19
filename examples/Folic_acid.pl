@@ -1,7 +1,7 @@
+#!/usr/bin/env perl
 use Modern::Perl;
 use WWW::Search;
 use Data::Dumper;
-use lib 'lib';
 use HackaMol::Atom;
 use HackaMol::Bond;
 use HackaMol::Molecule;

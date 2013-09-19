@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 use Modern::Perl;
 use HackaMol;
 use Math::Vector::Real;

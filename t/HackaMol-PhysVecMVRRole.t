@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 {
   # see node_id=1049328 on perlmonks. This hack allows the required subroutine
   # to be included in the ClassCompositor
@@ -15,6 +16,8 @@
   };
 }
 
+use strict;
+use warnings;
 use Test::Moose;
 use Test::More;
 use Test::Fatal qw(lives_ok dies_ok);

@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 # Demian Riccardi August, 22, 2013
 #
 use Modern::Perl;
@@ -39,4 +40,3 @@ $mol->print_xyz;
 $_->push_coords( V( 0, 0, 0 ) ) foreach $mol->all_atoms;
 $mol->t($max_t+3);
 $mol->print_xyz;
-

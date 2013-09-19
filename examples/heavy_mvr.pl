@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 #example for showing the laziness of attributes
 use Modern::Perl;
 use Math::Vector::Real;

@@ -145,91 +145,74 @@ __END__
 
 =head1 SYNOPSIS
 
-use HackaMol;
+   use HackaMol;
+   use Math::Vector::Real;
+   use Math::Vector::Real::Random;
+   use Math::Trig;
 
-use Math::Vector::Real;
-
-use Math::Vector::Real::Random;
-
-use Math::Trig;
-
-my $hack = HackaMol->new( name => "hackitup" );
-
-my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
-
-my $mol = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms] );
-
-# all coordinates from NMR ensemble are loaded
-
-my $fh = $mol->print_xyz( $mol->name . ".xyz" );
-foreach my $t ( 1 .. 4 ) {
-    $mol->t($t);
-    $mol->print_xyz($fh);
-}
-
-$mol->t(0);
-
-$mol->translate( -$mol->COM );
-
-$mol->rotate( V( 1, 0, 0 ), 180, V( 10, 10, 10 ) );
-
-$mol->print_xyz($fh);
-
-$mol->translate( -$mol->COM );
-
-$mol->print_xyz($fh);
-
-# translate/rotate method is provided by AtomGroupRole
-#populate groups byatom resid attr
-my @groups = $hack->group_by_atom_attr( 'resid', $mol->all_atoms );
-$mol->push_groups(@groups);
-
-foreach my $ang ( 1 .. 36 ) {
-    $_->rotate( V( 1, 1, 1 ), 10, $_->COM ) foreach $mol->all_groups;
-
-    #  $mol->get_groups(1)->print_xyz;
-    $mol->print_xyz($fh);
-}
-
-$fh->close;
-
-my $radius = 20;
-my $natoms = int( 0.0334 * ( $radius**3 ) * 4 * pi / 3 );
-
-my @sphatoms =
-  map { HackaMol::Atom->new( Z => 8, charges => [0], coords => [$_] ) }
-  map { Math::Vector::Real->random_in_sphere( 3, $radius ) } 1 .. $natoms;
-
-my $sphere = HackaMol::Molecule->new(
-    name  => "ball",
-    atoms => [@sphatoms]
-);
-
-my $bigmol = HackaMol::Molecule->new(
-    name  => "bigoverlap",
-    atoms => [ $mol->all_atoms, $sphere->all_atoms ],
-);
-
-$fh = $bigmol->print_xyz( $bigmol->name . ".xyz" );
-
-foreach my $ang ( 1 .. 36 ) {
-    $sphere->rotate( V( 1, 1, 1 ), 20, $sphere->COM );
-    $bigmol->print_xyz($fh);
-}
-
-
+   my $hack = HackaMol->new( name => "hackitup" );
+   my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
+   
+   # all coordinates from NMR ensemble are loaded into atoms
+   my $mol = HackaMol::Molecule->new(
+       name  => 'trp-cage',
+       atoms => [@atoms]
+   );
+   
+   #recenter all coordinates to center of mass
+   foreach my $t ( 0 .. $atoms[0]->count_coords - 1 ) {
+       $mol->t($t);
+       $mol->translate( -$mol->COM );
+   }
+   
+   # print coordinates from t=0 to trp-cage.xyz and return filehandle
+   my $fh = $mol->print_xyz( $mol->name . ".xyz" );
+   
+   # print coordinates for @t=(1..4) to same filehandle
+   foreach my $t ( 1 .. 4 ) {
+       $mol->t($t);
+       $mol->print_xyz($fh);
+   }
+   
+   $mol->t(0);
+   foreach ( 1 .. 10 ) {
+       $mol->rotate(
+           V( 0, 0, 1 ),    # rotation vector
+           36,              # rotate by 180 degrees
+           V( 5, 0, 0 )     # origin of rotation
+       );
+       $mol->print_xyz($fh);
+   }
+   
+   # translate/rotate method is provided by AtomGroupRole
+   # populate groups byatom resid attr
+   my @groups = $hack->group_by_atom_attr( 'resid', $mol->all_atoms );
+   $mol->push_groups(@groups);
+   
+   foreach my $ang ( 1 .. 10 ) {
+       $_->rotate( V( 1, 1, 1 ), 36, $_->COM ) foreach $mol->all_groups;
+       $mol->print_xyz($fh);
+   }
+   
+   $fh->close;    # done filling trp-cage.xyz with coordinates
+   #example/hackamol_synopsis.pl picks up from here
+   
 =head1 DESCRIPTION
+   
+The HackaMol library enables users to build simple, yet powerful scripts 
+for carrying out computational work on molecules at multiple scales. The 
+molecular object system organizes atoms within molecules using groups, 
+bonds, angles, and dihedrals.  HackaMol seeks to provide intuitive 
+attributes and methods that may be harnessed to coerce computational chemistry 
+through a common core. The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, and my own experiences as a researcher. 
 
-The HackaMol library enables users to build simple, yet powerful scripts for carrying out 
-computational work on molecules at multiple scales. The molecular object system organizes 
-atoms within molecules using groups, bonds, angles, and dihedrals.  HackaMol seeks to provide 
-intuitive attributes and methods that may be harnessed to coerce computational chemistry 
-through a common core. 
+The library is organized into two regions: HackaMol, the core (contained here) that has classes for atoms and molecules, and HackaMolX, the extensions, such as HackaMolX::PDB, a parser for protein databank files, and HackaMolX::Calculator, an abstract calculator for coercing computational chemistry, that use the core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core. Extensions are in the works, but the HackaMolX namespace has not been established yet! 
+
+HackaMol uses Math::Vector::Real (MVR) for all the vector operations. MVR is a lightweight solution with a fast XS dropin that overlaps very well with the desirables for working with atomic coordinates. Extensions that treat much larger systems will definitely benefit from the capabilities L<PDL> or L<Math::GSL>.
 
 The HackaMol class uses the core classes to provide some object building
 utilities described below.  This class consumes HackaMol::MolReadRole to provide
-structure readers for xyz and pdb coordinates.  Additional formats are pretty
-easy to add, but using open babel to do so may be a more robust approach.
+structure readers for xyz and pdb coordinates.  See L<Open Babel|http://openbabel.org> if other formats needed (All suggestions welcome!).  
 
 =attr name 
 
@@ -242,7 +225,7 @@ takes a list of atoms and returns a list of bonds.  The bonds are generated for
 
   my @bonds = $hack->build_bonds(@atoms[1,3,5]);
 
-  will return two bonds: B13 and B35 
+will return two bonds: B13 and B35 
 
 =method build_angles
 
@@ -251,7 +234,7 @@ takes a list of atoms and returns a list of angles. The angles are generated for
 
   my @angles = $hack->build_angles(@atoms[1,3,5]);
 
-  will return one angle: A135
+will return one angle: A135
 
 =method build_dihedrals
 
@@ -260,11 +243,11 @@ takes a list of atoms and returns a list of dihedrals. The dihedrals are generat
 
   my @dihedral = $hack->build_dihedrals(@atoms[1,3,5]);
 
-  will croak!  you need atleast four atoms.
+will croak!  you need atleast four atoms.
 
   my @dihedral = $hack->build_dihedrals(@atoms[1,3,5,6,9]);
 
-  will return two dihedrals: D1356 and D3569
+will return two dihedrals: D1356 and D3569
 
 =method group_by_atom_attr
 
@@ -280,10 +263,10 @@ takes hash argument list and returns bonds.  Find bonds between bond_atoms and t
                                     fudge      => 0.45,
                   );
 
-fudge is an optional argument. Default is 0.45 (open babel uses same default). find_bonds_brute
-uses a bruteforce algorithm that tests the interatomic separation against the sum of the 
-covalent radii + fudge. It does not return a self bond for an atom 
-( next if refaddr($ati) == refaddr($atj) ).
+fudge is an optional argument. Default is 0.45 (open babel uses same default). 
+find_bonds_brute uses a bruteforce algorithm that tests the interatomic 
+separation against the sum of the covalent radii + fudge. It does not return 
+a self bond for an atom ( next if refaddr($ati) == refaddr($atj) ).
 
 =head1 SEE ALSO
 
@@ -294,5 +277,6 @@ covalent radii + fudge. It does not return a self bond for an atom
 * L<HackaMol::Dihedral>
 * L<HackaMol::AtomGroup>
 * L<HackaMol::Molecule>
-* L<http://perlmol.org>
+* L<Protein Data Bank | http://pdb.org>
+* L<VMD | http://www.ks.uiuc.edu/Research/vmd/>
 

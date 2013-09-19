@@ -127,3 +127,8 @@ each isa ArrayRef[Math::Vector::Real] that is lazy with public ARRAY traits: pus
 all_$_ clear_$_ count_$_
 
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::Molecule>
+* L<EMSL | https://bse.pnl.gov/bse/portal>

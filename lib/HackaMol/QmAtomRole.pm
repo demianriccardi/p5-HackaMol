@@ -78,3 +78,8 @@ isa Str that is lazy and rw
 
 isa Str that is lazy and rw
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::Atom>
+* L<EMSL | https://bse.pnl.gov/bse/portal>

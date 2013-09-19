@@ -311,27 +311,32 @@ __END__
 
 =head1 SYNOPSIS
 
-# instance of class that consumes the PhysVecRol
+   # instance of class that consumes the PhysVecRol
+   use HackaMol::Molecule; 
+   my $obj = HackaMol::Molecule->new( 
+                 name => 'foo', 
+                 t => 0 , 
+                 charges => [0.1], 
+                 coords => [ V(0,1,2) ]
+   ); 
 
-my $obj = Class_with_PhysVec->new( name => 'foo', t => 0 , charges => [0.1], coords => [ V(0,1,2) ]); 
+   # add some charges
 
-# add some charges
+   $obj->push_charges($_) foreach ( 0.3, 0.2, 0.1, -0.1, -0.2, -0.36 );
 
-$obj->push_charges($_) foreach ( 0.3, 0.2, 0.1, -0.1, -0.2, -0.36 );
+   my $sum_charges = 0;
 
-my $sum_charges = 0;
+   $sum_charges += $_ foreach $obj->all_charges;
+   print "average charge: ", $sum_charges / $obj->count_charges;
 
-$sum_charges += $_ foreach $obj->all_charges;
-print "average charge: ", $sum_charges / $obj->count_charges;
+   # add some coordinates
 
-# add some coordinates
+   $obj->push_coords($_) foreach ( V(0,0,0), V(1,1,1), V(-1.0,2.0,-4.0) ) );
 
-$obj->push_coords($_) foreach ( V(0,0,0), V(1,1,1), V(-1.0,2.0,-4.0) ) );
-
-print $obj->mean_charges . "\n";
-print $obj->msd_charges . "\n";
-printf ("%10.3f %10.3f %10.3f \n", @{$obj->mean_coords};
-print $obj->msd_coords . "\n";
+   print $obj->mean_charges . "\n";
+   print $obj->msd_charges . "\n";
+   printf ("%10.3f %10.3f %10.3f \n", @{$obj->mean_coords};
+   print $obj->msd_coords . "\n";
 
 
 =head1 DESCRIPTION
@@ -345,9 +350,7 @@ important to understand. The PhysVecMVR uses Math::Vector::Real (referred to as 
 which has pure Perl and XS implementations.  MVR::XS is fast with many useful/powerful
 overloaded methods. PhysVecMVR leaves many attributes rw so that they may be set and 
 reset on the fly. This seems most intuitive from the 
-perspective of carrying out computational work on molecules.  Thus, HackaMol bravely 
-ignores Moose recommendations to use mostly 'ro' attributes and to generate 
-objects as needed.  HackaMol may be coerced to be more rigid in future releases.    
+perspective of carrying out computational work on molecules.  
 
 Comparing the PhysVec within Atom and Molecule may be helpful. For both, the PhysVecRol 
 generates a little metadata (mass, name, etc.) and an array of coordinates, forces, and 
@@ -359,48 +362,47 @@ can imagine using the coordinates array to track the center of mass of the molec
 
 In the following:  Methods with mean_foo msd_foo intra_dfoo out front, carries out some analysis
 within $self. Methods with inter_ out front carries out some analysis between
-two objects that "does" PhysVecMVR (tests for this should be added) at the
-$self->t and $obj->t; a warning is carped if the ts are different 
+two objects of classes that consume PhysVecMVR at the $self->t and $obj->t.
 
 =array_method push_$_, all_$_, get_$_, set_$_, count_$_, clear_$_ foreach qw(charges coords forces)
 
-  ARRAY traits, respectively: push, get, set, all, elements, clear
+ARRAY traits, respectively: push, get, set, all, elements, clear
   Descriptions for charges and coords follows.  forces analogous to coords.
   
 =array_method push_charges
 
-  push value on to charges array
+push value on to charges array
 
   $obj->push_charges($_) foreach (0.15, 0.17, 0.14, 0.13);
 
 =array_method all_charges
 
-  returns array of all elements in charges array
+returns array of all elements in charges array
 
     print $_ . " " foreach $obj->all_charges; # prints 0.15 0.17 0.14 0.13
 
 =array_method get_charges
 
-  return element by index from charges array
+return element by index from charges array
 
     print $obj->get_charges(1); # prints 0.17
 
 =array_method set_charges
 
-  set value of element by index from charges array
+set value of element by index from charges array
 
     $obj->set_charges(2, 1.00);
     print $_ . " " foreach $obj->all_charges; # prints 0.15 0.17 1.00 0.13
 
 =array_method count_charges
 
-  return number of elements in charges array
+return number of elements in charges array
   
     print $obj->count_charges; # prints 4 
 
 =array_method clear_charges
   
-  clears charges array
+clears charges array
     
     $obj->clear_charges;
     print $_ . " " foreach $obj->all_charges; # does nothing 
@@ -408,13 +410,13 @@ $self->t and $obj->t; a warning is carped if the ts are different
 
 =array_method push_coords
 
-  push value on to coords array
+push value on to coords array
 
   $obj->push_coords($_) foreach ([0,0,0],[1,1,1],[-1.0,2.0,-4.0], [3,3,3]);
 
 =array_method all_coords
 
-  returns array of all elements in coords array
+returns array of all elements in coords array
 
     printf ("%10.3f %10.3f %10.3f \n", @{$_}) foreach $obj->all_coords; 
 
@@ -424,26 +426,26 @@ $self->t and $obj->t; a warning is carped if the ts are different
 
 =array_method get_coords
 
-  return element by index from coords array
+return element by index from coords array
 
     printf ("%10.3f %10.3f %10.3f \n", @{$obj->get_coords(1)}); # 
 
 =array_method set_coords
 
-  set value of element by index from coords array
+set value of element by index from coords array
 
     $obj->set_coords(2, [100,100,100]);
     printf ("%10.3f %10.3f %10.3f \n", @{$_}) foreach $obj->all_coords; 
 
 =array_method count_coords
 
-  return number of elements in coords array
+return number of elements in coords array
   
     print $obj->count_coords; # prints 4 
 
 =array_method clear_coords
   
-  clears coords array
+clears coords array
     
     $obj->clear_coords;
     print $_ . " " foreach $obj->all_coords; # does nothing 
@@ -547,7 +549,7 @@ Calculates the change in charge from initial t ($ti) to final t ($tf). I.e.:
   
   $obj1->intra_dcharges( $ti, $tf );
 
-  yields the same as:
+yields the same as:
 
   $self->get_charges($tf) - $self->get_charges($ti);
   

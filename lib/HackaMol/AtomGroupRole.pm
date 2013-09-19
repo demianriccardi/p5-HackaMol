@@ -387,6 +387,13 @@ coordinates in tf rather than atom->t.
 requires Math::Vector::Real vector, an angle (in degrees), and a MVR vector origin as arguments. 
 Optional argument: integer tf.  
 
-Rotates all atoms in the group around the MVR vector. Pass tf to the translate method to store new 
-coordinates in tf rather than atom->t.
+Rotates all atoms in the group around the MVR vector. Pass tf to the translate method to store 
+new coordinates in tf rather than atom->t.
 
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::AtomGroup>
+* L<HackaMol::Bond>
+* L<HackaMol::Angle>
+* L<HackaMol::Dihedral>

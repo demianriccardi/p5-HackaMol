@@ -71,11 +71,11 @@ __END__
 
 =head1 SYNOPSIS
 
-use Atom;
+   use HackaMol::Atom;
 
-my $atom = Atom->new(Z=>6);
+   my $atom = Atom->new(Z=>6);
 
-print $atom->$_ foreach ( qw( 
+   print $atom->$_ foreach ( qw( 
                               record_name  
                               serial       
                               occ          
@@ -88,15 +88,14 @@ print $atom->$_ foreach ( qw(
                               pdbid        
                               segid  
                             )
-                         );
+   );
 
 =head1 DESCRIPTION
 
 PdbRole provides atom attributes for PDB parsing.  All attributes are 'rw' and
 lazy, so they will not contaminate the namespace unless called upon. The
-functionality of the PdbRole may be extended in the future.  See HackaMolX::PDB
-for more information about parsing pdbs.  name from PhysVec provide the attr for 
-namd in the pdb (cols 13-16). symbol -> pdb element and charge -> pdb charge
+functionality of the PdbRole may be extended in the future.  An extension 
+(HackaMolX::PDB or HackaMol::X::PDB) will be released soon.
      
 =attr  record_name  
 

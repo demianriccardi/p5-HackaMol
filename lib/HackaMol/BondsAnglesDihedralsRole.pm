@@ -121,31 +121,31 @@ ARRAY traits for the bonds attribute, respectively: push, get, set, elements, co
 
 push bond on to bonds array
 
-$group->push_bonds($bond1, $bond2, @otherbonds);
+  $group->push_bonds($bond1, $bond2, @otherbonds);
 
 =array_method all_bonds
 
 returns array of all elements in bonds array
 
-print $_->bond_order, "\n" foreach $group->all_bonds; 
+  print $_->bond_order, "\n" foreach $group->all_bonds; 
 
 =array_method get_bonds
 
 return element by index from bonds array
 
-print $group->get_bonds(1); # returns $bond2 from that pushed above
+  print $group->get_bonds(1); # returns $bond2 from that pushed above
 
 =array_method set_bonds
 
 set bonds array by index
 
-$group->set_bonds(1, $bond1);
+  $group->set_bonds(1, $bond1);
 
 =array_method count_bonds
 
 return number of bonds in the array  
   
-print $group->count_bonds; 
+  print $group->count_bonds; 
 
 =array_method delete_bonds
 
@@ -166,4 +166,9 @@ Analogous to those for bonds.
 ARRAY traits for the bonds attribute, respectively: push, get, set, elements, count, delete, clear
 
 Analogous to those for bonds.
+
+=head1 SEE ALSO
+
+=for :list
+* L<HackaMol::Molecule>
 

@@ -88,14 +88,10 @@ SYNOPSIS
 
 DESCRIPTION
 ============
-       The HackaMol library enables users to build simple, yet powerful scripts 
-       for carrying out computational work on molecules at multiple scales. The 
-       molecular object system organizes atoms within molecules using groups, 
-       bonds, angles, and dihedrals.  HackaMol seeks to provide intuitive 
-       attributes and methods that may be harnessed to coerce computational 
-       chemistry through a common core. The library is inspired by 
-       L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, 
-       L<MMTSB|http://www.mmtsb.org>, and my own experiences as a researcher. 
+       The HackaMol library enables users to build simple, yet powerful scripts for carrying out computational work on molecules at multiple scales. The 
+       molecular object system organizes atoms within molecules using groups, bonds, angles, and dihedrals.  HackaMol seeks to provide intuitive 
+       attributes and methods that may be harnessed to coerce computational chemistry through a common core. The library is inspired by 
+       L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, and my own experiences as a researcher. 
        
        The library is organized into two regions: HackaMol, the core (contained 
        here) that has classes for atoms and molecules, and HackaMolX, the 

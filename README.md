@@ -1,7 +1,6 @@
 HackaMol
 ========
 Object-Oriented Perl 5, Moose Library for Molecular Hacking on multiple scales
-![CAII](https://github.com/demianriccardi/HackaMol/blob/master/examples/HackaMol2cba.gif)
 
 VERSION
 ========

@@ -1,20 +1,4 @@
 #!/usr/bin/env perl
-{
-  # see node_id=1049328 on perlmonks. This hack allows the required subroutine
-  # to be included in the ClassCompositor
-  package MooseX::ClassCompositor::ReqRole;
-  use Moose;
-  extends qw( MooseX::ClassCompositor );
-  around class_for => sub {
-    my $orig = shift;
-    my $self = shift;
-    my @roles = map {
-      ref($_) eq q(HASH) ? 'Moose::Meta::Role'->create_anon_role(methods => $_)
-: $_
-    } @_;
-    $self->$orig(@roles);
-  };
-}
 
 use strict;
 use warnings;
@@ -22,11 +6,12 @@ use Test::Moose;
 use Test::More;
 use Test::Fatal qw(lives_ok dies_ok);
 use Test::Warn;
-use HackaMol::PhysVecMVRRole;                # v0.001;#To test for version availability
+use HackaMol::Atom;                # v0.001;#To test for version availability
 use Math::Vector::Real;           
 use Scalar::Util qw(refaddr);
 use Time::HiRes qw(time);
 
+#PhysVecMVRRole specific
 my @attributes = qw( t mass xyzfree is_fixed coords forces charges);
 my @methods = qw(
   push_charges get_charges set_charges all_charges clear_charges
@@ -40,21 +25,15 @@ my @methods = qw(
   charge xyz force
 );
 
+map has_attribute_ok( 'HackaMol::Atom', $_ ), @attributes;
+map can_ok( 'HackaMol::Atom', $_ ), @methods;
+
 my ( $obj1, $obj2, $obj3 );
 
-my %methods = ('_build_mass' => sub{return 0}); # this is from the above
-
-my $class = MooseX::ClassCompositor::ReqRole->new( { 
-                                            class_basename => 'Test', 
-                                          } )->class_for('HackaMol::PhysVecMVRRole',\%methods);
-
-map has_attribute_ok( $class, $_ ), @attributes;
-map can_ok( $class, $_ ), @methods;
-
 lives_ok {
-    $obj1 = $class->new( t => 1 );
+    $obj1 = HackaMol::Atom->new( Z => 1, t => 1 );
 }
-'Test creation of an obj1';
+'Test creation of an Atom obj1';
 
 is($obj1->t, 1, "t set ok");
 $obj1->t(0);
@@ -98,7 +77,7 @@ cmp_ok( $obj1->get_charges(4),
     '==', 1.0, '5th _tcharges set to 1.0 and get_charges as expected' );
 
 lives_ok {
-    $obj2 = $class->new( t => 0 );
+    $obj2 = HackaMol::Atom->new(Z => 1, t => 0 );
 }
 'Test creation of an obj2';
 
@@ -146,7 +125,7 @@ $vec1 = $obj1->get_coords(1);
 is_deeply( $obj1->intra_dforces( 0, 1 ), V(@vec), 'intra_dforces' );
 
 lives_ok {
-    $obj3 = $class->new(
+    $obj3 = HackaMol::Atom->new( Z=>1,
         t       => 0,
         charges => [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
         coords  => [
@@ -261,7 +240,7 @@ is($obj3->msd_charges, 8.25, "mean square deviation charges");
 
 my $obj4;
 lives_ok {
-    $obj4 = $class->new( t => 0, coords => [ V(1,2,3.0) ]  );
+    $obj4 = HackaMol::Atom->new(Z=>1, t => 0, coords => [ V(1,2,3.0) ]  );
 }
 'Test creation of an obj1';
 

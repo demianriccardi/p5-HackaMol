@@ -6,8 +6,7 @@ use Test::Moose;
 use Test::More;
 use Test::Warn;
 use Test::Fatal qw(lives_ok);
-use MooseX::ClassCompositor;    #use this for testing roles
-use HackaMol::QmMolRole;                # v0.001;#To test for version availability
+use HackaMol::Molecule;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 basis
@@ -30,15 +29,11 @@ dummy
 my @methods = qw(
 );
 
-my $class = MooseX::ClassCompositor->new( { 
-                                            class_basename => 'Test', 
-                                          } )->class_for('HackaMol::QmMolRole');
-
-map has_attribute_ok( $class, $_ ), @attributes;
-map can_ok( $class, $_ ), @methods;
+map has_attribute_ok( 'HackaMol::Molecule', $_ ), @attributes;
+map can_ok( 'HackaMol::Molecule', $_ ), @methods;
 my $obj;
 lives_ok {
-    $obj = $class->new();
+    $obj = HackaMol::Molecule->new();
 }
 'Test creation of an obj';
 

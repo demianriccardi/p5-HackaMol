@@ -1,22 +1,5 @@
 #!/usr/bin/env perl
 
-{
-  # see node_id=1049328 on perlmonks. This hack allows the required subroutine
-  # to be included in the ClassCompositor
-  package MooseX::ClassCompositor::ReqRole;
-  use Moose;
-  extends qw( MooseX::ClassCompositor );
-  around class_for => sub {
-    my $orig = shift;
-    my $self = shift;
-    my @roles = map {
-      ref($_) eq q(HASH) ? 'Moose::Meta::Role'->create_anon_role(methods => $_)
-: $_
-    } @_;
-    $self->$orig(@roles);
-  };
-}
-
 use warnings;
 use strict;
 use Test::More;
@@ -28,38 +11,27 @@ use Test::Fatal qw(lives_ok dies_ok);
 use Test::Moose;
 use Math::Vector::Real;
 use HackaMol::Atom;
-use HackaMol::AtomGroupRole;                # v0.001;#To test for version availability
+use HackaMol::AtomGroup;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 atoms 
 );
 my @methods = qw(
-bin_atoms dipole COM COZ dipole_moment total_charge
+bin_atoms dipole COM COZ 
+dipole_moment total_charge
 count_unique_atoms  
-bin_atoms_name 
-all_atoms push_atoms get_atoms delete_atoms count_atoms
-clear_atoms
+bin_atoms_name all_atoms 
+push_atoms get_atoms delete_atoms 
+count_atoms clear_atoms
 rotate translate print_xyz
 );
-my %methods = ('_clear_group_attrs' => sub{
-    my $self = shift;
-    foreach my $clearthis (qw(clear_dipole clear_COM clear_COZ
-                              clear_dipole_moment clear_total_charge
-                              clear_total_mass clear_total_Z 
-                              clear_atoms_bin)){
-      $self->$clearthis;
-    }
-}
-);
-my $class = MooseX::ClassCompositor::ReqRole->new( { 
-                                            class_basename => 'Test', 
-                                          })->class_for('HackaMol::AtomGroupRole',\%methods);
 
-map has_attribute_ok( $class, $_ ), @attributes;
-map can_ok( $class, $_ ), @methods;
+map has_attribute_ok( 'HackaMol::AtomGroup', $_ ), @attributes;
+map can_ok (          'HackaMol::AtomGroup', $_ ), @methods;
+
 my $group;
 lives_ok {
-    $group = $class->new();
+    $group = HackaMol::AtomGroup->new();
 }
 'Test creation of an group';
 

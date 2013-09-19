@@ -6,7 +6,8 @@ use namespace::autoclean;
 use Carp;
 use MooseX::Storage;
 with Storage( 'io' => 'StorableFile' ), 
-     'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole', 'HackaMol::PdbRole', 'HackaMol::QmRole';
+     'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole', 
+     'HackaMol::PdbRole','HackaMol::QmAtomRole';
 use HackaMol::PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 

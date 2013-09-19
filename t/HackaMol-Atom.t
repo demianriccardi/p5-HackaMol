@@ -32,13 +32,12 @@ segid
 my @qm_attributes = qw(
 basis
 ecp
-multiplicity
 basis_geom
 dummy
 );
 #todo add tests for storage!
 
-my @roles = qw(HackaMol::PdbRole HackaMol::QmRole HackaMol::PhysVecMVRRole);
+my @roles = qw(HackaMol::PdbRole HackaMol::QmAtomRole HackaMol::PhysVecMVRRole);
 
 map has_attribute_ok( 'HackaMol::Atom', $_ ), @attributes;
 map can_ok( 'HackaMol::Atom', $_ ), @methods;

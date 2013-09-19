@@ -3,7 +3,7 @@ use Test::More;
 use Test::Warn;
 use Test::Fatal qw(lives_ok);
 use MooseX::ClassCompositor;    #use this for testing roles
-use HackaMol::QmRole;                # v0.001;#To test for version availability
+use HackaMol::QmMolRole;                # v0.001;#To test for version availability
 
 my @attributes = qw(
 basis
@@ -11,13 +11,24 @@ ecp
 multiplicity
 basis_geom
 dummy
+              total_energy electronic_energy nuclear_energy 
+              qm_dipole_moment ionization_energy gradient_norm
+              heat_of_formation 
+              U H G S
+              S_t
+              S_r
+              S_v
+              total_energy_mp2
+              total_energy_ccsdt
+              nonelectrostatic_energy
+              qm_dipole frequencies eigvec alpha beta
 );
 my @methods = qw(
 );
 
 my $class = MooseX::ClassCompositor->new( { 
                                             class_basename => 'Test', 
-                                          } )->class_for('HackaMol::QmRole');
+                                          } )->class_for('HackaMol::QmMolRole');
 
 map has_attribute_ok( $class, $_ ), @attributes;
 map can_ok( $class, $_ ), @methods;

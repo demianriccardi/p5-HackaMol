@@ -10,24 +10,10 @@ requires '_build_mass';
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
 
-my @t_dep = qw(coords forces);
-
-#DMR notes: tried using coercions where we'd push a number or whatever into 
-#       [] to clean up the construction, but there's a pretty big (2x) time hit
-#   isa => ArrayRef[Num|ArrayRef|Object]  also slows it down.  although, the benefits may be worth it... 
-#subtype 'ArrayRefOfMVR',
-#    as 'ArrayRef[Math::Vector::Real]';
-
-#coerce 'ArrayRefOfMVR',
-#    from 'Math::Vector::Real',
-#    via { [ $_ ] };
-
-
 has "$_" => (
     traits  => ['Array'],
     is      => 'ro',
     isa     => 'ArrayRef[Math::Vector::Real]',
-#    isa     => 'ArrayRefOfMVR',
     default => sub { [] },
     handles => {
         "push_$_"  => 'push',
@@ -38,8 +24,7 @@ has "$_" => (
         "count_$_" => 'count',
     },
     lazy   => 1,
-#    coerce => 1,
-) for @t_dep;
+) for qw(coords forces);
 
 has "$_" => (
     traits  => ['Array'],

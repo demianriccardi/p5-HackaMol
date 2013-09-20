@@ -205,7 +205,7 @@ will be dumped into a YAML file in the future.
 
 =attr is_dirty
 
-isa Bool that is lazy and rw.  Default is 0.  C<$self->is_dirty(1)> called 
+isa Bool that is lazy and rw.  Default is 0.  $self->is_dirty(1) called 
 during the I<change_symbol> and I<change_Z methods>.
 
 =attr symbol

@@ -14,16 +14,16 @@ ecp
 multiplicity
 basis_geom
 dummy
-              total_energy electronic_energy nuclear_energy 
+              Etot Eelec Enuc 
               qm_dipole_moment ionization_energy gradient_norm
-              heat_of_formation 
+              Hform 
               U H G S
               S_t
               S_r
               S_v
-              total_energy_mp2
-              total_energy_ccsdt
-              nonelectrostatic_energy
+              Etot_mp2
+              Etot_ccsdt
+              Ecds
               qm_dipole frequencies eigvec alpha beta
 );
 my @methods = qw(

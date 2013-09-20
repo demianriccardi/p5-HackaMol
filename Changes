@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.00_03   2013-09-19 21:51:03 America/New_York
+
 0.00_02   2013-09-19 16:53:36 America/New_York
     * Fixing POD and tests based on how things look and cpantesters
 

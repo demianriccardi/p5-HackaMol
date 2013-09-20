@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.00_04   2013-09-20 06:56:56 America/New_York
+    * Fixing one test that needs recent MVR to work    
+
 0.00_03   2013-09-19 21:51:03 America/New_York
     * Fixing POD and tests further 
 

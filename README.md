@@ -4,7 +4,7 @@ Object-Oriented Perl 5, Moose Library for Molecular Hacking on multiple scales
 
 VERSION
 ========
-       version 0.00_01
+       developer version 0.00_05 
 
 SYNOPSIS
 ========

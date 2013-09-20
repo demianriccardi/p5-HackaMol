@@ -216,58 +216,61 @@ __END__
 
 =head1 SYNOPSIS
 
-my $atom1 = HackaMol::Atom->new(
-    name    => 'O1',
-    coords  => [ V( 2.05274, 0.01959, -0.07701 ) ],
-    Z       => 8,
-);
+    use HackaMol::AtomGroup;
+    use HackaMol::Atom;
 
-my $atom2 = HackaMol::Atom->new(
-    name    => 'H1',
-    coords  => [ V( 1.08388, 0.02164, -0.12303 ) ],
-    Z       => 1,
-);
+    my $atom1 = HackaMol::Atom->new(
+        name    => 'O1',
+        coords  => [ V( 2.05274, 0.01959, -0.07701 ) ],
+        Z       => 8,
+    );
+    
+    my $atom2 = HackaMol::Atom->new(
+        name    => 'H1',
+        coords  => [ V( 1.08388, 0.02164, -0.12303 ) ],
+        Z       => 1,
+    );
+    
+    my $atom3 = HackaMol::Atom->new(
+        name    => 'H2',
+        coords  => [ V( 2.33092, 0.06098, -1.00332 ) ],
+        Z       => 1,
+    );
+    
+    $atom1->push_charges(-0.834);
+    $_->push_charges(0.417) foreach ($atom1, $atom2);
+    
+    # instance of class that consumes the AtomGroupRole 
+    
+    my $group = HackaMol::AtomGroup->new(atoms=> [$atom1,$atom2,$atom3]);
+    
+    print $group->count_atoms . "\n"; #3
+    print $group->total_charge . "\n"; # 0
+    print $group->total_mass . "\n";  
+    
+    my @atoms = $group->all_atoms;
+    
+    print $group->dipole_moment . "\n";
+    
+    $group->do_forall('push_charges',0);
+    $group->do_forall('push_coords',$group->COM);
 
-my $atom3 = HackaMol::Atom->new(
-    name    => 'H2',
-    coords  => [ V( 2.33092, 0.06098, -1.00332 ) ],
-    Z       => 1,
-);
+    $group->gt(1); # same as $group->do_forall('t',1);
+    
+    print $group->dipole_moment . "\n";
+    print $group->bin_atoms_name . "\n";
+    print $group->unique_atoms . "\n";
 
-$atom1->push_charges(-0.834);
-$_->push_charges(0.417) foreach ($atom1, $atom2);
+    $group->translate(V(10,0,0));
 
-# instance of class that consumes the AtomGroupRole 
+    $group->rotate( V(1,0,0),
+                         180,
+                    V(0,0,0));
+  
+    $group->print_xyz ; #STDOUT
 
-my $group = Class_with_AtomGroupRole->new(atoms=> [$atom1,$atom2,$atom3]);
-
-print $group->count_atoms . "\n"; #3
-
-print $group->total_charge . "\n"; # 0
-
-print $group->total_mass . "\n";  
-
-my @atoms = $group->all_atoms;
-
-print $group->dipole_moment . "\n";
-
-$group->do_forall('push_charges',0);
-
-$group->do_forall('push_coords',$group->COM);
-
-$group->gt(1); # same as $group->do_forall('t',1);
-
-print $group->dipole_moment . "\n";
-
-print $group->bin_atoms_name . "\n";
-
-print $group->unique_atoms . "\n";
-
-$group->translate(V(10,0,0));
-
-$group->rotate( V(1,0,0),
-                     180,
-                V(0,0,0));
+    my $fh = $group->print_xyz("hackagroup.xyz"); #returns filehandle
+    $group->print_xyz($fh) foreach (1 .. 9);     # boring VMD movie with 10 frames
 
 =head1 DESCRIPTION
 
@@ -287,31 +290,31 @@ ARRAY traits for the atoms attribute, respectively: push, get, set, elements, co
 
 push atom on to atoms array
 
-$group->push_atoms($atom1, $atom2, @otheratoms);
+  $group->push_atoms($atom1, $atom2, @otheratoms);
 
 =array_method all_atoms
 
 returns array of all elements in atoms array
 
-print $_->symbol, "\n" foreach $group->all_atoms; 
+  print $_->symbol, "\n" foreach $group->all_atoms; 
 
 =array_method get_atoms
 
 return element by index from atoms array
 
-print $group->get_atoms(1); # returns $atom2 from above
+  print $group->get_atoms(1); # returns $atom2 from above
 
 =array_method set_atoms
 
 set atoms array by index
 
-$group->set_atoms(1, $atom1);
+  $group->set_atoms(1, $atom1);
 
 =array_method count_atoms
 
 return number of atoms in group 
   
-print $group->count_atoms; 
+  print $group->count_atoms; 
 
 =array_method clear_atoms
 
@@ -321,13 +324,13 @@ clears atoms array
 
 pass method and arguments down to atoms in group
 
-$group->do_for_all('t',1); #sets t to 1 for all atoms
+  $group->do_for_all('t',1); #sets t to 1 for all atoms
 
 =method gt
   
 integer argument. wraps do_for_all for setting time within group
 
-$group->gt(1);
+  $group->gt(1);
 
 =method dipole
 
@@ -359,8 +362,9 @@ no arguments. returns the norm of the dipole in debye (assuming charges in elect
 
 =method bin_atoms
 
-no arguments. returns two hash references. The histogram of atom symbols, and a map from symbol-> Z for the same
-keys.  The second hash reference was added, to be able to sort by Z in the absence of Atom objects.
+no arguments. returns two hash references. The histogram of atom symbols, and a
+map from symbol-> Z for the same keys.  The second hash reference was added, 
+to be able to sort by Z in the absence of Atom objects.
 
 =method count_unique_atoms
 
@@ -377,18 +381,18 @@ isa ArrayRef[Atom] that is lazy with public ARRAY traits described in ARRAY_METH
 
 =method translate
 
-requires Math::Vector::Real vector argument. Optional argument: integer tf.  
+requires L<Math::Vector::Real> vector argument. Optional argument: integer tf.  
 
-Translates all atoms in group by the MVR vector.  Pass tf to the translate method to store new 
-coordinates in tf rather than atom->t.
+Translates all atoms in group by the MVR vector.  Pass tf to the translate 
+method to store new coordinates in tf rather than atom->t.
 
 =method rotate
 
-requires Math::Vector::Real vector, an angle (in degrees), and a MVR vector origin as arguments. 
-Optional argument: integer tf.  
+requires Math::Vector::Real vector, an angle (in degrees), and a MVR vector 
+origin as arguments. Optional argument: integer tf.  
 
-Rotates all atoms in the group around the MVR vector. Pass tf to the translate method to store 
-new coordinates in tf rather than atom->t.
+Rotates all atoms in the group around the MVR vector. Pass tf to the translate 
+method to store new coordinates in tf rather than atom->t.
 
 =head1 SEE ALSO
 

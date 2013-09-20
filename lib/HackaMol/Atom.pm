@@ -190,43 +190,44 @@ __END__
 Central to HackaMol, the Atom class provides methods and attributes for a 
 given atom. The Atom class consumes L<HackaMol::PhysVecMVRRole>, 
 L<HackaMol::PdbRole>, and L<HackaMol::QmAtomRole>.  See the documentation 
-of those roles for details.  The Atom class adds attributes (such as symbol, Z, 
-covalent radius) and methods (such as change_symbol) specific to atoms. 
-Creating an instance of an Atom object requires either the atomic number (Z) 
-or the atomic symbol. The other attributes are lazily built when needed.  An 
-Atom object is flexible. The atom type can be changed in place (e.g. convert 
+of those roles for details.  The Atom class adds attributes (such as I<symbol>,
+I<Z>, 
+I<covalent_radius>) and methods (such as I<change_symbol>) specific to atoms. 
+Creating an instance of an Atom object requires either the atomic number (I<Z>) 
+or symbol (I<symbol>). The other attributes are lazily built when needed.  The 
+Atom class is flexible. The atom type can be changed in place (e.g. convert 
 a zinc atom to a mercury atom, see SYNOPSIS), but changing the type of atom 
 will set the is_dirty flag so that other objects using the atom have the 
 ability to know whether atom-type dependent attributes need to be updated 
-(e.g. forcefield parameters).  Atom data is generated from the PeriodicTable 
-module that borrows data from PerlMol.  The PeriodicTable module may be 
-extended in the future.
+(e.g. forcefield parameters, etc.).  Atom data is generated from the PeriodicTable 
+module that borrows data from PerlMol.  The PeriodicTable module is for data and 
+will be dumped into a YAML file in the future.
 
 =attr is_dirty
 
 isa Bool that is lazy and rw.  Default is 0.  C<$self->is_dirty(1)> called 
-during the change_symbol and change_Z methods.
+during the I<change_symbol> and I<change_Z methods>.
 
 =attr symbol
 
-isa Str that is lazy and rw. _build_symbol builds the default. 
+isa Str that is lazy and rw. I<_build_symbol> builds the default. 
 
-Generating an atom instance with symbol, will run C<ucfirst(lc ($symbol))> 
+Generating an atom instance with I<symbol>, will run C<ucfirst(lc ($symbol))> 
 to make sure the format is correct.  Thus, creating an atom object is 
-slightly slower with symbol than with Z. If Z is used to generate the 
-instance of the Atom class (my $atom = Atom->new(Z=>1)), the _build_symbol 
-method generates the symbol from Z only when the symbol attribute is read 
-(symbol attribute is lazy).
+slightly slower with symbol than with I<Z>. If I<Z> is used to generate the 
+instance of the Atom class (C<my $atom = Atom->new(Z=>1)>), the C<_build_symbol> 
+method generates the symbol from I<Z> only when the symbol attribute is read 
+(I<symbol> attribute is lazy).
 
 =attr Z
 
-isa Int that is lazy and rw. _build_Z builds the default
+isa Int that is lazy and rw. I<_build_Z> builds the default
 
-Z is the Atomic number.
+I<Z> is the Atomic number.
 
 =attr covalent_radius
 
-isa Num that is lazy and rw. _build_covalent_radius builds the default.
+isa Num that is lazy and rw. I<_build_covalent_radius> builds the default.
 
 the covalent radii are taken from those tabulated in:
 
@@ -240,19 +241,18 @@ also tabulated but currently not used.
 
 isa Num that is lazy and rw. _build_vdw_radius builds the default. 
 
-Atomic vdw radii information will be revisited and revised. Included as 
+Atomic Van der Waals radii information will be revisited and revised. Included as 
 reminder for now. See the source of PeriodicTable.pm for more information.
 
 =method change_Z
 
-no arguments.  Changes the atom type using Z.  change_Z calls _clean_atom 
-which clears all attributes and sets calls is_dirty(1).
+no arguments.  Changes the atom type using I<Z>.  I<change_Z> calls
+I<_clean_atom> which clears all attributes and sets calls I<is_dirty(1)>.
 
 =method change_symbol
 
-no arguments.  Changes the atom type using symbol. Similar to change_Z, 
-change_symbol calls _clean_atom which clears all attributes and sets calls 
-is_dirty(1).
+no arguments.  Changes the atom type using symbol and is analogous to
+I<change_Z>. 
 
 =head1 SEE ALSO
 

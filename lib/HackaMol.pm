@@ -178,7 +178,7 @@ __END__
    foreach ( 1 .. 10 ) {
        $mol->rotate(
            V( 0, 0, 1 ),    # rotation vector
-           36,              # rotate by 180 degrees
+           36,              # rotate by 36 degrees
            V( 5, 0, 0 )     # origin of rotation
        );
        $mol->print_xyz($fh);
@@ -188,7 +188,8 @@ __END__
    # populate groups byatom resid attr
    my @groups = $hack->group_by_atom_attr( 'resid', $mol->all_atoms );
    $mol->push_groups(@groups);
-   
+
+   # silly rotation of sidechains about their own center of mass   
    foreach my $ang ( 1 .. 10 ) {
        $_->rotate( V( 1, 1, 1 ), 36, $_->COM ) foreach $mol->all_groups;
        $mol->print_xyz($fh);
@@ -203,16 +204,23 @@ The HackaMol library enables users to build simple, yet powerful scripts
 for carrying out computational work on molecules at multiple scales. The 
 molecular object system organizes atoms within molecules using groups, 
 bonds, angles, and dihedrals.  HackaMol seeks to provide intuitive 
-attributes and methods that may be harnessed to coerce computational chemistry 
+attributes and methods that may be harnessed to coerce molecular computation 
 through a common core. The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, and my own experiences as a researcher. 
 
-The library is organized into two regions: HackaMol, the core (contained here) that has classes for atoms and molecules, and HackaMolX, the extensions, such as HackaMolX::PDB, a parser for protein databank files, and HackaMolX::Calculator, an abstract calculator for coercing computational chemistry, that use the core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core. Extensions are in the works, but the HackaMolX namespace has not been established yet! 
+The library is organized into two regions: HackaMol, the core (contained here)
+that has classes for atoms and molecules, and HackaMolX, the extensions, such as
+HackaMolX::PDB, a parser for protein databank files, and HackaMolX::Calculator,
+an abstract calculator for coercing molecular computation, that use the core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core. Extensions are in the works, but the HackaMolX namespace has not been established yet! 
 
-HackaMol uses Math::Vector::Real (MVR) for all the vector operations. MVR is a lightweight solution with a fast XS dropin that overlaps very well with the desirables for working with atomic coordinates. Extensions that treat much larger systems will definitely benefit from the capabilities L<PDL> or L<Math::GSL>.
+HackaMol uses Math::Vector::Real (MVR) for all the vector operations. MVR is a
+lightweight solution with a fast XS dropin that overlaps very well with the
+desirables for working with atoms and coarse grained molecules. Extensions that treat much larger systems will definitely benefit from the capabilities L<PDL> or L<Math::GSL>.
 
-The HackaMol class uses the core classes to provide some object building
-utilities described below.  This class consumes HackaMol::MolReadRole to provide
-structure readers for xyz and pdb coordinates.  See L<Open Babel|http://openbabel.org> if other formats needed (All suggestions welcome!).  
+The HackaMol class (loaded in Synopsis) uses the core classes to provide some object 
+building utilities described below.  This class consumes HackaMol::MolReadRole to 
+provide structure readers for xyz and pdb coordinates.  
+See L<Open Babel|http://openbabel.org> if other formats needed 
+(All suggestions, contributions welcome!).  
 
 =attr name 
 
@@ -229,8 +237,8 @@ will return two bonds: B13 and B35
 
 =method build_angles
 
-takes a list of atoms and returns a list of angles. The angles are generated for
-"list neighbors" by simply stepping through the atom list one at a time. e.g.
+takes a list of atoms and returns a list of angles. The angles are generated 
+analagously to build_bonds, e.g.
 
   my @angles = $hack->build_angles(@atoms[1,3,5]);
 
@@ -238,8 +246,8 @@ will return one angle: A135
 
 =method build_dihedrals
 
-takes a list of atoms and returns a list of dihedrals. The dihedrals are generated for
-"list neighbors" by simply stepping through the atom list one at a time. e.g.
+takes a list of atoms and returns a list of dihedrals. The dihedrals are generated 
+analagously to build_bonds, e.g.
 
   my @dihedral = $hack->build_dihedrals(@atoms[1,3,5]);
 
@@ -251,11 +259,13 @@ will return two dihedrals: D1356 and D3569
 
 =method group_by_atom_attr
 
-takes atom attribute as argument and builds AtomGroup objects by attribute
+takes atom attribute as argument and builds AtomGroup objects by attribute.
+Grouping by graphical searches are needed! 
 
 =method find_bonds_brute 
 
-takes hash argument list and returns bonds.  Find bonds between bond_atoms and the candidates.
+takes hash argument list and returns bonds.  Find bonds between bond_atoms and 
+the candidates.
 
   my @oxy_bonds = $hack->find_bonds_brute(
                                     bond_atoms => [$hg],
@@ -266,7 +276,7 @@ takes hash argument list and returns bonds.  Find bonds between bond_atoms and t
 fudge is an optional argument. Default is 0.45 (open babel uses same default). 
 find_bonds_brute uses a bruteforce algorithm that tests the interatomic 
 separation against the sum of the covalent radii + fudge. It does not return 
-a self bond for an atom ( next if refaddr($ati) == refaddr($atj) ).
+a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
 
 =head1 SEE ALSO
 

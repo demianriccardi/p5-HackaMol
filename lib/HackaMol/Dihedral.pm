@@ -161,10 +161,14 @@ isa Num that is lazy and rw. default = 0.  force constant for harmonic bond pote
 
 isa Num that is lazy and rw. default = 0.  Equilibrium dihedral angle.  
 
-=attr improper_dihe_energy_func torsion_energy_func
+=attr improper_dihe_energy_func 
 
 isa CodeRef that is lazy and rw. default uses builder to generate a 
 harmonic potential for the improper_dihedral and a torsion potential. 
+
+=attr torsion_energy_func
+
+analogous to improper_dihe_energy_func 
 
 =method dihe_deg 
 
@@ -177,7 +181,7 @@ no arguments. returns the angle (radians) between the planes containing
 (atom1,atom2,atom3) and (atom2, atom3, atom4). 
 
 
-=method improper_dihe_energy torsion_energy
+=method improper_dihe_energy 
 
 arguments, as many as you want. Calculates energy using the 
 improper_dihe_energy_func described below, if the attribute, dihe_fc > 0.  
@@ -186,6 +190,10 @@ The improper_dihe_energy method calls the improper_dihe_energy_func as follows:
    my $energy = &{$self->improper_dihe_energy_func}($self,@_);
 
 which will pass $self and that in @_ array to improper_dihe_energy_func, which, similar to the Bond and Angle classes, can be redefined. torsion_energy is analogous.
+
+=method torsion_energy
+
+analogous to improper_dihe_energy
 
 =head1 SEE ALSO
 

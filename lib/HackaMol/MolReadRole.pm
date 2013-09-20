@@ -29,7 +29,7 @@ sub read_pdb_atoms {
   my $segid = $file;
   $segid =~ s/\.pdb//;
   $segid =~ s/t\/lib\///;
-  my $fh = FileHandle->new("<$file");
+  my $fh = FileHandle->new("<$file") or croak "unable to open $file";;
 
   my @atoms;
   my ( $n, $t ) = ( 0, 0 );
@@ -103,8 +103,8 @@ sub read_xyz_atoms {
   my $segid = $file;
   $segid =~ s/\.xyz//;
   $segid =~ s/t\/lib\///;
-  my $fh = FileHandle->new("<$file");
-use Data::Dumper;
+  my $fh = FileHandle->new("<$file") or croak "unable to open $file";;
+
   my @atoms;
   my ( $n, $t ) = ( 0, 0 );
 

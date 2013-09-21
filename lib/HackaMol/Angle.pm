@@ -1,4 +1,5 @@
 package HackaMol::Angle;
+
 #ABSTRACT: Angle class for HackaMol
 use 5.008;
 use Moose;
@@ -6,38 +7,39 @@ use namespace::autoclean;
 use Carp;
 use Math::Vector::Real;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'HackaMol::NameRole','HackaMol::AtomGroupRole';
+with Storage( 'io' => 'StorableFile' ), 'HackaMol::NameRole',
+  'HackaMol::AtomGroupRole';
 
 has $_ => (
-            is  => 'rw'  ,
-            isa => 'Num' ,
-            default => 0 ,
-            lazy    => 1 ,
-            clearer => "clear_$_",
-            predicate => "has_$_",
-          ) foreach qw(ang_fc ang_eq);
+    is        => 'rw',
+    isa       => 'Num',
+    default   => 0,
+    lazy      => 1,
+    clearer   => "clear_$_",
+    predicate => "has_$_",
+) foreach qw(ang_fc ang_eq);
 
-sub ang_normvec{
-  my $self  = shift;
-  my @atoms = $self->all_atoms;
-  my $ang  = $self->ang_deg;
-  return V(0,0,0) if ($ang == 0 or $ang == 180);
-  my $vec1 = $atoms[1]->inter_dcoords($atoms[0]);
-  my $vec2 = $atoms[1]->inter_dcoords($atoms[2]);
-  my $v1xv2 = $vec1 x $vec2;
-  return ($v1xv2->versor);
+sub ang_normvec {
+    my $self  = shift;
+    my @atoms = $self->all_atoms;
+    my $ang   = $self->ang_deg;
+    return V( 0, 0, 0 ) if ( $ang == 0 or $ang == 180 );
+    my $vec1  = $atoms[1]->inter_dcoords( $atoms[0] );
+    my $vec2  = $atoms[1]->inter_dcoords( $atoms[2] );
+    my $v1xv2 = $vec1 x $vec2;
+    return ( $v1xv2->versor );
 }
 
-sub ang_deg{
-  my $self  = shift;
-  my @atoms = $self->all_atoms;
-  return ($atoms[1]->angle_deg($atoms[0],$atoms[2]));
+sub ang_deg {
+    my $self  = shift;
+    my @atoms = $self->all_atoms;
+    return ( $atoms[1]->angle_deg( $atoms[0], $atoms[2] ) );
 }
 
-sub ang_rad{
-  my $self  = shift;
-  my @atoms = $self->all_atoms;
-  return ($atoms[1]->angle_rad($atoms[0],$atoms[2]));
+sub ang_rad {
+    my $self  = shift;
+    my @atoms = $self->all_atoms;
+    return ( $atoms[1]->angle_rad( $atoms[0], $atoms[2] ) );
 }
 
 has 'angle_energy_func' => (
@@ -47,21 +49,21 @@ has 'angle_energy_func' => (
     lazy    => 1,
 );
 
-
 sub _build_angle_energy_func {
+
     #my $self = shift; #self is passed by moose, but we don't use it here
     my $subref = sub {
         my $angle = shift;
-        my $val = ( $angle->ang_deg - $angle->ang_eq )**2;
-        return ($angle->ang_fc*$val);
+        my $val   = ( $angle->ang_deg - $angle->ang_eq )**2;
+        return ( $angle->ang_fc * $val );
     };
     return ($subref);
 }
 
 sub angle_energy {
-    my $self  = shift;
-    return (0) unless ($self->ang_fc > 0);
-    my $energy = &{$self->angle_energy_func}($self,@_);
+    my $self = shift;
+    return (0) unless ( $self->ang_fc > 0 );
+    my $energy = &{ $self->angle_energy_func }( $self, @_ );
     return ($energy);
 }
 

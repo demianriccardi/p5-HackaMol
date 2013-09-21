@@ -1,24 +1,25 @@
 package HackaMol::QmMolRole;
+
 #ABSTRACT: provides attributes needed for quantum chemistry calculations
 # this will need updating as needs arise
 use Moose::Role;
 
 with 'HackaMol::QmAtomRole';
 
-has 'multiplicity' , is => 'rw', isa => 'Int', lazy=>1, default => 1;
+has 'multiplicity', is => 'rw', isa => 'Int', lazy => 1, default => 1;
 
 my @tscl = qw(
-              Etot Eelec Enuc 
-              qm_dipole_moment ionization_energy gradient_norm
-              Hform 
-              U H G S
-              S_t
-              S_r
-              S_v
-              Etot_mp2
-              Etot_ccsdt
-              Ecds
-              );
+  Etot Eelec Enuc
+  qm_dipole_moment ionization_energy gradient_norm
+  Hform
+  U H G S
+  S_t
+  S_r
+  S_v
+  Etot_mp2
+  Etot_ccsdt
+  Ecds
+);
 
 has "$_" => (
     traits  => ['Array'],
@@ -32,7 +33,7 @@ has "$_" => (
         "clear_$_" => 'clear',
         "count_$_" => 'count',
     },
-    lazy   => 1,
+    lazy => 1,
 ) foreach @tscl;
 
 has "$_" => (
@@ -47,9 +48,8 @@ has "$_" => (
         "clear_$_" => 'clear',
         "count_$_" => 'count',
     },
-    lazy   => 1,
+    lazy => 1,
 ) for qw(qm_dipole frequencies eigvec alpha beta);
-
 
 no Moose::Role;
 

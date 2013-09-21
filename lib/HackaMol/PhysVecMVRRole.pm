@@ -1,7 +1,9 @@
 package HackaMol::PhysVecMVRRole;
+
 # ABSTRACT: Provides the core of HackaMol Atom and Molecule classes.
 use Math::Vector::Real;
 use Math::Trig;
+
 #use Moose::Util::TypeConstraints;
 use Moose::Role;
 use Carp;
@@ -23,7 +25,7 @@ has "$_" => (
         "clear_$_" => 'clear',
         "count_$_" => 'count',
     },
-    lazy   => 1,
+    lazy => 1,
 ) for qw(coords forces);
 
 has "$_" => (
@@ -39,16 +41,15 @@ has "$_" => (
         "clear_$_" => 'clear',
         "count_$_" => 'count',
     },
-    lazy   => 1,
+    lazy => 1,
 ) for qw(charges);
-
 
 has 'units', is => 'rw', isa => 'Str';    #flag for future use [SI]
 
 has 'origin' => (
     is      => 'rw',
     isa     => 'Math::Vector::Real',
-    default => sub { V(0,0,0) },
+    default => sub { V( 0, 0, 0 ) },
     lazy    => 1,
 );
 
@@ -62,27 +63,27 @@ has 'xyzfree' => (
 );
 
 has 'mass' => (
-    is => 'rw', 
-    isa => 'Num', 
-    lazy => 1, 
-    clearer=> 'clear_mass', 
+    is      => 'rw',
+    isa     => 'Num',
+    lazy    => 1,
+    clearer => 'clear_mass',
     builder => '_build_mass',
 );
 
 sub _freedom {
-    my ($self, $new,$old) = @_;
-    if (grep {$_ == 0} @{$new}) {
-      $self->is_fixed(1) ;
+    my ( $self, $new, $old ) = @_;
+    if ( grep { $_ == 0 } @{$new} ) {
+        $self->is_fixed(1);
     }
     else {
-      $self->is_fixed(0) ;
+        $self->is_fixed(0);
     }
-}    
+}
 
-has 'is_fixed' => ( 
-    is => 'rw', 
-    isa => 'Bool', 
-    lazy => 1, 
+has 'is_fixed' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    lazy    => 1,
     default => 0,
 );
 
@@ -92,137 +93,143 @@ sub intra_dcharges {
     croak "intra_dcharges> pass initial and final time" unless ( @_ == 2 );
     my $ti = shift;
     my $tf = shift;
-    return($self->get_charges($tf) - $self->get_charges($ti));
+    return ( $self->get_charges($tf) - $self->get_charges($ti) );
 }
 
 sub mean_charges {
-    my $self = shift;
+    my $self     = shift;
     my @tcharges = $self->all_charges;
-    my $sum = 0;
+    my $sum      = 0;
     $sum += $_ foreach @tcharges;
-    return($sum / $self->count_charges);
+    return ( $sum / $self->count_charges );
 }
 
 sub msd_charges {
-    my $self = shift;
-    my $avg  = $self->mean_charges;
+    my $self     = shift;
+    my $avg      = $self->mean_charges;
     my @tcharges = $self->all_charges;
-    my $sum  = 0;
-    $sum += ($_ - $avg)**2 foreach @tcharges;
-    return ($sum / $self->count_charges);
+    my $sum      = 0;
+    $sum += ( $_ - $avg )**2 foreach @tcharges;
+    return ( $sum / $self->count_charges );
 }
 
 sub intra_dcoords {
-#M::V::R makes much simpler
+
+    #M::V::R makes much simpler
     my $self = shift;
     croak "intra_dcoords> pass initial and final time" unless ( @_ == 2 );
     my $ti = shift;
     my $tf = shift;
-    return( $self->get_coords($tf) - $self->get_coords($ti) );
+    return ( $self->get_coords($tf) - $self->get_coords($ti) );
 }
 
 sub mean_coords {
     my $self    = shift;
     my @tcoords = $self->all_coords;
-    my $sum = V(0, 0, 0);
+    my $sum     = V( 0, 0, 0 );
     $sum += $_ foreach @tcoords;
-    return ($sum / $self->count_coords); 
+    return ( $sum / $self->count_coords );
 }
 
 sub msd_coords {
-# returns scalar
+
+    # returns scalar
     my $self    = shift;
     my $avg     = $self->mean_coords;
     my @tcoords = $self->all_coords;
-    my $sum = 0;
-    foreach my $c (@tcoords){
-      my $dc = $c - $avg;
-      $sum += $dc*$dc;
+    my $sum     = 0;
+    foreach my $c (@tcoords) {
+        my $dc = $c - $avg;
+        $sum += $dc * $dc;
     }
-    return ($sum / $self->count_coords);
+    return ( $sum / $self->count_coords );
 }
 
 sub intra_dforces {
-#M::V::R makes much simpler
+
+    #M::V::R makes much simpler
     my $self = shift;
     croak "intra_dforces> pass initial and final time" unless ( @_ == 2 );
     my $ti = shift;
     my $tf = shift;
-    return( $self->get_forces($tf) - $self->get_forces($ti) );
+    return ( $self->get_forces($tf) - $self->get_forces($ti) );
 }
 
 sub mean_forces {
     my $self    = shift;
     my @tforces = $self->all_forces;
-    my $sum = V(0, 0, 0);
+    my $sum     = V( 0, 0, 0 );
     $sum += $_ foreach @tforces;
-    return ($sum / $self->count_forces);
+    return ( $sum / $self->count_forces );
 }
 
 sub msd_forces {
-# returns scalar
+
+    # returns scalar
     my $self    = shift;
     my $avg     = $self->mean_forces;
     my @tforces = $self->all_forces;
-    my $sum = 0;
-    foreach my $c (@tforces){
-      my $dc = $c - $avg;
-      $sum += $dc*$dc;
+    my $sum     = 0;
+    foreach my $c (@tforces) {
+        my $dc = $c - $avg;
+        $sum += $dc * $dc;
     }
-    return ($sum / $self->count_forces);
+    return ( $sum / $self->count_forces );
 }
 
 #interobject methods
 sub distance {
     my $self = shift;
     my $obj2 = shift or croak "need to pass another obj that does PhysVec";
-    my ($ts, $t2) = ($self->t, $obj2->t);
-    carp "comparing objects with different times" unless($ts == $t2);
-    my $vs = $self->get_coords($ts); 
-    my $v2 = $obj2->get_coords($t2); 
-    return ( $vs->dist( $v2 ) );
+    my ( $ts, $t2 ) = ( $self->t, $obj2->t );
+    carp "comparing objects with different times" unless ( $ts == $t2 );
+    my $vs = $self->get_coords($ts);
+    my $v2 = $obj2->get_coords($t2);
+    return ( $vs->dist($v2) );
 }
 
 sub angle_rad {
+
     # obj2    obj3
     #   \ Ang /
     #    \   /
     #     self
     #
     # returns in degrees
-    my ($self,$obj2,$obj3) = @_;
-    croak "need to pass two objects that do PhysVecMVR" unless (@_ == 3);
+    my ( $self, $obj2, $obj3 ) = @_;
+    croak "need to pass two objects that do PhysVecMVR" unless ( @_ == 3 );
     my $v1 = $self->inter_dcoords($obj2);
     my $v2 = $self->inter_dcoords($obj3);
-    return (0) if (abs($v1) == 0 or abs($v2) == 0);
-    return (atan2($v1,$v2));
+    return (0) if ( abs($v1) == 0 or abs($v2) == 0 );
+    return ( atan2( $v1, $v2 ) );
 }
 
 sub angle_deg {
-    my $self = shift;
+    my $self  = shift;
     my $angle = $self->angle_rad(@_);
     return ( rad2deg($angle) );
 }
 
 sub dihedral_rad {
+
     # self            obj4
     #   \             /
     #    \    Ang    /
     #     obj2---obj3
     #
     # returns in degrees
-    my ($self,$obj2,$obj3,$obj4) = @_;
-    croak "need to pass three objects that do PhysVecMVR" unless (@_ == 4);
+    my ( $self, $obj2, $obj3, $obj4 ) = @_;
+    croak "need to pass three objects that do PhysVecMVR" unless ( @_ == 4 );
 
-    my $v1 = $self->inter_dcoords($obj2);
-    my $v2 = $obj2->inter_dcoords($obj3);
-    my $v3 = $obj3->inter_dcoords($obj4);
+    my $v1      = $self->inter_dcoords($obj2);
+    my $v2      = $obj2->inter_dcoords($obj3);
+    my $v3      = $obj3->inter_dcoords($obj4);
     my $v3_x_v2 = $v3 x $v2;
     my $v2_x_v1 = $v2 x $v1;
-    my $sign = $v1*$v3_x_v2;
+    my $sign    = $v1 * $v3_x_v2;
 
-    my $dihe = atan2($v3_x_v2,$v2_x_v1);
-    $dihe *= -1 if ($sign>0);
+    my $dihe = atan2( $v3_x_v2, $v2_x_v1 );
+    $dihe *= -1 if ( $sign > 0 );
     return $dihe;
 }
 
@@ -232,75 +239,77 @@ sub dihedral_deg {
     return ( rad2deg($dihe) );
 }
 
-sub inter_dcharges {      
+sub inter_dcharges {
     my $self = shift;
     my $obj2 = shift or croak "need to pass another obj that does PhysVec";
-    my ($ts, $t2) = ($self->t, $obj2->t);
-    carp "comparing objects with different times" unless($ts == $t2);
+    my ( $ts, $t2 ) = ( $self->t, $obj2->t );
+    carp "comparing objects with different times" unless ( $ts == $t2 );
     my $dvec = $obj2->get_charges($t2) - $self->get_charges($ts);
     return ($dvec);
 }
 
-sub inter_dcoords { 
+sub inter_dcoords {
     my $self = shift;
     my $obj2 = shift or croak "need to pass another obj that does PhysVec";
-    my ($ts, $t2) = ($self->t, $obj2->t);
-    carp "comparing objects with different times" unless($ts == $t2);
+    my ( $ts, $t2 ) = ( $self->t, $obj2->t );
+    carp "comparing objects with different times" unless ( $ts == $t2 );
     my $dvec = $obj2->get_coords($t2) - $self->get_coords($ts);
     return ($dvec);
 }
 
-sub inter_dforces {      
+sub inter_dforces {
     my $self = shift;
     my $obj2 = shift or croak "need to pass another obj that does PhysVec";
-    my ($ts, $t2) = ($self->t, $obj2->t);
-    carp "comparing objects with different times" unless($ts == $t2);
+    my ( $ts, $t2 ) = ( $self->t, $obj2->t );
+    carp "comparing objects with different times" unless ( $ts == $t2 );
     my $dvec = $obj2->get_forces($t2) - $self->get_forces($ts);
     return ($dvec);
 }
 
 sub charge {
-  my $self = shift;
-  carp "charge> takes no arguments. returns get_charges(t)" if (@_);
-  return($self->get_charges($self->t));
+    my $self = shift;
+    carp "charge> takes no arguments. returns get_charges(t)" if (@_);
+    return ( $self->get_charges( $self->t ) );
 }
 
 sub xyz {
-  my $self = shift;
-  carp "xyz> takes no arguments. returns get_coords(t)" if (@_);
-  return($self->get_coords($self->t));
+    my $self = shift;
+    carp "xyz> takes no arguments. returns get_coords(t)" if (@_);
+    return ( $self->get_coords( $self->t ) );
 }
 
 sub clone_xyz {
-# returns a new MVR 
-# optionally takes t
-  my $self = shift;
-  my $t    = shift;
-  $t = $self->t unless (defined($t));
-  return(V(@{$self->get_coords($t)}));
+
+    # returns a new MVR
+    # optionally takes t
+    my $self = shift;
+    my $t    = shift;
+    $t = $self->t unless ( defined($t) );
+    return ( V( @{ $self->get_coords($t) } ) );
 }
 
 sub force {
-  my $self = shift;
-  carp "force> takes no arguments. returns get_forces(t)" if (@_);
-  return($self->get_forces($self->t));
+    my $self = shift;
+    carp "force> takes no arguments. returns get_forces(t)" if (@_);
+    return ( $self->get_forces( $self->t ) );
 }
 
 sub clone_force {
-# returns a new MVR 
-# optionally takes t
-  my $self = shift;
-  my $t    = shift;
-  $t = $self->t unless (defined($t));
-  return(V(@{$self->get_forces($t)}));
+
+    # returns a new MVR
+    # optionally takes t
+    my $self = shift;
+    my $t    = shift;
+    $t = $self->t unless ( defined($t) );
+    return ( V( @{ $self->get_forces($t) } ) );
 }
 
 sub copy_ref_from_t1_through_t2 {
-  croak "need to pass [charges|coords|forces] t and tf" unless @_ == 4;
-  my ($self,$qcf,$t,$tf)  = @_;
-  my ($get_qcf, $set_qcf) = map{$_.$qcf} qw(get_ set_);
-  my $qcf_at_t = $self->$get_qcf($t);
-  $self->$set_qcf($_,$qcf_at_t) foreach ($t+1 .. $tf);
+    croak "need to pass [charges|coords|forces] t and tf" unless @_ == 4;
+    my ( $self, $qcf, $t, $tf ) = @_;
+    my ( $get_qcf, $set_qcf ) = map { $_ . $qcf } qw(get_ set_);
+    my $qcf_at_t = $self->$get_qcf($t);
+    $self->$set_qcf( $_, $qcf_at_t ) foreach ( $t + 1 .. $tf );
 }
 
 no Moose::Role;

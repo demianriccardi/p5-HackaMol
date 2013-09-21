@@ -1,30 +1,31 @@
 package HackaMol::QmAtomRole;
+
 #ABSTRACT: simple role that provides attributes needed for setting up quantum chemistry calculations
 use Moose::Role;
 
 has 'basis' => (
-                is        => 'rw',
-                isa       => 'Str',
-                predicate => 'has_basis',
-                clearer   => 'clear_basis',
-                lazy      => 1,
-                default   => '6-31+G*', #to provide example; EMSL Str can be many lines...
-               );
-has 'ecp'   => (
-                is        => 'rw',
-                isa       => 'Str',
-                clearer   => 'clear_ecp',
-                predicate => 'has_ecp',
-               );
+    is        => 'rw',
+    isa       => 'Str',
+    predicate => 'has_basis',
+    clearer   => 'clear_basis',
+    lazy      => 1,
+    default => '6-31+G*',    #to provide example; EMSL Str can be many lines...
+);
+has 'ecp' => (
+    is        => 'rw',
+    isa       => 'Str',
+    clearer   => 'clear_ecp',
+    predicate => 'has_ecp',
+);
 
-has 'basis_geom'   , is => 'rw', isa => 'Str';
+has 'basis_geom', is => 'rw', isa => 'Str';
 
 has 'dummy' => (
-                is          => 'rw',
-                isa         => 'Str',
-                predicate   => 'is_dummy',
-                clearer     => 'clear_dummy',
-               );
+    is        => 'rw',
+    isa       => 'Str',
+    predicate => 'is_dummy',
+    clearer   => 'clear_dummy',
+);
 
 no Moose::Role;
 

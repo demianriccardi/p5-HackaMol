@@ -182,29 +182,31 @@ sub rotate {
 }
 
 sub print_xyz {
-    my $self  = shift;
-    my $file  = shift; # could be file or filehandle 
-    
-    my $fh = \*STDOUT ; # default to standard out
-    # if argument is passed, check if filehandle 
-    if (defined($file)){
-      if (ref($file) and reftype($file) eq "GLOB" ){
-        $fh = $file;
-      }
-      else {
-        carp "overwrite $file" if (-e $file);
-        $fh = FileHandle->new(">$file");
-      }
+    my $self = shift;
+    my $file = shift;    # could be file or filehandle
+
+    my $fh = \*STDOUT;   # default to standard out
+                         # if argument is passed, check if filehandle
+    if ( defined($file) ) {
+        if ( ref($file) and reftype($file) eq "GLOB" ) {
+            $fh = $file;
+        }
+        else {
+            carp "overwrite $file" if ( -e $file );
+            $fh = FileHandle->new(">$file");
+        }
     }
 
     my @atoms = $self->all_atoms;
     print $fh $self->count_atoms . "\n\n";
     foreach my $at (@atoms) {
-        printf $fh ( "%3s %10.6f %10.6f %10.6f\n",
-            $at->symbol, @{ $at->get_coords( $at->t ) } );
+        printf $fh (
+            "%3s %10.6f %10.6f %10.6f\n",
+            $at->symbol, @{ $at->get_coords( $at->t ) }
+        );
     }
 
-    return ($fh); # returns filehandle for future writing
+    return ($fh);    # returns filehandle for future writing
 
 }
 

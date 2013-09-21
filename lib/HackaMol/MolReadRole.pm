@@ -1,157 +1,160 @@
 package HackaMol::MolReadRole;
-# ABSTRACT: Read XYZ and PDB files 
+
+# ABSTRACT: Read XYZ and PDB files
 use Moose::Role;
 use Carp;
 use Math::Vector::Real;
 use FileHandle;
 
 sub read_file_atoms {
-  my $self = shift;
-  my $file = shift;
-  my @atoms;
+    my $self = shift;
+    my $file = shift;
+    my @atoms;
 
-  if ($file =~ m/\.pdb$/){
-    @atoms = $self->read_pdb_atoms($file);
-  }
-  elsif ($file =~ m/\.xyz$/){
-    @atoms = $self->read_xyz_atoms($file);
-  }
-  else {
-    croak "$file format not supported";
-  }
-  return (@atoms); 
+    if ( $file =~ m/\.pdb$/ ) {
+        @atoms = $self->read_pdb_atoms($file);
+    }
+    elsif ( $file =~ m/\.xyz$/ ) {
+        @atoms = $self->read_xyz_atoms($file);
+    }
+    else {
+        croak "$file format not supported";
+    }
+    return (@atoms);
 }
 
 sub read_pdb_atoms {
-#read pdb file and generate list of Atom objects
-  my $self  = shift;
-  my $file  = shift;
-  my $segid = $file;
-  $segid =~ s/\.pdb//;
-  $segid =~ s/t\/lib\///;
-  my $fh = FileHandle->new("<$file") or croak "unable to open $file";;
 
-  my @atoms;
-  my ( $n, $t ) = ( 0, 0 );
+    #read pdb file and generate list of Atom objects
+    my $self  = shift;
+    my $file  = shift;
+    my $segid = $file;
+    $segid =~ s/\.pdb//;
+    $segid =~ s/t\/lib\///;
+    my $fh = FileHandle->new("<$file") or croak "unable to open $file";
 
-  while (<$fh>) {
+    my @atoms;
+    my ( $n, $t ) = ( 0, 0 );
 
-      if (/^(?:MODEL\s+(\d+))/) {
-          $t = $1 - 1;
-          $n = 0;
-      }
-      elsif (/^(?:HETATM|ATOM)/) {
+    while (<$fh>) {
 
-          my (
-              $record_name, $serial, $name, $altloc,  $resName,
-              $chainID,     $resSeq, $icod, $x,       $y,
-              $z,           $occ,    $B,    $element, $charge
-          ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x10A2A2", $_;
+        if (/^(?:MODEL\s+(\d+))/) {
+            $t = $1 - 1;
+            $n = 0;
+        }
+        elsif (/^(?:HETATM|ATOM)/) {
 
-          if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
-          else                      { $charge = 0 }
+            my (
+                $record_name, $serial, $name, $altloc,  $resName,
+                $chainID,     $resSeq, $icod, $x,       $y,
+                $z,           $occ,    $B,    $element, $charge
+            ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x10A2A2", $_;
 
-          if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
-          else                       { $chainID = 'AA' }
+            if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
+            else                      { $charge = 0 }
 
-          $element = ucfirst( lc( _trim($element) ) );
-          $name    = _trim($name);
-          $resName = _trim($resName);
-          $resSeq  = _trim($resSeq);
-          $resSeq  = 0 if ( $resSeq < 0 );
-          $serial  = _trim($serial);
-          my $xyz = V( $x, $y, $z );
+            if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
+            else                       { $chainID = 'AA' }
 
-          if ( $t == 0 ) {
-              $atoms[$n] = HackaMol::Atom->new(
-                  name        => $name,
-                  record_name => $record_name,
-                  serial      => $serial,
-                  chain       => $chainID,
-                  symbol      => $element,
-                  charges     => [$charge],
-                  coords      => [$xyz],
-                  occ         => $occ * 1,
-                  bfact       => $B * 1,
-                  resname     => $resName,
-                  resid       => $resSeq,
-                  altloc      => $altloc,
-              );
-          }
-          else {
-              croak "atoms have changed from last model to current: $t\n"
-                if ( 
-                    $name    ne $atoms[$n]->name   or 
-                    $element ne $atoms[$n]->symbol
-                    );
+            $element = ucfirst( lc( _trim($element) ) );
+            $name    = _trim($name);
+            $resName = _trim($resName);
+            $resSeq  = _trim($resSeq);
+            $resSeq  = 0 if ( $resSeq < 0 );
+            $serial  = _trim($serial);
+            my $xyz = V( $x, $y, $z );
 
-              $atoms[$n]->set_coords( $t, $xyz );
-          }
-          $n++;
-      }
-  }
+            if ( $t == 0 ) {
+                $atoms[$n] = HackaMol::Atom->new(
+                    name        => $name,
+                    record_name => $record_name,
+                    serial      => $serial,
+                    chain       => $chainID,
+                    symbol      => $element,
+                    charges     => [$charge],
+                    coords      => [$xyz],
+                    occ         => $occ * 1,
+                    bfact       => $B * 1,
+                    resname     => $resName,
+                    resid       => $resSeq,
+                    altloc      => $altloc,
+                );
+            }
+            else {
+                croak "atoms have changed from last model to current: $t\n"
+                  if ( $name ne $atoms[$n]->name
+                    or $element ne $atoms[$n]->symbol );
 
-  # set iatom to track the array.  diff from serial which refers to pdb
-  $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-  return (@atoms);
+                $atoms[$n]->set_coords( $t, $xyz );
+            }
+            $n++;
+        }
+    }
+
+    # set iatom to track the array.  diff from serial which refers to pdb
+    $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
+    return (@atoms);
 }
 
 sub read_xyz_atoms {
-#read pdb file and generate list of Atom objects
-  my $self  = shift;
-  my $file  = shift;
-  my $segid = $file;
-  $segid =~ s/\.xyz//;
-  $segid =~ s/t\/lib\///;
-  my $fh = FileHandle->new("<$file") or croak "unable to open $file";;
 
-  my @atoms;
-  my ( $n, $t ) = ( 0, 0 );
+    #read pdb file and generate list of Atom objects
+    my $self  = shift;
+    my $file  = shift;
+    my $segid = $file;
+    $segid =~ s/\.xyz//;
+    $segid =~ s/t\/lib\///;
+    my $fh = FileHandle->new("<$file") or croak "unable to open $file";
 
-  my $nat  = undef;
-  while (<$fh>) {
+    my @atoms;
+    my ( $n, $t ) = ( 0, 0 );
 
-    if (/^(\s*\d+\s*)$/){
-      $n = (split)[0];
-      if (defined($nat)){
-        croak "number of atoms has changed\n" unless ($nat == $n);
-        $t++;
-      }
-      $nat  = $n;
-      $n = 0;
+    my $nat = undef;
+    while (<$fh>) {
+
+        if (/^(\s*\d+\s*)$/) {
+            $n = (split)[0];
+            if ( defined($nat) ) {
+                croak "number of atoms has changed\n" unless ( $nat == $n );
+                $t++;
+            }
+            $nat = $n;
+            $n   = 0;
+        }
+        elsif (/(\w+|\d+)(\s+-*\d+\.\d+){3}/) {
+            my @stuff = split;
+            my $sym   = $stuff[0];
+            my $xyz   = V( @stuff[ 1, 2, 3 ] );
+            if ( $t == 0 ) {
+                if ( $sym =~ /\d/ ) {
+                    $atoms[$n] =
+                      HackaMol::Atom->new( Z => $sym, coords => [$xyz] );
+                }
+                else {
+                    $atoms[$n] =
+                      HackaMol::Atom->new( symbol => $sym, coords => [$xyz] );
+                }
+            }
+            else {
+                if ( $sym =~ /\d/ ) {
+                    croak "atoms have changed from last model to current: $t\n"
+                      if ( $sym != $atoms[$n]->Z );
+                }
+                else {
+                    croak "atoms have changed from last model to current: $t\n"
+                      if ( $sym ne $atoms[$n]->symbol );
+                }
+                $atoms[$n]->set_coords( $t, $xyz );
+
+            }
+            $n++;
+        }
     }
-    elsif (/(\w+|\d+)(\s+-*\d+\.\d+){3}/) {
-      my @stuff = split;
-      my $sym = $stuff[0];
-      my $xyz = V( @stuff[1,2,3] );
-      if ( $t == 0 ) {
-        if ($sym =~ /\d/)
-             {
-         $atoms[$n] = HackaMol::Atom->new( Z      => $sym,coords => [$xyz])
-        }
-        else {
-         $atoms[$n] = HackaMol::Atom->new( symbol => $sym,coords => [$xyz])
-        }
-      }
-      else {
-        if ($sym =~ /\d/){
-          croak "atoms have changed from last model to current: $t\n"
-                if ( $sym != $atoms[$n]->Z );
-        }
-        else {
-          croak "atoms have changed from last model to current: $t\n"
-                if ( $sym ne $atoms[$n]->symbol );
-        }
-        $atoms[$n]->set_coords( $t, $xyz );
 
-      }
-      $n++;
-    }
-  }
-  # set iatom to track the array.  diff from serial which refers to pdb
-  $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-  return (@atoms);
-}                                                    
+    # set iatom to track the array.  diff from serial which refers to pdb
+    $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
+    return (@atoms);
+}
 
 sub _trim {
     my $string = shift;

@@ -1,37 +1,39 @@
 package HackaMol::Atom;
+
 #ABSTRACT: HackaMol Atom Class
 use 5.008;
 use Moose;
 use namespace::autoclean;
 use Carp;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ), 
-     'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole', 
-     'HackaMol::PdbRole','HackaMol::QmAtomRole';
+with Storage( 'io' => 'StorableFile' ),
+  'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole',
+  'HackaMol::PdbRole',  'HackaMol::QmAtomRole';
 use HackaMol::PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 
 my @delta_attrs = qw(Z symbol mass vdw_radius covalent_radius);
 
 has 'is_dirty' => (
-# when attributes change, the Atom gets dirty. change_symbol, change_Z
-# generally, classes that have Atom should decide whether to clean Atom
-  is      => 'rw',
-  isa     => 'Bool',
-  lazy    => 1,
-  default => 0, # anytime called, the atom becomes dirty forever!  
+
+    # when attributes change, the Atom gets dirty. change_symbol, change_Z
+    # generally, classes that have Atom should decide whether to clean Atom
+    is      => 'rw',
+    isa     => 'Bool',
+    lazy    => 1,
+    default => 0,        # anytime called, the atom becomes dirty forever!
 );
 
 has 'bond_count' => (
-      traits  => ['Counter'],
-      is      => 'ro',
-      isa     => 'Num',
-      default => 0,
-      handles => {
-          inc_bond_count   => 'inc',
-          dec_bond_count   => 'dec',
-          reset_bond_count => 'reset',
-      },
+    traits  => ['Counter'],
+    is      => 'ro',
+    isa     => 'Num',
+    default => 0,
+    handles => {
+        inc_bond_count   => 'inc',
+        dec_bond_count   => 'dec',
+        reset_bond_count => 'reset',
+    },
 );
 
 has 'symbol' => (
@@ -59,9 +61,8 @@ has 'Z' => (
 
 sub _build_Z {
     my $self = shift;
-    return  ( _symbol_to_Z( $self->symbol ) );
+    return ( _symbol_to_Z( $self->symbol ) );
 }
-
 
 has $_ => (
     is        => 'rw',
@@ -79,30 +80,30 @@ sub _build_covalent_radius {
 
 sub _build_vdw_radius {
     my $self = shift;
-    return( _Z_to_vdw_radius( $self->Z ) );
+    return ( _Z_to_vdw_radius( $self->Z ) );
 }
 
 sub change_Z {
     my $self = shift;
-    my $Z    = shift or croak "pass argument Z to change_Z method";
+    my $Z = shift or croak "pass argument Z to change_Z method";
     $self->_clean_atom;
     $self->Z($Z);
 }
 
-sub change_symbol{
-    my $self   = shift;
-    my $symbol = shift or croak "pass argument symbol to change_Z method";   
+sub change_symbol {
+    my $self = shift;
+    my $symbol = shift or croak "pass argument symbol to change_Z method";
     $self->_clean_atom;
-    $self->symbol(_fix_symbol($symbol));
+    $self->symbol( _fix_symbol($symbol) );
 }
 
 sub _clean_atom {
     my $self = shift;
-    foreach my $clearthis (map {"clear_$_"} @delta_attrs) {
-      $self->$clearthis;
+    foreach my $clearthis ( map { "clear_$_" } @delta_attrs ) {
+        $self->$clearthis;
     }
     carp "cleaning atom attributes for in place change. setting atom->is_dirty";
-    $self->is_dirty(1); 
+    $self->is_dirty(1);
 }
 
 sub BUILD {
@@ -112,20 +113,21 @@ sub BUILD {
         croak "Either Z or Symbol must be set when calling Atom->new()";
     }
 
-    if($self->has_Z) {
-      #clear out the symbol if Z is passed.  Z is faster and takes precedence
-      $self->clear_symbol;
-      return;
+    if ( $self->has_Z ) {
+
+        #clear out the symbol if Z is passed.  Z is faster and takes precedence
+        $self->clear_symbol;
+        return;
     }
 
-    $self->symbol( _fix_symbol( $self->symbol ) ) ;
+    $self->symbol( _fix_symbol( $self->symbol ) );
     return;
 }
 
 sub _build_mass {
-  my $self = shift;
-  return (_symbol_to_mass($self->symbol));
-};
+    my $self = shift;
+    return ( _symbol_to_mass( $self->symbol ) );
+}
 
 sub _symbol_to_Z {
     my $symbol = shift;

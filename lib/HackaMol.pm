@@ -12,131 +12,135 @@ use HackaMol::Dihedral;
 use Scalar::Util qw(refaddr);
 use Carp;
 
-with 'HackaMol::NameRole','HackaMol::MolReadRole';
+with 'HackaMol::NameRole', 'HackaMol::MolReadRole';
 
 sub build_bonds {
-#take a list of n, atoms; walk down list and generate bonds 
-  my $self  = shift;
-  my @atoms = @_;
-  croak "<2 atoms passed to build_dihedrals" unless (@atoms > 1);
-  my @bonds ;
 
-  # build the bonds 
-  my $k = 0;
-  while ($k+1 <= $#atoms){
-    my $name = join("_", map{ 
-                           $_->name.$_->resid  
-                            } @atoms[$k , $k+1] 
-    );
-    push @bonds, HackaMol::Bond->new(
-                        name => $name,
-                        atoms=>[ @atoms[$k, $k+1] ] );
-    $k++;
-  }
-  return (@bonds);
+    #take a list of n, atoms; walk down list and generate bonds
+    my $self  = shift;
+    my @atoms = @_;
+    croak "<2 atoms passed to build_dihedrals" unless ( @atoms > 1 );
+    my @bonds;
+
+    # build the bonds
+    my $k = 0;
+    while ( $k + 1 <= $#atoms ) {
+        my $name =
+          join( "_", map { $_->name . $_->resid } @atoms[ $k, $k + 1 ] );
+        push @bonds,
+          HackaMol::Bond->new(
+            name  => $name,
+            atoms => [ @atoms[ $k, $k + 1 ] ]
+          );
+        $k++;
+    }
+    return (@bonds);
 }
 
 sub build_angles {
-#take a list of n, atoms; walk down list and generate angles 
-  my $self  = shift;
-  my @atoms = @_;
-  croak "<3 atoms passed to build_dihedrals" unless (@atoms > 2);
-  my @angles ;
 
-  # build the angles 
-  my $k = 0;
-  while ($k+2 <= $#atoms){
-    my $name = join("_", map{ 
-                           $_->name.$_->resid  
-                            } @atoms[$k .. $k+2] 
-    );
-    push @angles, HackaMol::Angle->new(
-                        name => $name,
-                        atoms=>[ @atoms[$k .. $k+2] ] );
-    $k++;
-  }
-  return (@angles);
+    #take a list of n, atoms; walk down list and generate angles
+    my $self  = shift;
+    my @atoms = @_;
+    croak "<3 atoms passed to build_dihedrals" unless ( @atoms > 2 );
+    my @angles;
+
+    # build the angles
+    my $k = 0;
+    while ( $k + 2 <= $#atoms ) {
+        my $name =
+          join( "_", map { $_->name . $_->resid } @atoms[ $k .. $k + 2 ] );
+        push @angles,
+          HackaMol::Angle->new(
+            name  => $name,
+            atoms => [ @atoms[ $k .. $k + 2 ] ]
+          );
+        $k++;
+    }
+    return (@angles);
 }
 
 sub build_dihedrals {
-#take a list of n, atoms; walk down list and generate dihedrals 
-  my $self  = shift;
-  my @atoms = @_;
-  croak "<4 atoms passed to build_dihedrals" unless (@atoms > 3);
-  my @dihedrals ;
 
-  # build the dihedrals 
-  my $k = 0;
-  while ($k+3 <= $#atoms){
-    my $name = join("_", map{ 
-                           $_->name.$_->resid  
-                            } @atoms[$k .. $k+3] 
-    );
-    push @dihedrals, HackaMol::Dihedral->new(
-                        name => $name, 
-                        atoms=>[ @atoms[$k .. $k+3] ] );
-    $k++;
-  }
-  return (@dihedrals);
+    #take a list of n, atoms; walk down list and generate dihedrals
+    my $self  = shift;
+    my @atoms = @_;
+    croak "<4 atoms passed to build_dihedrals" unless ( @atoms > 3 );
+    my @dihedrals;
+
+    # build the dihedrals
+    my $k = 0;
+    while ( $k + 3 <= $#atoms ) {
+        my $name =
+          join( "_", map { $_->name . $_->resid } @atoms[ $k .. $k + 3 ] );
+        push @dihedrals,
+          HackaMol::Dihedral->new(
+            name  => $name,
+            atoms => [ @atoms[ $k .. $k + 3 ] ]
+          );
+        $k++;
+    }
+    return (@dihedrals);
 }
 
 sub group_by_atom_attr {
-# group atoms by attribute
-# Z, name, bond_count, etc. 
-  my $self  = shift;
-  my $attr  = shift;
-  my @atoms = @_; 
- 
-  my %group;
-  foreach my $atom ( @atoms ) {
-      push @{ $group{ $atom->$attr } }, $atom;
-  }
 
-  my @atomgroups =
-    map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort
-    keys(%group);
+    # group atoms by attribute
+    # Z, name, bond_count, etc.
+    my $self  = shift;
+    my $attr  = shift;
+    my @atoms = @_;
 
-  return(@atomgroups);
+    my %group;
+    foreach my $atom (@atoms) {
+        push @{ $group{ $atom->$attr } }, $atom;
+    }
+
+    my @atomgroups =
+      map { HackaMol::AtomGroup->new( atoms => $group{$_} ) } sort
+      keys(%group);
+
+    return (@atomgroups);
 
 }
 
 sub find_bonds_brute {
-  my $self       = shift;
-  my %args       = @_;
-  my @bond_atoms = @{ $args{bond_atoms} };
-  my @atoms      = @{ $args{candidates} };
+    my $self       = shift;
+    my %args       = @_;
+    my @bond_atoms = @{ $args{bond_atoms} };
+    my @atoms      = @{ $args{candidates} };
 
-  my $fudge      = 0.45; 
+    my $fudge = 0.45;
 
-  $fudge = $args{fudge} if ( exists($args{fudge}) );
+    $fudge = $args{fudge} if ( exists( $args{fudge} ) );
 
-  my @bonds;
-  my %name;
+    my @bonds;
+    my %name;
 
-  foreach my $at_i (@bond_atoms){
-    my $cov_i = $at_i->covalent_radius;
-    my $xyz_i = $at_i->xyz;
+    foreach my $at_i (@bond_atoms) {
+        my $cov_i = $at_i->covalent_radius;
+        my $xyz_i = $at_i->xyz;
 
-    foreach my $at_j (@atoms){
-        next if (refaddr($at_i) == refaddr($at_j));
-        my $cov_j = $at_j->covalent_radius;
-        my $dist  = $at_j->distance( $at_i );
+        foreach my $at_j (@atoms) {
+            next if ( refaddr($at_i) == refaddr($at_j) );
+            my $cov_j = $at_j->covalent_radius;
+            my $dist  = $at_j->distance($at_i);
 
-        if ($dist <= $cov_i + $cov_j + $fudge){
-          my $nm=$at_i->symbol."-".$at_j->symbol;
-          $name{$nm}++;
-          push @bonds,
-            HackaMol::Bond->new(
-              name  => "$nm\_".$name{$nm},
-              atoms => [ $at_i, $at_j ],
-            );
+            if ( $dist <= $cov_i + $cov_j + $fudge ) {
+                my $nm = $at_i->symbol . "-" . $at_j->symbol;
+                $name{$nm}++;
+                push @bonds,
+                  HackaMol::Bond->new(
+                    name  => "$nm\_" . $name{$nm},
+                    atoms => [ $at_i, $at_j ],
+                  );
+            }
+
         }
-
     }
-  }
-  return (@bonds);
+    return (@bonds);
 }
- 
+
 __PACKAGE__->meta->make_immutable;
 
 1;

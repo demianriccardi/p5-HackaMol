@@ -1,27 +1,29 @@
 package HackaMol::Bond;
+
 #ABSTRACT: HackaMol Bond class
 use 5.008;
 use Moose;
 use namespace::autoclean;
 use Carp;
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ),'HackaMol::NameRole','HackaMol::AtomGroupRole';
+with Storage( 'io' => 'StorableFile' ), 'HackaMol::NameRole',
+  'HackaMol::AtomGroupRole';
 
 has $_ => (
-            is  => 'rw'  ,
-            isa => 'Num' ,
-            default => 1 ,
-            lazy    => 1 ,
-            clearer => 'clear_bond_order',
-          ) foreach qw(bond_order);
+    is      => 'rw',
+    isa     => 'Num',
+    default => 1,
+    lazy    => 1,
+    clearer => 'clear_bond_order',
+) foreach qw(bond_order);
 
 has $_ => (
-            is  => 'rw'  ,
-            isa => 'Num' ,
-            default => 0 ,
-            lazy    => 1 ,
-            clearer => "clear_$_",
-          ) foreach qw(bond_fc bond_length_eq);
+    is      => 'rw',
+    isa     => 'Num',
+    default => 0,
+    lazy    => 1,
+    clearer => "clear_$_",
+) foreach qw(bond_fc bond_length_eq);
 
 has 'bond_energy_func' => (
     is      => 'rw',
@@ -30,33 +32,33 @@ has 'bond_energy_func' => (
     lazy    => 1,
 );
 
-
 sub _build_bond_energy_func {
+
     #my $self = shift; #self is passed by moose, but we don't use it here
     my $subref = sub {
         my $bond = shift;
-        my $val = ($bond->bond_length - $bond->bond_length_eq )**2;
-        return ($bond->bond_fc*$val);
+        my $val  = ( $bond->bond_length - $bond->bond_length_eq )**2;
+        return ( $bond->bond_fc * $val );
     };
     return ($subref);
 }
 
-sub bond_vector{
-  my $self  = shift;
-  my @atoms = $self->all_atoms;
-  return ($atoms[0]->inter_dcoords($atoms[1]));
+sub bond_vector {
+    my $self  = shift;
+    my @atoms = $self->all_atoms;
+    return ( $atoms[0]->inter_dcoords( $atoms[1] ) );
 }
 
-sub bond_length{
-  my $self  = shift;
-  my @atoms = $self->all_atoms;
-  return ($atoms[0]->distance($atoms[1]));
+sub bond_length {
+    my $self  = shift;
+    my @atoms = $self->all_atoms;
+    return ( $atoms[0]->distance( $atoms[1] ) );
 }
 
 sub bond_energy {
-    my $self  = shift;
-    return (0) unless ($self->bond_fc > 0);
-    my $energy = &{$self->bond_energy_func}($self,@_);
+    my $self = shift;
+    return (0) unless ( $self->bond_fc > 0 );
+    my $energy = &{ $self->bond_energy_func }( $self, @_ );
     return ($energy);
 }
 

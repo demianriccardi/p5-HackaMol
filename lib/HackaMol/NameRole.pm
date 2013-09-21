@@ -1,5 +1,6 @@
 package HackaMol::NameRole;
-#ABSTRACT: provides name attribute 
+
+#ABSTRACT: provides name attribute
 use 5.008;
 use Moose::Role;
 

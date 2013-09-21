@@ -1,4 +1,5 @@
 package HackaMol::Molecule;
+
 #ABSTRACT: Molecule class for HackaMol
 use 5.008;
 use Moose;
@@ -7,7 +8,8 @@ use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);
 use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ), 'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole',
+with Storage( 'io' => 'StorableFile' ), 'HackaMol::NameRole',
+  'HackaMol::PhysVecMVRRole',
   'HackaMol::BondsAnglesDihedralsRole', 'HackaMol::QmMolRole';
 
 extends 'HackaMol::AtomGroup';
@@ -32,12 +34,11 @@ has 'atomgroups' => (
 
 sub BUILD {
     my $self = shift;
-    foreach my $bond ($self->all_bonds){
-      $_->inc_bond_count foreach $bond->all_atoms;
+    foreach my $bond ( $self->all_bonds ) {
+        $_->inc_bond_count foreach $bond->all_atoms;
     }
     return;
 }
-
 
 # need to increase atom bond_count when push
 after 'push_bonds' => sub {
@@ -91,6 +92,7 @@ sub all_dihedrals_atoms {
 }
 
 sub _all_these_atoms {
+
     #these bonds, these angles, these dihedrals
     #this bond, this angle, this dihedral
     my $self      = shift;
@@ -167,11 +169,11 @@ sub dihedral_rotate_atoms {
     my $self = shift;
     croak "pass Dihedral, rotation angle (deg), atoms to rotate" unless @_ > 2;
     my $t = $self->t;
-    my ( $dihe, $dang ) = (shift,shift);
+    my ( $dihe, $dang ) = ( shift, shift );
     my ( $atom0, $ratom1, $ratom2, $atom3 ) = $dihe->all_atoms;
     my $rvec   = ( $ratom2->inter_dcoords($ratom1) )->versor;
     my $origin = $ratom1->xyz;
-     my @atoms  = @_;
+    my @atoms  = @_;
     my @cor =
       map { $_->get_coords($t) - $origin } @atoms;    #shift origin too
     my @rcor = $rvec->rotate_3d( deg2rad($dang), @cor );

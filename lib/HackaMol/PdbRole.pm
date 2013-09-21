@@ -1,45 +1,46 @@
 package HackaMol::PdbRole;
+
 #ABSTRACT: PdbRole of lazy attributes for HackaMol atoms
 use Moose::Role;
 
-has 'record_name'  , is => 'rw', isa => 'Str', lazy => 1, default => 'HETATM';
-has 'serial'       , is => 'rw', isa => 'Int', lazy => 1, default =>    0;
-has 'occ'          , is => 'rw', isa => 'Num', lazy => 1, default =>  1.0;
-has 'bfact'        , is => 'rw', isa => 'Num', lazy => 1, default => 20.0;
-has 'resname'      , is => 'rw', isa => 'Str', lazy => 1, default => 'ALA';
-has 'chain'        , is => 'rw', isa => 'Str', lazy => 1, default => 'AA';
-has 'altloc'       , is => 'rw', isa => 'Str', lazy => 1, default => ' ';
-has 'resid'        , is => 'rw', isa => 'Int', lazy => 1, default => 64;
-has 'iatom'        , is => 'rw', isa => 'Int', lazy => 1, default => 0;
-has 'icode'        , is => 'rw', isa => 'Str', lazy => 1, default => 'X';
-has 'pdbid'        , is => 'rw', isa => 'Str', lazy => 1, default => '2CBA';
-has 'segid'        , is => 'rw', isa => 'Str', lazy => 1, default => 'TIP3';
+has 'record_name', is => 'rw', isa => 'Str', lazy => 1, default => 'HETATM';
+has 'serial',      is => 'rw', isa => 'Int', lazy => 1, default => 0;
+has 'occ',         is => 'rw', isa => 'Num', lazy => 1, default => 1.0;
+has 'bfact',       is => 'rw', isa => 'Num', lazy => 1, default => 20.0;
+has 'resname',     is => 'rw', isa => 'Str', lazy => 1, default => 'ALA';
+has 'chain',       is => 'rw', isa => 'Str', lazy => 1, default => 'AA';
+has 'altloc',      is => 'rw', isa => 'Str', lazy => 1, default => ' ';
+has 'resid',       is => 'rw', isa => 'Int', lazy => 1, default => 64;
+has 'iatom',       is => 'rw', isa => 'Int', lazy => 1, default => 0;
+has 'icode',       is => 'rw', isa => 'Str', lazy => 1, default => 'X';
+has 'pdbid',       is => 'rw', isa => 'Str', lazy => 1, default => '2CBA';
+has 'segid',       is => 'rw', isa => 'Str', lazy => 1, default => 'TIP3';
 
 no Moose::Role;
 1;
 
 # added attributes for parsing a PDB file
-# Histidine 64 for Human Carbonic Anhydrase II from pdbid: 2CBA 
+# Histidine 64 for Human Carbonic Anhydrase II from pdbid: 2CBA
 #some lines for reference that did not translate well into POD
 #my $lines_H64_2cba = '
 #         1         2         3         4         5         6         7         8
 #12345678901234567890123456789012345678901234567890123456789012345678901234567890
-#ATOM    504  N   HIS A  64      -0.822  -1.995   6.439  1.00 10.63           N  
-#ATOM    505  CA  HIS A  64      -0.847  -2.773   7.721  1.00 10.22           C  
-#ATOM    506  C   HIS A  64      -2.270  -3.278   7.949  1.00  9.51           C  
-#ATOM    507  O   HIS A  64      -2.449  -4.225   8.736  1.00 11.94           O  
-#ATOM    508  CB AHIS A  64      -0.335  -2.173   8.991  0.70 10.98           C  
-#ATOM    509  CB BHIS A  64      -0.409  -1.888   8.917  0.20  9.21           C  
-#ATOM    510  CG AHIS A  64      -0.736  -0.782   9.258  0.70 12.16           C  
-#ATOM    511  CG BHIS A  64       0.714  -0.964   8.521  0.20  8.70           C  
-#ATOM    512  ND1AHIS A  64      -1.795  -0.353  10.014  0.70 14.34           N  
-#ATOM    513  ND1BHIS A  64       0.513   0.338   8.162  0.20  8.57           N  
-#ATOM    514  CD2AHIS A  64      -0.117   0.344   8.805  0.70 12.79           C  
-#ATOM    515  CD2BHIS A  64       2.037  -1.198   8.364  0.20  8.90           C  
-#ATOM    516  CE1AHIS A  64      -1.809   0.971  10.061  0.70 13.80           C  
-#ATOM    517  CE1BHIS A  64       1.691   0.868   7.814  0.20  8.65           C  
-#ATOM    518  NE2AHIS A  64      -0.844   1.403   9.281  0.70 15.45           N  
-#ATOM    519  NE2BHIS A  64       2.615  -0.026   7.936  0.20  6.94           N  
+#ATOM    504  N   HIS A  64      -0.822  -1.995   6.439  1.00 10.63           N
+#ATOM    505  CA  HIS A  64      -0.847  -2.773   7.721  1.00 10.22           C
+#ATOM    506  C   HIS A  64      -2.270  -3.278   7.949  1.00  9.51           C
+#ATOM    507  O   HIS A  64      -2.449  -4.225   8.736  1.00 11.94           O
+#ATOM    508  CB AHIS A  64      -0.335  -2.173   8.991  0.70 10.98           C
+#ATOM    509  CB BHIS A  64      -0.409  -1.888   8.917  0.20  9.21           C
+#ATOM    510  CG AHIS A  64      -0.736  -0.782   9.258  0.70 12.16           C
+#ATOM    511  CG BHIS A  64       0.714  -0.964   8.521  0.20  8.70           C
+#ATOM    512  ND1AHIS A  64      -1.795  -0.353  10.014  0.70 14.34           N
+#ATOM    513  ND1BHIS A  64       0.513   0.338   8.162  0.20  8.57           N
+#ATOM    514  CD2AHIS A  64      -0.117   0.344   8.805  0.70 12.79           C
+#ATOM    515  CD2BHIS A  64       2.037  -1.198   8.364  0.20  8.90           C
+#ATOM    516  CE1AHIS A  64      -1.809   0.971  10.061  0.70 13.80           C
+#ATOM    517  CE1BHIS A  64       1.691   0.868   7.814  0.20  8.65           C
+#ATOM    518  NE2AHIS A  64      -0.844   1.403   9.281  0.70 15.45           N
+#ATOM    519  NE2BHIS A  64       2.615  -0.026   7.936  0.20  6.94           N
 #';
 #
 #my $ATOM_record_format = '
@@ -54,11 +55,11 @@ no Moose::Role;
 #22           Character        chainID    Chain identifier.
 #23 - 26      Integer          resSeq     Residue sequence number.
 #27           AChar            iCode      Code for insertion of residues.
-#31 - 38      Real(8.3)        x          Orthogonal coordinates for X in 
+#31 - 38      Real(8.3)        x          Orthogonal coordinates for X in
 #                                         Angstroms
-#39 - 46      Real(8.3)        y          Orthogonal coordinates for Y in 
+#39 - 46      Real(8.3)        y          Orthogonal coordinates for Y in
 #                                         Angstroms
-#47 - 54      Real(8.3)        z          Orthogonal coordinates for Z in 
+#47 - 54      Real(8.3)        z          Orthogonal coordinates for Z in
 #                                         Angstroms
 #55 - 60      Real(6.2)        occupancy  Occupancy.
 #61 - 66      Real(6.2)        tempFactor Temperature factor.

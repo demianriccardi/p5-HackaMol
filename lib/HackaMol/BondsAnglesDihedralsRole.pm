@@ -1,56 +1,57 @@
 package HackaMol::BondsAnglesDihedralsRole;
+
 # ABSTRACT: Array traits for containers of HackaMol Bonds, Angles, Dihedrals.
 use Moose::Role;
 
-has 'bonds'  => (
-    traits   => ['Array'],
-    is       => 'ro',
-    isa      => 'ArrayRef[HackaMol::Bond]',
-    default  => sub { [] },
-    lazy     => 1,
-    handles  => {
-        "has_bonds"   => 'count',
+has 'bonds' => (
+    traits  => ['Array'],
+    is      => 'ro',
+    isa     => 'ArrayRef[HackaMol::Bond]',
+    default => sub { [] },
+    lazy    => 1,
+    handles => {
+        "has_bonds"    => 'count',
         "push_bonds"   => 'push',
-        "get_bonds"   => 'get',
-        "set_bonds"   => 'set',
-        "all_bonds"   => 'elements',
-        "count_bonds" => 'count',
+        "get_bonds"    => 'get',
+        "set_bonds"    => 'set',
+        "all_bonds"    => 'elements',
+        "count_bonds"  => 'count',
         "delete_bonds" => 'delete',
-        "clear_bonds" => 'clear',
-    },
-); 
-
-has 'angles'  => (
-    traits   => ['Array'],
-    isa      => 'ArrayRef[HackaMol::Angle]',
-    default  => sub { [] },
-    lazy     => 1,
-    handles  => {
-        "has_angles"   => 'count',
-        "push_angles"   => 'push',
-        "get_angles"   => 'get',
-        "set_angles"   => 'set',
-        "all_angles"   => 'elements',
-        "count_angles" => 'count',
-        "delete_angles" => 'delete',
-        "clear_angles" => 'clear',
+        "clear_bonds"  => 'clear',
     },
 );
 
-has 'dihedrals'  => (
-    traits   => ['Array'],
-    isa      => 'ArrayRef[HackaMol::Dihedral]',
-    default  => sub { [] },
-    lazy     => 1,
-    handles  => {
-        "has_dihedrals"   => 'count',
+has 'angles' => (
+    traits  => ['Array'],
+    isa     => 'ArrayRef[HackaMol::Angle]',
+    default => sub { [] },
+    lazy    => 1,
+    handles => {
+        "has_angles"    => 'count',
+        "push_angles"   => 'push',
+        "get_angles"    => 'get',
+        "set_angles"    => 'set',
+        "all_angles"    => 'elements',
+        "count_angles"  => 'count',
+        "delete_angles" => 'delete',
+        "clear_angles"  => 'clear',
+    },
+);
+
+has 'dihedrals' => (
+    traits  => ['Array'],
+    isa     => 'ArrayRef[HackaMol::Dihedral]',
+    default => sub { [] },
+    lazy    => 1,
+    handles => {
+        "has_dihedrals"    => 'count',
         "push_dihedrals"   => 'push',
-        "get_dihedrals"   => 'get',
-        "set_dihedrals"   => 'set',
-        "all_dihedrals"   => 'elements',
-        "count_dihedrals" => 'count',
+        "get_dihedrals"    => 'get',
+        "set_dihedrals"    => 'set',
+        "all_dihedrals"    => 'elements',
+        "count_dihedrals"  => 'count',
         "delete_dihedrals" => 'delete',
-        "clear_dihedrals" => 'clear',
+        "clear_dihedrals"  => 'clear',
     },
 );
 

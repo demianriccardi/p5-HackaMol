@@ -30,6 +30,18 @@ sub ang_normvec {
     return ( $v1xv2->versor );
 }
 
+sub bisector {
+# vector that bisects the angle between to vectors of the angle
+    my $self = shift;
+    my @atoms = $self->all_atoms;
+    my $ang   = $self->ang_deg;
+    return V( 0, 0, 0 ) if ( $ang == 0 or $ang == 180 );
+    my $vec1  = $atoms[1]->inter_dcoords( $atoms[0] );
+    my $vec2  = $atoms[1]->inter_dcoords( $atoms[2] );
+    my $bvec  = ($vec1->versor+$vec2->versor)->versor;
+    return $bvec;
+}
+
 sub ang_deg {
     my $self  = shift;
     my @atoms = $self->all_atoms;
@@ -152,8 +164,13 @@ if interested in changing the function form.
 
 =method ang_normvec
 
-no arguments. returns Math::Vector::Real object from the normalized cross 
+no arguments. returns Math::Vector::Real (MVR) object from the normalized cross 
 product of the atom21 and atom23 interatomic vectors.
+
+=method bisector
+
+no arguments. returns vector (MVR) that bisects the angle between the two
+vectors of the angle.   
 
 =method ang_deg 
 

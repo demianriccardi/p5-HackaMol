@@ -1,4 +1,4 @@
-package references;
+package References;
 
 # ABSTRACT: some useful references
 use Moose;

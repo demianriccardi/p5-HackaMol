@@ -34,14 +34,14 @@ lives_ok {
 'Test creation of an obj';
 
 is($obj->record_name, 'HETATM', 'record_name default');
-is($obj->serial     , 0       , 'serial      default');
 is($obj->occ        , 1.0     , 'occ         default');
 is($obj->bfact      , 20.0    , 'bfact       default');
 is($obj->resname    , 'ALA'   , 'resname     default');
 is($obj->chain      , 'AA'    , 'chain       default');
 is($obj->altloc     , ' '     , 'altloc      default');
-is($obj->resid      , 64      , 'resid       default');
+is($obj->resid      , 0       , 'resid       default');
 is($obj->iatom      , 0       , 'iatom       default');
+is($obj->serial     , 0       , 'serial      default');
 is($obj->icode      , 'X'     , 'icode       default');
 is($obj->pdbid      , '2CBA'  , 'pdbid       default');
 is($obj->segid      , 'TIP3'  , 'segid       default');

@@ -21,12 +21,11 @@ sub build_bonds {
     my @atoms = @_;
     croak "<2 atoms passed to build_dihedrals" unless ( @atoms > 1 );
     my @bonds;
-
     # build the bonds
     my $k = 0;
     while ( $k + 1 <= $#atoms ) {
         my $name =
-          join( "_", map { $_->name . $_->resid } @atoms[ $k, $k + 1 ] );
+              join( "_", map { _name_resid($_,'B')} @atoms[ $k .. $k + 1 ] );
         push @bonds,
           HackaMol::Bond->new(
             name  => $name,
@@ -47,9 +46,10 @@ sub build_angles {
 
     # build the angles
     my $k = 0;
+
     while ( $k + 2 <= $#atoms ) {
         my $name =
-          join( "_", map { $_->name . $_->resid } @atoms[ $k .. $k + 2 ] );
+              join( "_", map { _name_resid($_,'A')} @atoms[ $k .. $k + 2 ] );
         push @angles,
           HackaMol::Angle->new(
             name  => $name,
@@ -58,6 +58,13 @@ sub build_angles {
         $k++;
     }
     return (@angles);
+}
+
+sub _name_resid {
+  my $atom    = shift;
+  my $default = shift;
+  return ($default    . $atom->resid) unless $atom->has_name;
+  return ($atom->name . $atom->resid);
 }
 
 sub build_dihedrals {
@@ -72,7 +79,7 @@ sub build_dihedrals {
     my $k = 0;
     while ( $k + 3 <= $#atoms ) {
         my $name =
-          join( "_", map { $_->name . $_->resid } @atoms[ $k .. $k + 3 ] );
+              join( "_", map { _name_resid($_,'D')} @atoms[ $k .. $k + 3 ] );
         push @dihedrals,
           HackaMol::Dihedral->new(
             name  => $name,

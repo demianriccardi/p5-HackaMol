@@ -166,5 +166,30 @@ dies_ok { $hack->build_bonds($bb[0]) }          "build_bonds croak";
 dies_ok { $hack->build_angles(@bb[0,1]) }    "build_angles croak";
 
 
+{
+  $_->clear_name foreach @bb;
+  my @bonds     = $hack->build_bonds(@bb);
+  my @angles    = $hack->build_angles(@bb);
+  my @dihedrals = $hack->build_dihedrals(@bb);
+
+  is( $dihedrals[0]->name,  'D1_D1_D1_D2',     "dihedral noname default" );
+  is( $angles[0]->name,     'A1_A1_A1',        "angle noname default" );
+  is( $bonds[0]->name,      'B1_B1',         "bond noname default" );
+}
+
+{
+  $_->name("foo") foreach @bb;
+  $_->resid foreach @bb;
+  my @bonds     = $hack->build_bonds(@bb);
+  my @angles    = $hack->build_angles(@bb);
+  my @dihedrals = $hack->build_dihedrals(@bb);
+  
+  is( $dihedrals[0]->name,  'foo1_foo1_foo1_foo2',     "dihedral name foo resid default" );
+  is( $angles[0]->name,     'foo1_foo1_foo1',               "angle name foo resid default" );
+  is( $bonds[0]->name,      'foo1_foo1',               "bond name foo resid default" );
+
+}
+
+
 done_testing();
 

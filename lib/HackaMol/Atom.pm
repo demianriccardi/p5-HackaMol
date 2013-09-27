@@ -246,6 +246,15 @@ isa Num that is lazy and rw. _build_vdw_radius builds the default.
 Atomic Van der Waals radii information will be revisited and revised. Included as 
 reminder for now. See the source of PeriodicTable.pm for more information.
 
+=bond_count
+
+isa Num that is lazy with a default of 0. The value adjusted with public Counter traits:
+
+  inc_bound_count    adds 1 by default
+  dec_bound_count    subtracts 1 by default
+  reset_bond_count   sets to zero
+
+
 =method change_Z
 
 no arguments.  Changes the atom type using I<Z>.  I<change_Z> calls

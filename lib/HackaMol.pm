@@ -118,18 +118,22 @@ sub find_bonds_brute {
     my @atoms      = @{ $args{candidates} };
 
     my $fudge = 0.45;
+    my $max_bonds = 99;
 
-    $fudge = $args{fudge} if ( exists( $args{fudge} ) );
+    $fudge     = $args{fudge} if ( exists( $args{fudge} ) );
+    $max_bonds = $args{max_bonds} if (exists( $args{max_bonds} ) );
 
     my @bonds;
     my %name;
 
     foreach my $at_i (@bond_atoms) {
+        next if ($at_i->bond_count >= $max_bonds);
         my $cov_i = $at_i->covalent_radius;
         my $xyz_i = $at_i->xyz;
 
         foreach my $at_j (@atoms) {
             next if ( refaddr($at_i) == refaddr($at_j) );
+            next if ($at_j->bond_count >= $max_bonds);
             my $cov_j = $at_j->covalent_radius;
             my $dist  = $at_j->distance($at_i);
 
@@ -141,6 +145,8 @@ sub find_bonds_brute {
                     name  => "$nm\_" . $name{$nm},
                     atoms => [ $at_i, $at_j ],
                   );
+                $at_i->inc_bond_count;
+                $at_j->inc_bond_count;
             }
 
         }
@@ -282,12 +288,19 @@ the candidates.
                                     bond_atoms => [$hg],
                                     candidates => [$mol->all_atoms],
                                     fudge      => 0.45,
+                                    max_bonds  => 6,
   );
 
-fudge is an optional argument. Default is 0.45 (open babel uses same default). 
+fudge is optional with Default is 0.45 (open babel uses same default); 
+max_bonds is optional with default of 99. 
 find_bonds_brute uses a bruteforce algorithm that tests the interatomic 
-separation against the sum of the covalent radii + fudge. It does not return 
+separation against the sum of the covalent radii + fudge. It will not test
+for bond between atoms if either atom has >= max_bonds. It does not return 
 a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
+
+Conflict with Molecule BUILD. add_bonds, delete_bonds, etc... For now,
+clear out bond_count before adding bonds to the molecule, too get the expected 
+behavior. need to think about this more.
 
 =head1 SEE ALSO
 

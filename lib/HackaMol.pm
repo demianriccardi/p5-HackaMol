@@ -123,6 +123,8 @@ sub find_bonds_brute {
     $fudge     = $args{fudge} if ( exists( $args{fudge} ) );
     $max_bonds = $args{max_bonds} if (exists( $args{max_bonds} ) );
 
+    my @init_bond_counts = map {$_->bond_count} (@bond_atoms,@atoms);
+
     my @bonds;
     my %name;
 
@@ -151,7 +153,15 @@ sub find_bonds_brute {
 
         }
     }
+  
+    my $i = 0;
+    foreach my $at (@bond_atoms,@atoms){
+      $at->reset_bond_count;
+      $at->inc_bond_count($init_bond_counts[$i]);
+      $i++;
+    }
     return (@bonds);
+
 }
 
 __PACKAGE__->meta->make_immutable;

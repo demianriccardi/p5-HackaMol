@@ -302,15 +302,14 @@ the candidates.
   );
 
 fudge is optional with Default is 0.45 (open babel uses same default); 
-max_bonds is optional with default of 99. 
+max_bonds is optional with default of 99. max_bonds is compared against
+the atom bond count, which are incremented during the search. Before returning
+the bonds, the bond_count are returned the values before the search.  For now,
+molecules are responsible for setting the number of bonds in atoms. 
 find_bonds_brute uses a bruteforce algorithm that tests the interatomic 
 separation against the sum of the covalent radii + fudge. It will not test
 for bond between atoms if either atom has >= max_bonds. It does not return 
 a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
-
-Conflict with Molecule BUILD. add_bonds, delete_bonds, etc... For now,
-clear out bond_count before adding bonds to the molecule, too get the expected 
-behavior. need to think about this more.
 
 =head1 SEE ALSO
 

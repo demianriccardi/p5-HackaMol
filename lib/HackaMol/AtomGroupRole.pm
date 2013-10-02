@@ -183,6 +183,51 @@ sub rotate {
 
 sub print_xyz {
     my $self = shift;
+    my $fh = _open_file_unless_fh(shift);
+
+    my @atoms = $self->all_atoms;
+    print $fh $self->count_atoms . "\n\n";
+    foreach my $at (@atoms) {
+        printf $fh (
+            "%3s %10.6f %10.6f %10.6f\n",
+            $at->symbol, @{ $at->get_coords( $at->t ) }
+        );
+    }
+
+    return ($fh);    # returns filehandle for future writing
+
+}
+
+sub print_pdb {
+    my $self = shift;
+    my $fh = _open_file_unless_fh(shift);
+
+    my @atoms = $self->all_atoms;
+    foreach my $at (@atoms) {
+        printf $fh (
+            "%%-6s%5i  %-3s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
+            ( map{$at->$_} qw ( 
+                              record_name 
+                              serial 
+                              name 
+                              altloc  
+                              resname
+                              chain
+                              resid
+                              icode
+                            )
+            ), @{ $at->get_coords( $at->t ) },
+            $at->occ, $at->bfact, $at->symbol, $at->charge
+        );
+
+    }
+    
+    return ($fh);    # returns filehandle for future writing
+
+}
+
+sub _open_file_unless_fh {
+
     my $file = shift;    # could be file or filehandle
 
     my $fh = \*STDOUT;   # default to standard out
@@ -197,18 +242,9 @@ sub print_xyz {
         }
     }
 
-    my @atoms = $self->all_atoms;
-    print $fh $self->count_atoms . "\n\n";
-    foreach my $at (@atoms) {
-        printf $fh (
-            "%3s %10.6f %10.6f %10.6f\n",
-            $at->symbol, @{ $at->get_coords( $at->t ) }
-        );
-    }
-
-    return ($fh);    # returns filehandle for future writing
-
+    return ($fh);
 }
+
 
 no Moose::Role;
 

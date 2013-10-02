@@ -120,8 +120,8 @@ sub find_bonds_brute {
     my $fudge = 0.45;
     my $max_bonds = 99;
 
-    $fudge     = $args{fudge} if ( exists( $args{fudge} ) );
-    $max_bonds = $args{max_bonds} if (exists( $args{max_bonds} ) );
+    $fudge     = $args{fudge}     if ( exists( $args{fudge} ) );
+    $max_bonds = $args{max_bonds} if ( exists( $args{max_bonds} ) );
 
     my @bonds;
     my %name;
@@ -151,6 +151,7 @@ sub find_bonds_brute {
 
         }
     }
+    $_->reset_bond_count foreach (@bond_atoms,@atoms);
     return (@bonds);
 }
 

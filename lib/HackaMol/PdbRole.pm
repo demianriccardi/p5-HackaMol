@@ -7,7 +7,7 @@ has 'record_name', is => 'rw', isa => 'Str', lazy => 1, default => 'HETATM';
 has 'occ',         is => 'rw', isa => 'Num', lazy => 1, default => 1.0;
 has 'bfact',       is => 'rw', isa => 'Num', lazy => 1, default => 20.0;
 has 'resname',     is => 'rw', isa => 'Str', lazy => 1, default => 'ALA';
-has 'chain',       is => 'rw', isa => 'Str', lazy => 1, default => 'AA';
+has 'chain',       is => 'rw', isa => 'Str', lazy => 1, default => '  ';
 has 'altloc',      is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'icode',       is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'pdbid',       is => 'rw', isa => 'Str', lazy => 1, default => '2CBA';

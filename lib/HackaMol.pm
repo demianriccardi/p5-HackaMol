@@ -153,9 +153,6 @@ sub find_bonds_brute {
 
         }
     }
-<<<<<<< HEAD
-    $_->reset_bond_count foreach (@bond_atoms,@atoms);
-=======
   
     my $i = 0;
     foreach my $at (@bond_atoms,@atoms){
@@ -163,7 +160,6 @@ sub find_bonds_brute {
       $at->inc_bond_count($init_bond_counts[$i]);
       $i++;
     }
->>>>>>> 7b32281f141822f39bcbd2a9b4299f04ce357d8b
     return (@bonds);
 
 }

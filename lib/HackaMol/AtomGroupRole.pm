@@ -205,7 +205,7 @@ sub print_pdb {
     my @atoms = $self->all_atoms;
     foreach my $at (@atoms) {
         printf $fh (
-            "%%-6s%5i  %-3s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
+            "%-6s%5i  %-3s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
             ( map{$at->$_} qw ( 
                               record_name 
                               serial 
@@ -431,6 +431,16 @@ origin as arguments. Optional argument: integer tf.
 
 Rotates all atoms in the group around the MVR vector. Pass tf to the translate 
 method to store new coordinates in tf rather than atom->t.
+
+=method print_xyz
+
+optional argument: filename or filehandle.  with no argument, prints xyz formatted output to STDOUT. pass 
+a filename and an xyz file with that name will be written or overwritten (with warning). pass filehandle 
+for continuous writing to an open filehandle.
+
+=method print_pdb
+
+same as print_xyz, but for pdb formatted output
 
 =head1 SEE ALSO
 

@@ -250,8 +250,8 @@ reminder for now. See the source of PeriodicTable.pm for more information.
 
 isa Num that is lazy with a default of 0. The value adjusted with public Counter traits:
 
-  inc_bound_count    adds 1 by default
-  dec_bound_count    subtracts 1 by default
+  inc_bond_count    adds 1 by default
+  dec_bond_count    subtracts 1 by default
   reset_bond_count   sets to zero
 
 

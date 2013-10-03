@@ -116,3 +116,15 @@ DESCRIPTION
        that treat much larger systems will definitely benefit from the 
        capabilities L<PDL> or L<Math::GSL>.
        
+INSTALLATION
+============
+       With cpanminus installed, you will be able to install HackaMol from the commandline with:
+       
+       cpanm HackaMol
+       
+       once it is officially released. For now, you can install the developer release. Again with cpanminus:
+       
+       cpanm DEMIAN/HackaMol-0.00_05.tar.gz
+       
+       I would love for people to give it a spin with the examples. I will use feedback to make improvements in the near future.
+       

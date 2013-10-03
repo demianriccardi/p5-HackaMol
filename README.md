@@ -4,8 +4,8 @@ Object-Oriented Perl 5, Moose Library for Molecular Hacking on multiple scales
 
 VERSION
 ========
-       developer version 0.00_05 
-       Available for testing from cpan.org:
+developer version 0.00_05 
+Available for testing from cpan.org:
        
 *please see [HackaMol](https://metacpan.org/release/DEMIAN/HackaMol-0.00_05)*
        
@@ -91,42 +91,41 @@ SYNOPSIS
 
 DESCRIPTION
 ============
-       The HackaMol library enables users to build simple, yet powerful scripts 
-       for carrying out computational work on molecules at multiple scales. The 
-       molecular object system organizes atoms within molecules using groups, bonds, 
-       angles, and dihedrals.  HackaMol seeks to provide intuitive attributes and 
-       methods that may be harnessed to coerce computational chemistry through a 
-       common core. The library is inspired by L<PerlMol|http://www.perl.org>, 
-       L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, and my own 
-       experiences as a researcher. 
+The HackaMol library enables users to build simple, yet powerful scripts 
+for carrying out computational work on molecules at multiple scales. The 
+molecular object system organizes atoms within molecules using groups, bonds, 
+angles, and dihedrals.  HackaMol seeks to provide intuitive attributes and 
+methods that may be harnessed to coerce computational chemistry through a 
+common core. The library is inspired by 
+*[PerlMol](http://www.perlmol.org)*, *[BioPerl](http://bioperl.org)*, *[MMTSB](http://www.mmtsb.org)*, and my own experiences as a researcher. 
        
-       The library is organized into two regions: HackaMol, the core (contained 
-       here) that has classes for atoms and molecules, and HackaMolX, the 
-       extensions, such as HackaMolX::PDB, a parser for protein databank files, 
-       and HackaMolX::Calculator, an abstract calculator for coercing 
-       computational chemistry, that use the core. The three major goals of the 
-       core are for it to be well-tested, well-documented, and easy to install. 
-       The goal of the extensions is to provide a more flexible space for 
-       researchers to develop and share new methods that use the core. 
-       Extensions are in the works, but the HackaMolX namespace has not been 
-       established yet! 
+The library is organized into two regions: HackaMol, the core (contained 
+here) that has classes for atoms and molecules, and HackaMolX, the 
+extensions, such as HackaMolX::PDB, a parser for protein databank files, 
+and HackaMolX::Calculator, an abstract calculator for coercing 
+computational chemistry, that use the core. The three major goals of the 
+core are for it to be well-tested, well-documented, and easy to install. 
+The goal of the extensions is to provide a more flexible space for 
+researchers to develop and share new methods that use the core. 
+Extensions are in the works, but the HackaMolX namespace has not been 
+established yet! 
        
-       HackaMol uses Math::Vector::Real (MVR) for all the vector operations. 
-       MVR is a lightweight solution with a fast XS dropin that overlaps very 
-       well with the desirables for working with atomic coordinates. Extensions 
-       that treat much larger systems will definitely benefit from the 
-       capabilities L<PDL> or L<Math::GSL>.
+HackaMol uses Math::Vector::Real (MVR) for all the vector operations. 
+MVR is a lightweight solution with a fast XS dropin that overlaps very 
+well with the desirables for working with atomic coordinates. Extensions 
+that treat much larger systems will definitely benefit from the 
+capabilities L<PDL> or L<Math::GSL>.
        
 INSTALLATION
 ============
-       With cpanminus installed, you will be able to install HackaMol from the commandline with:
+With cpanminus installed, you will be able to install HackaMol from the commandline with:
        
        cpanm HackaMol
        
-       once it is officially released. For now, you can install the developer release. Again with cpanminus:
+once it is officially released. For now, you can install the developer release. Again with cpanminus:
        
        cpanm DEMIAN/HackaMol-0.00_05.tar.gz
        
-       I would love for people to give it a spin with the examples. I will use feedback to make improvements 
-       in the near future.
+I would love for people to give it a spin with the examples. I will use feedback to make improvements 
+in the near future.
        

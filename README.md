@@ -7,7 +7,7 @@ VERSION
 developer version 0.00_05 
 Available for testing from cpan.org:
        
-*please see [HackaMol](https://metacpan.org/release/DEMIAN/HackaMol-0.00_05)*
+please see *[HackaMol](https://metacpan.org/release/DEMIAN/HackaMol-0.00_05)* for formatted documentation.  
        
 SYNOPSIS
 ========
@@ -110,11 +110,11 @@ researchers to develop and share new methods that use the core.
 Extensions are in the works, but the HackaMolX namespace has not been 
 established yet! 
        
-HackaMol uses Math::Vector::Real (MVR) for all the vector operations. 
+HackaMol uses *[Math::Vector::Real](https://metacpan.org/module/Math::Vector::Real)* (MVR) for all the vector operations. 
 MVR is a lightweight solution with a fast XS dropin that overlaps very 
 well with the desirables for working with atomic coordinates. Extensions 
 that treat much larger systems will definitely benefit from the 
-capabilities L<PDL> or L<Math::GSL>.
+capabilities *[Perl Data Language](http://pdl.perl.org)* (PDL) or *[Math::GSL](https://metacpan.org/module/Math::GSL)*.
        
 INSTALLATION
 ============

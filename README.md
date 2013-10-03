@@ -5,9 +5,10 @@ Object-Oriented Perl 5, Moose Library for Molecular Hacking on multiple scales
 VERSION
 ========
        developer version 0.00_05 
-       Available for testing from cpan.org
-       http://search.cpan.org/~demian/
-
+       Available for testing from cpan.org:
+       
+       please see http://search.cpan.org/~demian/HackaMol-0.00_05/lib/HackaMol.pm 
+       
 SYNOPSIS
 ========
        use HackaMol;

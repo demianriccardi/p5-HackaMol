@@ -116,8 +116,3 @@ DESCRIPTION
        that treat much larger systems will definitely benefit from the 
        capabilities L<PDL> or L<Math::GSL>.
        
-       The HackaMol class uses the core classes to provide some object building
-       utilities described below.  This class consumes HackaMol::MolReadRole to 
-       provide structure readers for xyz and pdb coordinates.  See 
-       L<Open Babel|http://openbabel.org> if other formats needed (All 
-       suggestions welcome!).  

@@ -7,7 +7,7 @@ VERSION
        developer version 0.00_05 
        Available for testing from cpan.org:
        
-       please see [HackaMol](https://metacpan.org/release/DEMIAN/HackaMol-0.00_05) 
+       *please see [HackaMol](https://metacpan.org/release/DEMIAN/HackaMol-0.00_05) 
        
 SYNOPSIS
 ========

@@ -11,12 +11,12 @@ my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
 my $max_t = $atoms[0]->count_coords - 1;
 my $mol   = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms] );
 
-print_xyz($mol);
+$mol->print_xyz;
 
 $mol->translate( -$mol->COM );
 $mol->translate( V( 10, 10, 10 ) );
 
-print_xyz($mol);
+$mol->print_xyz;
 
 $mol->rotate( V( 1, 0, 0 ), 180, V( 10, 10, 10 ) );
 

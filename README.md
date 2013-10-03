@@ -126,5 +126,6 @@ INSTALLATION
        
        cpanm DEMIAN/HackaMol-0.00_05.tar.gz
        
-       I would love for people to give it a spin with the examples. I will use feedback to make improvements in the near future.
+       I would love for people to give it a spin with the examples. I will use feedback to make improvements 
+       in the near future.
        

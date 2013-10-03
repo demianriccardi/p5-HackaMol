@@ -2,7 +2,7 @@
 # Demian Riccardi
 # This script loads 1L2Y.pdb and then generates xyz coordinates for the molecule spinning across the screen
 # to run:
-# > perl spinning_ball.pl > spinning_ball.xyz
+#   perl spinning_ball.pl > spinning_ball.xyz
 # 
 # then load into your favorite GUI.  I use VMD
 use Modern::Perl;

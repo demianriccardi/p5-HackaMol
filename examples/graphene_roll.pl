@@ -22,7 +22,7 @@ foreach my $j (0 .. 99){
   }
 }
 
-#grouped in strips along y axis
+#grouped in strips along a2 vector
 
 my @groups = $hack->group_by_atom_attr('resid',@atoms);
 @groups = sort {$a->get_atoms(0)->resid <=> $b->get_atoms(0)->resid } @groups;

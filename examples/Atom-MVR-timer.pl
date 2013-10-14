@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# 
 use Modern::Perl;
 use Math::Vector::Real;
 use Time::HiRes qw(time);
@@ -14,7 +15,7 @@ my $t1 = time;
 my @atoms = map { HackaMol::Atom->new( Z => 80 ) } 1 .. $natoms;
 
 my $t2 = time;
-printf( "time to Atom->new(Z => 80) for $natoms atoms: %10.3f\n", $t2 - $t1 );
+printf( "Time to Atom->new(Z => 80) for $natoms atoms: %10.3f\n", $t2 - $t1 );
 
 my $t3;
 foreach my $t ( 1 .. 3 ) {
@@ -38,10 +39,10 @@ foreach my $t ( 1 .. 3 ) {
 $_->set_coords( 0, V( 1.000, 1.000, 1.000 ) ) foreach @atoms;
 my $t4 = time;
 printf(
-    "time to set_coords(0, V(1.000 ,1.000,1.000)) for $natoms atoms: %10.3f\n",
+    "Time to set_coords(0, V(1.000 ,1.000,1.000)) for $natoms atoms: %10.3f\n",
     $t4 - $t3 );
 
-print "dump the last atom: ", $#atoms, "\n";
+print "Dump the last atom: ", $#atoms, "\n";
 print $atoms[$#atoms]->dump;
 
 print "grep for some PdbRole defaults\n";

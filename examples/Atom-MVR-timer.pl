@@ -8,7 +8,7 @@ use HackaMol::Atom;
 
 my $natoms = 100000;
 print
-"Atom-timer will time the construction of and array of  $natoms atoms to give idea about speed\n";
+"Atom-timer will time the construction of an array of  $natoms atoms to give idea about speed\n";
 
 my $t1 = time;
 my @atoms = map { HackaMol::Atom->new( Z => 80 ) } 1 .. $natoms;

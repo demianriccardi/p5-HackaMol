@@ -111,6 +111,18 @@ sub group_by_atom_attr {
 
 }
 
+sub find_disulfides {
+    my $self  = shift;
+    my @sulf  = grep {$_->Z == 16} grep {$_->resname eq "CYS"} @_;
+    my @ss = $self->find_bonds_brute(
+                                     bond_atoms => [@sulf],
+                                     candidates => [@sulf],
+                                     fudge      => 0.45,
+                                     max_bonds  => 1,
+                                    );
+    return @ss;
+}
+
 sub find_bonds_brute {
     my $self       = shift;
     my %args       = @_;
@@ -286,7 +298,7 @@ will return two dihedrals: D1356 and D3569
 
 =method group_by_atom_attr
 
-takes atom attribute as argument and builds AtomGroup objects by attribute.
+takes atom attribute and a list of atoms as arguments and builds AtomGroup objects by attribute.
 Grouping by graphical searches are needed! 
 
 =method find_bonds_brute 

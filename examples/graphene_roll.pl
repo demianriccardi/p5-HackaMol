@@ -2,7 +2,9 @@
 use Modern::Perl;
 use HackaMol;
 use Math::Vector::Real;
+use Time::HiRes qw(time);
 
+my $t1 = time;
 my $l = 1.42;
 
 my $hack = HackaMol->new(name => "hackitup");
@@ -53,7 +55,11 @@ for (my $i = 0; $i < $#groups; $i++){
 
 }
 
-$mol->print_pdb;
+my $t2 = time;
+
+printf ("time: %10.4f\n", $t2-$t1);
+
+#$mol->print_pdb;
 
 sub carbon {
   my $mvr   = shift;

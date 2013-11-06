@@ -128,11 +128,11 @@ sub read_xyz_atoms {
             if ( $t == 0 ) {
                 if ( $sym =~ /\d/ ) {
                     $atoms[$n] =
-                      HackaMol::Atom->new( Z => $sym, coords => [$xyz] );
+                      HackaMol::Atom->new(name=> "at$n", Z => $sym, coords => [$xyz] );
                 }
                 else {
                     $atoms[$n] =
-                      HackaMol::Atom->new( symbol => $sym, coords => [$xyz] );
+                      HackaMol::Atom->new(name=> "at$n", symbol => $sym, coords => [$xyz] );
                 }
             }
             else {

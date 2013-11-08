@@ -14,6 +14,15 @@ use Carp;
 
 with 'HackaMol::NameRole', 'HackaMol::MolReadRole';
 
+sub read_file_mol{
+    my $self = shift;
+    my $file = shift;
+
+    my @atoms = $self->read_file_atoms($file);
+    my $name = $file . ".mol";
+    return (HackaMol::Molecule->new(name=>$name, atoms=>[@atoms]));
+}
+
 sub build_bonds {
 
     #take a list of n, atoms; walk down list and generate bonds
@@ -63,7 +72,7 @@ sub build_angles {
 sub _name_resid {
   my $atom    = shift;
   my $default = shift;
-  return ($default    . $atom->resid) unless $atom->has_name;
+  return ($default    . $atom->resid) unless $atom->has_name; # this comes up when undefined atoms are passed 
   return ($atom->name . $atom->resid);
 }
 

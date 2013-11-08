@@ -16,8 +16,9 @@ my @attributes = qw(
 );
 my @methods = qw(
   build_bonds build_angles build_dihedrals
-  group_by_atom_attr read_file_atoms read_pdb_atoms
+  group_by_atom_attr read_file_mol read_file_atoms read_pdb_atoms
   read_xyz_atoms
+
 );
 
 my @roles = qw(HackaMol::MolReadRole HackaMol::NameRole);

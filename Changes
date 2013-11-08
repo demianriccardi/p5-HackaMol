@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
     * Added find_disulfides to HackaMol.pm
+    * Added read_file_mol to HackaMol.pm
 
 0.00_05   2013-10-02 16:19:31 America/New_York
     * Adjusted builders in HackaMol.pm added pdb_print for groups

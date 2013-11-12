@@ -31,7 +31,7 @@ sub ang_normvec {
 }
 
 sub bisector {
-# vector that bisects the angle between to vectors of the angle
+# vector that bisects the angle between two vectors of the angle
     my $self = shift;
     my @atoms = $self->all_atoms;
     my $ang   = $self->ang_deg;

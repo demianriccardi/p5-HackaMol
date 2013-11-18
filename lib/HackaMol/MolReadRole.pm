@@ -40,9 +40,12 @@ sub read_pdb_atoms {
     while (<$fh>) {
 
         if (/^(?:MODEL\s+(\d+))/) {
-            $t = $1 - 1;
+            #$t = $1 - 1; # I don't like this!!  set increment t instead.. below
             $n = 0;
             $q_tbad = 0; # flag a bad model and never read again!
+        }
+        elsif (/^(?:ENDMDL)/){
+            $t++;
         }
         elsif (/^(?:HETATM|ATOM)/) {
             next if $q_tbad;

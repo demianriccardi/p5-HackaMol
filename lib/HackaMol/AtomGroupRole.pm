@@ -27,6 +27,16 @@ has 'atoms' => (
     lazy => 1,
 );
 
+sub tmax {
+    # use coords to calculate tmax,which may be annoying if just interested in charges
+    my $self = shift;
+    return (0) unless $self->count_atoms;
+    my $t0   = $self->get_atoms(0)->count_coords;
+    my $tn   = $self->get_atoms($self->count_atoms - 1)->count_coords;
+    croak "not all atoms have same tmax" unless($t0 == $tn);
+    return ($t0);
+}
+
 sub dipole {
     my $self = shift;
     return ( V(0) ) unless ( $self->count_atoms );
@@ -203,6 +213,7 @@ sub print_pdb {
     my $fh = _open_file_unless_fh(shift);
 
     my @atoms = $self->all_atoms;
+    printf $fh ("MODEL       %2i\n",$atoms[0]->t+1); 
     foreach my $at (@atoms) {
         
         printf $fh (
@@ -223,6 +234,7 @@ sub print_pdb {
         );
 
     }
+    print $fh "ENDMDL\n"; 
     
     return ($fh);    # returns filehandle for future writing
 
@@ -418,6 +430,10 @@ by Z and generates something like OH2 for water or O2H2 for peroxide.
 =attr atoms
 
 isa ArrayRef[Atom] that is lazy with public ARRAY traits described in ARRAY_METHODS
+
+=method tmax
+
+return count_coords of first atom; checks that count_coords is same for first and last atoms
 
 =method translate
 

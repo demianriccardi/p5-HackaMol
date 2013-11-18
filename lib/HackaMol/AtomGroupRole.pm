@@ -34,7 +34,7 @@ sub tmax {
     my $t0   = $self->get_atoms(0)->count_coords;
     my $tn   = $self->get_atoms($self->count_atoms - 1)->count_coords;
     croak "not all atoms have same tmax" unless($t0 == $tn);
-    return ($t0);
+    return ($t0-1);
 }
 
 sub dipole {
@@ -433,7 +433,7 @@ isa ArrayRef[Atom] that is lazy with public ARRAY traits described in ARRAY_METH
 
 =method tmax
 
-return count_coords of first atom; checks that count_coords is same for first and last atoms
+return (count_coords-1) of first atom; checks that count_coords is same for first and last atoms
 
 =method translate
 

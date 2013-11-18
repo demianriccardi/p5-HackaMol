@@ -81,10 +81,16 @@ sub read_pdb_atoms {
                 );
             }
             else {
-                croak "atoms have changed from last model to current: $t\n"
-                  if ( $name ne $atoms[$n]->name
-                    or $element ne $atoms[$n]->symbol );
-
+                #croak condition if atom changes between models
+                if ( $name ne $atoms[$n]->name
+                    or $element ne $atoms[$n]->symbol ) {
+                  my $croak_message  = "atom $n at t0 name:". 
+                                       $atoms[$n]->name. " symbol:".
+                                       $atoms[$n]->symbol."\n";
+                     $croak_message .= "atom $n at $t name:". 
+                                       "$name symbol: $element\n";
+                  croak $croak_message;
+                }
                 $atoms[$n]->set_coords( $t, $xyz );
             }
             $n++;

@@ -116,9 +116,17 @@ dies_ok { $hack->read_file_atoms("t/lib/bad1.xyz") } "xyz Croak change symbol";
 dies_ok { $hack->read_file_atoms("t/lib/bad2.xyz") } "xyz Croak change Z";
 dies_ok { $hack->read_file_atoms("t/lib/bad3.xyz") }
 "xyz Croak change number of atoms";
-dies_ok { $hack->read_file_atoms("t/lib/bad1.pdb") }
-"pdb Croak change atom name";
-dies_ok { $hack->read_file_atoms("t/lib/bad2.pdb") } "pdb Croak change element";
+
+#dies_ok { $hack->read_file_atoms("t/lib/bad1.pdb") }
+#"pdb Croak change atom name";
+warning_is { $hack->read_file_atoms("t/lib/bad1.pdb") }
+"BAD t->1 PDB Atom 0 has changed",
+  "carp warning for bad model in pdb file";
+
+warning_is { $hack->read_file_atoms("t/lib/bad2.pdb") }
+"BAD t->1 PDB Atom 1 has changed",
+  "carp warning for bad model in pdb file";
+
 
 my @wats1 = $hack->read_file_atoms("t/lib/byZ.xyz");
 my @wats2 = $hack->read_file_atoms("t/lib/byZSym.xyz");

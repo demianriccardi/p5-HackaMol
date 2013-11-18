@@ -86,20 +86,20 @@ sub read_pdb_atoms {
                 #croak condition if atom changes between models
                 if ( $name ne $atoms[$n]->name
                     or $element ne $atoms[$n]->symbol ) {
-                  my $croak_message  = "atom $n at t0 " 
+                  my $carp_message  = "atom $n at t0 " 
                                        ."name: ".$atoms[$n]->name." "
                                        ."serial: ".$atoms[$n]->serial." "
                                        ."resname:".$atoms[$n]->resname." "
                                        ."symbol: ".$atoms[$n]->symbol." "
                                        ."\n";
-                     $croak_message .= "atom $n at $t "
+                     $carp_message .= "atom $n at $t "
                                        ."name: $name " 
                                        ."serial: $serial "
                                        ."resname:$resName " 
                                        ."symbol: $element "
                                        ."\n";
-                  print $_;
-                  carp  "$croak_message \nBAD t->$t PDB line: $_ ";
+                  chomp;
+                  carp  "BAD t->$t PDB Atom $n has changed"; # $carp_message;
                   $q_tbad = $t; # this is a bad model!
                   #wipe out all the coords prior
                   $atoms[$_]->delete_coords($t) foreach 0 .. $n-1; 

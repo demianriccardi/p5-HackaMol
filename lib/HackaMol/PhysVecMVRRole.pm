@@ -18,12 +18,13 @@ has "$_" => (
     isa     => 'ArrayRef[Math::Vector::Real]',
     default => sub { [] },
     handles => {
-        "push_$_"  => 'push',
-        "get_$_"   => 'get',
-        "set_$_"   => 'set',
-        "all_$_"   => 'elements',
-        "clear_$_" => 'clear',
-        "count_$_" => 'count',
+        "push_$_"   => 'push',
+        "get_$_"    => 'get',
+        "delete_$_" => 'delete',
+        "set_$_"    => 'set',
+        "all_$_"    => 'elements',
+        "clear_$_"  => 'clear',
+        "count_$_"  => 'count',
     },
     lazy => 1,
 ) for qw(coords forces);
@@ -34,12 +35,13 @@ has "$_" => (
     isa     => 'ArrayRef[Num]',
     default => sub { [] },
     handles => {
-        "push_$_"  => 'push',
-        "get_$_"   => 'get',
-        "set_$_"   => 'set',
-        "all_$_"   => 'elements',
-        "clear_$_" => 'clear',
-        "count_$_" => 'count',
+        "push_$_"   => 'push',
+        "get_$_"    => 'get',
+        "delete_$_" => 'delete',
+        "set_$_"    => 'set',
+        "all_$_"    => 'elements',
+        "clear_$_"  => 'clear',
+        "count_$_"  => 'count',
     },
     lazy => 1,
 ) for qw(charges);
@@ -375,7 +377,7 @@ two objects of classes that consume PhysVecMVR at the $self->t and $obj->t.
 
 =array_method push_$_, all_$_, get_$_, set_$_, count_$_, clear_$_ foreach qw(charges coords forces)
 
-ARRAY traits, respectively: push, get, set, all, elements, clear
+ARRAY traits, respectively: push, get, set, all, elements, delete, clear
   Descriptions for charges and coords follows.  forces analogous to coords.
   
 =array_method push_charges
@@ -408,6 +410,14 @@ set value of element by index from charges array
 return number of elements in charges array
   
     print $obj->count_charges; # prints 4 
+
+=array_method delete_charges($index)
+
+    Removes the element at the given index from the array.
+
+    This method returns the deleted value. Note that if no value exists, it will return undef.
+
+    This method requires one argument.
 
 =array_method clear_charges
   
@@ -451,6 +461,20 @@ set value of element by index from coords array
 return number of elements in coords array
   
     print $obj->count_coords; # prints 4 
+
+=array_method delete_coords($index)
+
+    Removes the element at the given index from the array.
+
+    This method returns the deleted value. Note that if no value exists, it will return undef.
+
+    This method requires one argument.
+  
+clears coords array
+    
+    $obj->clear_coords;
+    print $_ . " " foreach $obj->all_coords; # does nothing 
+    print $obj->count_coords # prints 0
 
 =array_method clear_coords
   

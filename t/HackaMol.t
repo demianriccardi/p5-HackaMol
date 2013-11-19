@@ -143,6 +143,9 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
 }
 
 my $mol1 = $hack->read_file_mol("t/lib/1L2Y.pdb");
+is( $mol1->tmax, 37, "index of last coords for each atom" );
+$hack->read_file_append_mol( "t/lib/1L2Y.pdb", $mol1 );
+is( $mol1->tmax, 75, "index of last coords for each atom after append" );
 
 #test group generation
 my @gresids = $hack->group_by_atom_attr( 'resid',  $mol1->all_atoms );
@@ -205,6 +208,29 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
     is( $angles[0]->name, 'foo1_foo1_foo1', "angle name foo resid default" );
     is( $bonds[0]->name,  'foo1_foo1',      "bond name foo resid default" );
 
+}
+
+{    #find_disulfides
+    my $mol = $hack->read_file_mol("t/lib/1V0Z.pdb");
+    my @ss  = $hack->find_disulfides( $mol->all_atoms );
+    is( scalar(@ss), 36, "found 36 disulfides in 1V0Z" );
+    my @ss_atoms = map { $_->all_atoms } @ss;
+    is( scalar(@ss_atoms), 72, "36 disulfides have 72 atoms" );
+    is( ( grep { $_->symbol eq "S" } @ss_atoms ), 72, "72 Sulfur atoms" );
+    my $bc = 0;
+    $bc += $_->bond_count foreach @ss_atoms;
+    is( $bc, 0, "0 bonds for 36 disulfides with no molecule" );
+    my $mol2 = HackaMol::Molecule->new(
+        name  => "1voz.ss",
+        atoms => [@ss_atoms],
+        bonds => [@ss]
+    );
+
+    $bc += $_->bond_count foreach @ss_atoms;
+    is( $bc, 72, "72 bonds for 36 disulfides (1/atom) in molecule" );
+
+    # checks out by viz xyz and pdb overlay
+    # $mol2->print_xyz;
 }
 
 done_testing();

@@ -13,7 +13,7 @@ my @avg  = mce_map {
                  my $sum = 0;
                  $sum += abs($_) foreach @mvrs;
                  $sum/(scalar(@mvrs)) 
-               } 0 .. 100;
+               } 0 .. 1000;
 
 say foreach @avg;
 

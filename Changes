@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * Reduced size of test directory
 
 0.00_06   2013-11-18 21:28:05 America/New_York
     * Added find_disulfides to HackaMol.pm

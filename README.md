@@ -97,7 +97,9 @@ molecular object system organizes atoms within molecules using groups, bonds,
 angles, and dihedrals.  HackaMol seeks to provide intuitive attributes and 
 methods that may be harnessed to coerce computational chemistry through a 
 common core. The library is inspired by 
-*[PerlMol](http://www.perlmol.org)*, *[BioPerl](http://bioperl.org)*, *[MMTSB](http://www.mmtsb.org)*, and my own experiences as a researcher. 
+*[PerlMol](http://www.perlmol.org)*, *[BioPerl](http://bioperl.org)*, *[MMTSB](http://www.mmtsb.org)*, 
+and my own experiences as a researcher.  A goal of this library is to reduce
+the "viscosity" of setting up computations and managing data.
        
 The library is organized into two regions: HackaMol, the core (contained 
 here) that has classes for atoms and molecules, and HackaMolX, the 

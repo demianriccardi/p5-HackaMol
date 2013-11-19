@@ -84,16 +84,6 @@ foreach my $t ( 0 .. $max_t ) {
     cmp_ok( abs( $mol->Rg - $Rgt[$t] ), '<', 1E-7, "Rg at $t" );
 }
 
-#$mol->push_groups_by_atom_attr('resid');
-#is( $mol->count_groups, 22, "group_by_atom_resid yields 22 groups" );
-#$mol->clear_groups;
-#is( $mol->count_groups, 0, "clear->groups yields 0 groups" );
-#$mol->push_groups_by_atom_attr('symbol');
-#is( $mol->count_groups, 4, "group_by_atom_symbol yields 4 (ONCH) groups" );
-#$mol->clear_groups;
-#$mol->push_groups_by_atom_attr('name');
-#is( $mol->count_groups, 60, "group_by_atom_name yields 60 groups" );
-
 my @bonds =
   map {HackaMol::Bond->new( atoms => [ $atoms[0], $atoms[$_] ] ) } 1 .. $#atoms;
 $mol->push_bonds(@bonds);

@@ -95,7 +95,7 @@ my $hack = HackaMol->new( name => "hackitup" );
 is( $hack->name, "hackitup", "HackaMol name attr" );
 
 {    #reading pdb/xyz into molecule or atoms
-    my @atoms1 = $hack->read_file_atoms("t/lib/1L2Y.pdb");
+    my @atoms1 = $hack->read_file_atoms("t/lib/1L2Y_mod123.pdb");
     my $mol1 =
       HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms1] );
     is( $mol1->count_atoms, 304, "read atoms in from pdb" );
@@ -142,10 +142,10 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
     is_deeply( \@Zw1, \@Zw2, "different Z/Symbol formatted xyz give same" );
 }
 
-my $mol1 = $hack->read_file_mol("t/lib/1L2Y.pdb");
-is( $mol1->tmax, 37, "index of last coords for each atom" );
-$hack->read_file_append_mol( "t/lib/1L2Y.pdb", $mol1 );
-is( $mol1->tmax, 75, "index of last coords for each atom after append" );
+my $mol1 = $hack->read_file_mol("t/lib/1L2Y_mod123.pdb");
+is( $mol1->tmax, 2, "index of last coords for each atom" );
+$hack->read_file_append_mol( "t/lib/1L2Y_mod123.pdb", $mol1 );
+is( $mol1->tmax, 5, "index of last coords for each atom after append" );
 
 #test group generation
 my @gresids = $hack->group_by_atom_attr( 'resid',  $mol1->all_atoms );
@@ -211,15 +211,15 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
 }
 
 {    #find_disulfides
-    my $mol = $hack->read_file_mol("t/lib/1V0Z.pdb");
+    my $mol = $hack->read_file_mol("t/lib/1V0Z_A.pdb");
     my @ss  = $hack->find_disulfides( $mol->all_atoms );
-    is( scalar(@ss), 36, "found 36 disulfides in 1V0Z" );
+    is( scalar(@ss), 9 , "found 9  disulfides in 1V0Z" );
     my @ss_atoms = map { $_->all_atoms } @ss;
-    is( scalar(@ss_atoms), 72, "36 disulfides have 72 atoms" );
-    is( ( grep { $_->symbol eq "S" } @ss_atoms ), 72, "72 Sulfur atoms" );
+    is( scalar(@ss_atoms), 18, "9  disulfides have 18 atoms" );
+    is( ( grep { $_->symbol eq "S" } @ss_atoms ), 18, "18 Sulfur atoms" );
     my $bc = 0;
     $bc += $_->bond_count foreach @ss_atoms;
-    is( $bc, 0, "0 bonds for 36 disulfides with no molecule" );
+    is( $bc, 0, "0 bonds for 9 disulfides with no molecule" );
     my $mol2 = HackaMol::Molecule->new(
         name  => "1voz.ss",
         atoms => [@ss_atoms],
@@ -227,7 +227,7 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
     );
 
     $bc += $_->bond_count foreach @ss_atoms;
-    is( $bc, 72, "72 bonds for 36 disulfides (1/atom) in molecule" );
+    is( $bc, 18, "18 bonds for 9  disulfides (1/atom) in molecule" );
 
     # checks out by viz xyz and pdb overlay
     # $mol2->print_xyz;

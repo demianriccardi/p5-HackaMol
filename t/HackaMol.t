@@ -124,11 +124,11 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
     "xyz Croak change number of atoms";
 
     warning_is { $hack->read_file_atoms("t/lib/bad1.pdb") }
-    "BAD t->1 PDB Atom 0 has changed",
+    "BAD t->1 PDB Atom 0 serial 1 resname ASN has changed",
       "carp warning for bad model in pdb file";
 
     warning_is { $hack->read_file_atoms("t/lib/bad2.pdb") }
-    "BAD t->1 PDB Atom 1 has changed",
+    "BAD t->1 PDB Atom 1 serial 2 resname ASN has changed",
       "carp warning for bad model in pdb file";
 }
 

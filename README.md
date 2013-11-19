@@ -126,7 +126,7 @@ With cpanminus installed, you will be able to install HackaMol from the commandl
        
 once it is officially released. For now, you can install the developer release. Again with cpanminus:
        
-       cpanm DEMIAN/HackaMol-0.00_05.tar.gz
+       cpanm DEMIAN/HackaMol-0.00_06.tar.gz
        
 I would love for people to give it a spin with the examples. I will use feedback to make improvements 
 in the near future.

@@ -96,6 +96,7 @@ sub read_pdb_atoms {
                   $q_tbad = $t; # this is a bad model!
                   #wipe out all the coords prior
                   $atoms[$_]->delete_coords($t) foreach 0 .. $n-1; 
+                  $t--;
                   next;
                 }
                 $atoms[$n]->set_coords( $t, $xyz );

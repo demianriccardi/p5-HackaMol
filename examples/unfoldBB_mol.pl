@@ -66,6 +66,7 @@ foreach my $dihe (@dihedrals) {
 }
 
 $mol->print_xyz;
+#$mol->print_pdb;
 
 my $t2 = time;
 

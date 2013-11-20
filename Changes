@@ -1,7 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_07   2013-11-19 22:57:36 America/New_York
     * Reduced size of test directory
+    * Improved reading of PDBs with multiple (sometimes erroneous) models
 
 0.00_06   2013-11-18 21:28:05 America/New_York
     * Added find_disulfides to HackaMol.pm

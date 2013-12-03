@@ -60,34 +60,7 @@ SYNOPSIS
            $mol->print_xyz($fh);
        }
        
-       $fh->close;    # done filling trp-cage.xyz with coordinates
-       
-       # let's create a 20 Angstrom ball of oxygen atoms from density of water
-       my $radius = 20;
-       my $natoms = int( 0.0334 * ( $radius**3 ) * 4 * pi / 3 );
-       
-       my @sphatoms =
-         map { HackaMol::Atom->new( Z => 8, charges => [0], coords => [$_] ) }
-         map { Math::Vector::Real->random_in_sphere( 3, $radius ) } 1 .. $natoms;
-       
-       my $sphere = HackaMol::Molecule->new(
-           name  => "ball",
-           atoms => [@sphatoms]
-       );
-
-       # create new system with both trp-cage and O atom sphere
-       my $bigmol = HackaMol::Molecule->new(
-           name  => "bigoverlap",
-           atoms => [ $mol->all_atoms, $sphere->all_atoms ],
-       );
-       
-       # write out and get new filehandle
-       $fh = $bigmol->print_xyz( $bigmol->name . ".xyz" );
-       
-       # rotate the O atom sphere inside bigmol
-       foreach my $ang ( 1 .. 10 ) {
-           $sphere->rotate( V( 1, 1, 1 ), 36, $sphere->COM );
-           $bigmol->print_xyz($fh);
+ 
 
 DESCRIPTION
 ============

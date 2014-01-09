@@ -21,7 +21,7 @@ sub read_file_append_mol{
 
     my @atoms = $self->read_file_atoms($file);
     my @matoms= $mol->all_atoms;
-    unless (scalar ($mol->all_atoms) == scalar(@atoms) ){
+    unless (scalar(@matoms) == scalar(@atoms) ){
       croak "number of atoms not same";
     }
     foreach my $i (0 .. $#atoms) {

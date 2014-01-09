@@ -67,7 +67,7 @@ sub _build_torsion_energy_func {
 
 sub torsion_energy {
     my $self = shift;
-    return (0) unless ( $self->dihe_fc > 0 );
+    return (0) unless ( $self->dihe_fc > 0 ); # necessary?
     my $energy = &{ $self->torsion_energy_func }( $self, @_ );
     return ($energy);
 }

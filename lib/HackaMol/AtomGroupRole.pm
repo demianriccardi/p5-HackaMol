@@ -162,6 +162,7 @@ sub translate {
     my $tf   = shift;
 
     my @atoms = $self->all_atoms;
+    do{carp "no atoms to translate"; return} unless (@atoms);
     $tf = $atoms[0]->t unless ( defined($tf) );
 
     foreach my $at (@atoms) {

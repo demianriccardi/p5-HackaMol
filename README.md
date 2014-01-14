@@ -106,6 +106,4 @@ once it is officially released. For now, you can install the developer release. 
        
        cpanm DEMIAN/HackaMol-0.00_07.tar.gz
        
-I would love for people to give it a spin with the examples. I will use feedback to make improvements 
-in the near future.
-       
+Feedback and contributions welcome!

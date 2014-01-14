@@ -31,6 +31,11 @@ SYNOPSIS
            $mol->translate( -$mol->COM );
        }
        
+       #create array of all alanine, CA atoms
+
+       my @CAs = grep {$_->name eq 'CA'} 
+                 grep {$_->resname eq 'ALA'} $mol->all_atoms;
+       
        # print coordinates from t=0 to trp-cage.xyz and return filehandle
        my $fh = $mol->print_xyz( $mol->name . ".xyz" );
        

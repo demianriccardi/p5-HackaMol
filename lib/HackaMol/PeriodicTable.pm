@@ -518,12 +518,12 @@ our @VDW_RADII = (
 our %KNOWN_NAMES;
 $KNOWN_NAMES{$_} = 'C' foreach qw(C CA CB CD CD1 CD2 CE CE1 
                                  CE2 CE3 CG CG1 CG2 CH2 CZ CZ2 CZ3);
-$KNOWN_NAMES{$_} = 'H' foreach qw(H HA HA1 HA2 HB HB1 HB2 HB3 HD1 HD11 
+$KNOWN_NAMES{$_} = 'H' foreach qw(H H1 H2 H3 H4 HA HA1 HA2 HB HB1 HB2 HB3 HD1 HD11 
                                  HD12 HD13 HD2 HD21 HD22 HD23 HD3 HE 
                                  HE1 HE2 HE21 HE22 HE3 HG HG1 HG11 HG12 
                                  HG13 HG2 HG21 HG22 HG23 HH HH11 HH12 HH2 
                                  HH21 HH22 HN HT1 HT2 HT3 HZ HZ1 HZ2 HZ3
-                                 H1 H2 DUM); 
+                                 DUM); 
 $KNOWN_NAMES{$_} = 'N' foreach qw(N ND1 ND2 NE NE1 NE2 NH1 NH2 NZ);
 $KNOWN_NAMES{$_} = 'O' foreach qw(O OD1 OD2 OE1 OE2 OG OG1 OH OT1 OT2 OH2);
 $KNOWN_NAMES{$_} = 'S' foreach qw(S SD SG);

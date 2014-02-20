@@ -213,7 +213,7 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
 {    #find_disulfides
     my $mol = $hack->read_file_mol("t/lib/1V0Z_A.pdb");
     my @ss  = $hack->find_disulfides( $mol->all_atoms );
-    is( scalar(@ss), 9 , "found 9  disulfides in 1V0Z" );
+    is( scalar(@ss), 9, "found 9  disulfides in 1V0Z" );
     my @ss_atoms = map { $_->all_atoms } @ss;
     is( scalar(@ss_atoms), 18, "9  disulfides have 18 atoms" );
     is( ( grep { $_->symbol eq "S" } @ss_atoms ), 18, "18 Sulfur atoms" );
@@ -231,6 +231,21 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
 
     # checks out by viz xyz and pdb overlay
     # $mol2->print_xyz;
+}
+
+{    # guess element from name
+    my @lsymbols;
+    warning_is {
+        @lsymbols =
+          map { $_->symbol } $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb");
+    }
+    "HXXX doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES",
+    "carp if name unknown for element";
+
+    my @esymbols = qw(N C C O C C O N H H H H H H H H N C C O C C
+      C C H H H H H H H H H H H H);
+    is_deeply( \@lsymbols, \@esymbols, "symbols set from names" );
+
 }
 
 done_testing();

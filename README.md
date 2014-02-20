@@ -31,6 +31,11 @@ SYNOPSIS
            $mol->translate( -$mol->COM );
        }
        
+       #create array of all alanine, CA atoms
+
+       my @CAs = grep {$_->name eq 'CA'} 
+                 grep {$_->resname eq 'ALA'} $mol->all_atoms;
+       
        # print coordinates from t=0 to trp-cage.xyz and return filehandle
        my $fh = $mol->print_xyz( $mol->name . ".xyz" );
        
@@ -101,6 +106,4 @@ once it is officially released. For now, you can install the developer release. 
        
        cpanm DEMIAN/HackaMol-0.00_07.tar.gz
        
-I would love for people to give it a spin with the examples. I will use feedback to make improvements 
-in the near future.
-       
+Feedback and contributions welcome!

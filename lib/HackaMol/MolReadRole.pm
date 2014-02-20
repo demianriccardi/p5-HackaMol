@@ -28,9 +28,6 @@ sub read_pdb_atoms {
     #read pdb file and generate list of Atom objects
     my $self  = shift;
     my $file  = shift;
-    my $segid = $file;
-    $segid =~ s/\.pdb//;
-    $segid =~ s/t\/lib\///;
     my $fh = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
@@ -52,14 +49,14 @@ sub read_pdb_atoms {
             my (
                 $record_name, $serial, $name, $altloc,  $resName,
                 $chainID,     $resSeq, $icod, $x,       $y,
-                $z,           $occ,    $B,    $element, $charge
-            ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x10A2A2", $_;
+                $z,           $occ,    $B,    $segID,   $element, $charge
+            ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x6A4A2A2", $_;
 
             if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
             else                      { $charge = 0 }
 
             if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
-            else                       { $chainID = '  ' }
+            else                       { $chainID = ' ' }
 
             $element = ucfirst( lc( _trim($element) ) );
             $name    = _trim($name);
@@ -67,6 +64,7 @@ sub read_pdb_atoms {
             $resSeq  = _trim($resSeq);
             $resSeq  = 0 if ( $resSeq < 0 );
             $serial  = _trim($serial);
+            $segID   = _trim($segID);
             my $xyz = V( $x, $y, $z );
 
             if ( $t == 0 ) {
@@ -82,6 +80,7 @@ sub read_pdb_atoms {
                     bfact       => $B * 1,
                     resname     => $resName,
                     resid       => $resSeq,
+                    segid       => $segID ,
                     altloc      => $altloc,
                 );
             }
@@ -115,9 +114,6 @@ sub read_xyz_atoms {
     #read pdb file and generate list of Atom objects
     my $self  = shift;
     my $file  = shift;
-    my $segid = $file;
-    $segid =~ s/\.xyz//;
-    $segid =~ s/t\/lib\///;
     my $fh = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;

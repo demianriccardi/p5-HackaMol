@@ -198,11 +198,12 @@ my $xyz1 =
 
 my $pdb =
 'MODEL        1
-HETATM    0    O ALA     0       2.053   0.020  -0.077  1.00 20.00           O
-HETATM    0    H ALA     0       1.084   0.022  -0.123  1.00 20.00           H
-HETATM    0    H ALA     0       2.331   0.061  -1.003  1.00 20.00           H
+HETATM    0 O            0       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H            0       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H            0       2.331   0.061  -1.003  1.00 20.00           H
 ENDMDL
 ';
+# previously ALA as default, but no longer
 #HETATM    0  O   ALA     0       2.053   0.020  -0.077  1.00 20.00           O
 #HETATM    0  H   ALA     0       1.084   0.022  -0.123  1.00 20.00           H
 #HETATM    0  H   ALA     0       2.331   0.061  -1.003  1.00 20.00           H

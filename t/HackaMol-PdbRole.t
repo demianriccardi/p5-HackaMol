@@ -36,14 +36,14 @@ lives_ok {
 is($obj->record_name, 'HETATM', 'record_name default');
 is($obj->occ        , 1.0     , 'occ         default');
 is($obj->bfact      , 20.0    , 'bfact       default');
-is($obj->resname    , 'ALA'   , 'resname     default');
-is($obj->chain      , '  '    , 'chain       default');
+is($obj->resname    , ' '     , 'resname     default');
+is($obj->chain      , ' '     , 'chain       default');
 is($obj->altloc     , ' '     , 'altloc      default');
 is($obj->resid      , 0       , 'resid       default');
 is($obj->iatom      , 0       , 'iatom       default');
 is($obj->serial     , 0       , 'serial      default');
 is($obj->icode      , ' '     , 'icode       default');
-is($obj->pdbid      , '2CBA'  , 'pdbid       default');
-is($obj->segid      , 'TIP3'  , 'segid       default');
+is($obj->pdbid      , ' '     , 'pdbid       default');
+is($obj->segid      , ' '     , 'segid       default');
 
 done_testing();

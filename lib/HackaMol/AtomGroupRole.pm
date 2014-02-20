@@ -219,7 +219,8 @@ sub print_pdb {
         
         printf $fh (
             #"%-6s%5i  %-3s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
-            "%-6s%5i %4s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
+            #      12         21         
+            "%-6s%5i %-4s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
             ( map{$at->$_} qw ( 
                               record_name 
                               serial 

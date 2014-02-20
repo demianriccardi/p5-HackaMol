@@ -1,7 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_08   2014-02-20 14:53:19 America/New_York
     * improve PDB reading and writing 
+    * for PDB guess element from atom name 
  
 0.00_07   2013-11-19 22:57:36 America/New_York
     * Reduced size of test directory

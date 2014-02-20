@@ -4,6 +4,7 @@ package HackaMol::MolReadRole;
 use Moose::Role;
 use Carp;
 use Math::Vector::Real;
+use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
 
 sub read_file_atoms {
@@ -58,13 +59,16 @@ sub read_pdb_atoms {
             if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
             else                       { $chainID = ' ' }
 
-            $element = ucfirst( lc( _trim($element) ) );
+            
             $name    = _trim($name);
             $resName = _trim($resName);
             $resSeq  = _trim($resSeq);
             $resSeq  = 0 if ( $resSeq < 0 );
             $serial  = _trim($serial);
             $segID   = _trim($segID);
+  
+            $element = ucfirst( lc( _trim($element) ) );
+            $element = _element_name($name) unless ($element =~ /\w+/);
             my $xyz = V( $x, $y, $z );
 
             if ( $t == 0 ) {
@@ -173,6 +177,7 @@ sub _trim {
     return $string;
 }
 
+
 sub _qstring_num {
 
     # _qstring something like 2+  or 2-
@@ -182,6 +187,16 @@ sub _qstring_num {
     $string = sprintf( "%g", $string );
     return $string;
 
+}
+
+sub _element_name{
+# guess the element using the atom name
+  my $name = uc(shift);
+  unless (exists($KNOWN_NAMES{$name})){
+    carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
+    return (substr $name, 0,1);
+  }
+  return ($KNOWN_NAMES{$name});
 }
 
 no Moose::Role;

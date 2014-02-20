@@ -129,7 +129,7 @@ pdb cols 18-20: residue name. defaults to 'ALA'
 
 =attr  chain        
 
-pdb cols 22. protein chain.  default = 'AA'
+pdb cols 22. protein chain.  default = '  '
 
 =attr  resid        
 

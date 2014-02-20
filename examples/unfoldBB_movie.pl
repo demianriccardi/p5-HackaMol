@@ -15,7 +15,7 @@ $angle = 180 unless ( defined($angle) );
 my $hack = HackaMol->new( name => "hackitup" );
 
 #my @all_atoms = $hack->read_file_atoms("t/lib/2cba.pdb");
-my @all_atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
+my @all_atoms = $hack->read_file_atoms("1L2Y.pdb");
 
 #to keep example simple, keep only the backbone
 my @atoms =

@@ -59,7 +59,7 @@ sub read_pdb_atoms {
             else                      { $charge = 0 }
 
             if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
-            else                       { $chainID = 'AA' }
+            else                       { $chainID = '  ' }
 
             $element = ucfirst( lc( _trim($element) ) );
             $name    = _trim($name);

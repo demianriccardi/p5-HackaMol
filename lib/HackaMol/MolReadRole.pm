@@ -227,7 +227,15 @@ Matches the filename extension and calls on either read_pdb_atoms or read_xyz_at
 
 takes the name of the file as input, parses the pdb file to return the list of built 
 Atom objects. This is a barebones parser.  A more advanced PDB parser will be released 
-soon as an extension.
+soon as an extension. 
+
+According to the PDB specification, the element symbol should be present in columns 77-78.  
+The element is often ommitted by programs, such as charmm, that can write pdbs because it makes the
+file larger, and the information is accessible somewhere else. Unfortunately, other programs require
+the information.  HackaMol::MolReadRole, loads a hash (KNOWN_NAMES) from HackaMol::PeriodicTable 
+that maps common names to the element (e.g. POT => 'K'). read_pdb_atoms will carp if the name is 
+not in the hash, and then set the element to the first letter of the name. This will be improved when
+HackaMol::PeriodicTable is improved. See TODO.
 
 =method read_xyz_atoms
 

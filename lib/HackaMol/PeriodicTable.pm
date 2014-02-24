@@ -529,6 +529,7 @@ $KNOWN_NAMES{$_} = 'O' foreach qw(O OD1 OD2 OE1 OE2 OG OG1 OH OT1 OT2 OH2);
 $KNOWN_NAMES{$_} = 'S' foreach qw(S SD SG);
 $KNOWN_NAMES{$_} = 'Cl' foreach qw(CLA);
 $KNOWN_NAMES{$_} = 'Na' foreach qw(SOD);
+$KNOWN_NAMES{$_} = 'K'  foreach qw(POT);
 
 1;
 

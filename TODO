@@ -1,0 +1,4 @@
+HackaMol::PeriodicTable needs to be reengineered 
+  - the data should be of higher quality
+  - access needs to be fast
+  - some datastructures such as KNOWN_NAMES accessible, and such mappings can be mutable.

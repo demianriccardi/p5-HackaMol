@@ -158,4 +158,5 @@ and paste as above, etc).
 
 =for :list
 * L<http://www.pdb.org>
+* L<Bio::PDB::Structure::Atom>
                               

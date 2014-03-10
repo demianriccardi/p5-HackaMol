@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 # Demian Riccardi 03/09/2014
+# available on github
 # print out COM of the binding sites predicted by FTMap
 #
 # The clusters of small molecule probes begin with HEADER: 
@@ -21,7 +22,10 @@ use File::chdir;
 use FileHandle;
 use Data::Dumper;
 
-my $file = shift;
+die "pass file (Str)  [cluster size cutoff (Int)]\n" unless @ARGV ;
+my $file  = shift;
+my $nclst = shift || 0;
+
 my $fh   = FileHandle->new("< $file");
 
 my @CLUSTERS;
@@ -37,19 +41,25 @@ while (<$fh>){
   }
 }
 
+my @lines ;
 my $dir = tempdir( CLEANUP=>1 );
 
 my $hack = HackaMol->new();
 foreach my $clust (@CLUSTERS){
+  my $ncluster = scalar(@{$clust});
+  next unless ($ncluster >= $nclst);
   my ($fh, $filename) = mkstemps( "hackXXXX",'.xyz');
   #write xyz file
-  print $fh scalar(@{$clust})."\n\n";
+  print $fh "$ncluster\n\n";
   print $fh $_ foreach @{$clust};
   close($fh);
   #read in xyz and print COM
   my $mol = $hack->read_file_mol($filename);
-  printf("%10.3f %10.3f %10.3f\n", @{$mol->COM});
+  push @lines, sprintf("Hg %10.3f %10.3f %10.3f $ncluster\n", @{$mol->COM});
   unlink($filename);
 }
+
+print scalar (@lines) . "\n\n";
+print foreach @lines;
 
 

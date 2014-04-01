@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * PDB reading will atom->is_dirty if the element(s) unknown. Carp warning
+    * 
 
 0.00_08   2014-02-20 14:53:19 America/New_York
     * improve PDB reading and writing 

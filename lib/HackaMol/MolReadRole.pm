@@ -34,6 +34,7 @@ sub read_pdb_atoms {
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
     my $q_tbad = 0;
+    my $something_dirty = 0;
 
     while (<$fh>) {
 
@@ -68,7 +69,9 @@ sub read_pdb_atoms {
             $segID   = _trim($segID);
   
             $element = ucfirst( lc( _trim($element) ) );
-            $element = _element_name($name) unless ($element =~ /\w+/);
+            my $qdirt = 0;
+            ($element,$qdirt) = _element_name($name) unless ($element =~ /\w+/);
+            $something_dirty++ if ($qdirt); 
             my $xyz = V( $x, $y, $z );
 
             if ( $t == 0 ) {
@@ -87,6 +90,7 @@ sub read_pdb_atoms {
                     segid       => $segID ,
                     altloc      => $altloc,
                 );
+                $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty; 
             }
             else {
                 #croak condition if atom changes between models
@@ -110,6 +114,8 @@ sub read_pdb_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
+    carp "MolReadRole> found $something_dirty dirty atoms. check symbols and lookup names"
+      if ($something_dirty);
     return (@atoms);
 }
 
@@ -191,12 +197,15 @@ sub _qstring_num {
 
 sub _element_name{
 # guess the element using the atom name
-  my $name = uc(shift);
+  my $name  = uc(shift);
+  my $dirt  = 0;
   unless (exists($KNOWN_NAMES{$name})){
-    carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
-    return (substr $name, 0,1);
+    #carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
+    $dirt = 1;
+    my $symbol = substr $name, 0,1;  #doesn't work if two letters for symbol
+    return ($symbol,$dirt);
   }
-  return ($KNOWN_NAMES{$name});
+  return ($KNOWN_NAMES{$name},$dirt);
 }
 
 no Moose::Role;

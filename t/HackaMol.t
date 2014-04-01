@@ -244,15 +244,16 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
     # $mol2->print_xyz;
 }
 
-{    # guess element from name
-    my @lsymbols;
-    warning_is {
-        @lsymbols =
-          map { $_->symbol } $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb");
-    }
-    "HXXX doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES",
-    "carp if name unknown for element";
+{    # guess element from name make them dirty if don't exist in lookup
+    my @atoms;
+    warning_is { @atoms = $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb")}
+    "MolReadRole> found 2 dirty atoms. check symbols and lookup names",
+      "warning for dirty atoms";
 
+    my @lsymbols = map { $_->symbol } @atoms;
+    
+    my @dirty = grep {$_->is_dirty} @atoms;
+    is (scalar(@dirty),2, "2 dirty atoms");  
     my @esymbols = qw(N C C O C C O N H H H H H H H H N C C O C C
       C C H H H H H H H H H H H H);
     is_deeply( \@lsymbols, \@esymbols, "symbols set from names" );

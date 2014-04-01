@@ -28,12 +28,14 @@ has 'atoms' => (
 );
 
 sub tmax {
+    # not the best implementation! what about atoms without coords?
+    # comparing first and last?  really?!  
     # use coords to calculate tmax,which may be annoying if just interested in charges
     my $self = shift;
     return (0) unless $self->count_atoms;
     my $t0   = $self->get_atoms(0)->count_coords;
     my $tn   = $self->get_atoms($self->count_atoms - 1)->count_coords;
-    croak "not all atoms have same tmax" unless($t0 == $tn);
+    croak "first and last atoms no tmax" unless($t0 == $tn);
     return ($t0-1);
 }
 

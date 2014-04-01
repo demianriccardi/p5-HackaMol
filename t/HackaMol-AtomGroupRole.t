@@ -80,8 +80,10 @@ foreach my $at ($group->all_atoms){
 
 foreach my $t (0 .. 2){
   $group->gt($t);
+  is($group->tmax, 2, 'group tmax remains max t with increment');
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
 }
+
 
 my $atom4 = HackaMol::Atom->new(
     name    => 'H',
@@ -104,8 +106,13 @@ my $atom6 = HackaMol::Atom->new(
     Z       => 1
 );
 
+$group->push_atoms($atom4);
+dies_ok{$group->tmax} "first and last tmax not same";
 $group->clear_atoms;
 is($group->count_atoms, 0, 'atom clear atom count');
+warning_is { $group->translate( V( 3,0,0 ) ) }
+"no atoms to translate",
+  "carp warning> translate no atoms. ";
 
 $group->push_atoms($atom4);
 is($group->count_atoms, 1, 'atom atom count 1');
@@ -246,7 +253,11 @@ stdout_is(sub{$group->print_xyz},$xyz2,"print_xyz after rotation 180");
 $group->rotate(V(1,0,0), 180, $COM);
 stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
 
+
 $group->clear_atoms;
+
+is($group->tmax,0, 'group with no atoms returns 0 tmax ');
+
 cmp_ok (abs(0-$group->total_charge), '<', 1E-7, 'cleared total charge'  );
 cmp_ok (abs(0-$group->total_mass), '<', 1E-7, 'cleared total mass'  );
 cmp_ok ($group->total_Z, '==', 0, 'cleared total Z'  );

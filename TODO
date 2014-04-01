@@ -25,4 +25,5 @@ names. We will use the is_dirty parameter To make more robust and to put the res
 7. improve examples; add more
   - one with an extended class
 
+8. storage, persistance, and use of MongoDB!
 

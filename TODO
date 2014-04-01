@@ -27,3 +27,6 @@ names. We will use the is_dirty parameter To make more robust and to put the res
 
 8. storage, persistance, and use of MongoDB!
 
+9. remove the QmMolRol attributes from being loaded.  That should be added through extensions that
+actually do QM.  it seems a bit excessive to include even if it they are lazy.
+

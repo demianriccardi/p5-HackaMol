@@ -260,5 +260,14 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
 
 }
 
+{ # pdbqt reading tests
+    my @atoms;
+    warning_is { @atoms = $hack->read_file_atoms("t/lib/test.pdbqt")}
+    "MolReadRole> found 27 dirty atoms. check symbols and lookup names",
+      "warning for dirty atoms";
+    my $mol = HackaMol::Molecule->new(name=>"drugs", atoms=>[@atoms]);
+    is ($mol->tmax, 8, "9 models in  test.pdbqt")
+}
+
 done_testing();
 

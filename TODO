@@ -5,7 +5,9 @@
 
 2. need the FileHandleRole... even though it isn't perfect. add it.  
 
-3. basic pdbqt reading support
+3. basic pdbqt reading support  ------>  DONE! DMR 04-01-2014
+  3a. pull the tree of rotatable bonds groups
+
 4. pdbqt writing support (3 should be easier)
 
 5. refactor test suite

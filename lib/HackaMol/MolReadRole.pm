@@ -177,6 +177,7 @@ sub read_pdbqt_atoms {
             $ADTtype = _trim($ADTtype);
   
             my ($element,$qdirt) = _element_name($ADTtype);
+            $element = 'C' if ($element eq 'A'); #aromatic, is this dirty?
             $something_dirty++ if ($qdirt); 
             my $xyz = V( $x, $y, $z );
 

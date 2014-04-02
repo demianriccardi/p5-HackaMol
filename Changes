@@ -1,7 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-
+    * minor fix for pdbqt reading: A -> C
+  
 0.00_10   2014-04-02 15:27:08EDT-0400 America/New_York
     * AtomGroupRole adjustments:
       - added print_pdb_ts and print_xyz_ts for printing many configs

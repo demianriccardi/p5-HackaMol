@@ -175,7 +175,6 @@ sub translate {
 }
 
 sub rotate {
-
     #rotate about origin. having origin allows rotation of subgroup
     #without having to translate everything.
     my $self = shift;
@@ -194,29 +193,6 @@ sub rotate {
 
     $atoms[$_]->set_coords( $tf, $rcor[$_] + $orig ) foreach 0 .. $#rcor;
 }
-
-
-# need a method to ask the current time!
-#ub print_xyz_ts {
-#   # three args: ti, tf, [filename]
-#   my $self = shift;
-#   my $ti   = shift;
-#   my $tf   = shift;
-#   unless(defined($ti) and defined($tf)) {
-#     croak "must pass initial and final t: ti,tf";
-#   }
-#   my $tnow = $self->what_time;
-#   # take the first out of the loop to setup fh
-#   $self->gt($ti);
-#   my $fh = $self->print_xyz(@_);
-
-#   foreach my $t ($ti+1 .. $tf){
-#     $self->gt($t);
-#     $fh = $self->print_xyz($fh);      
-#   } 
-#   # return to original t
-#   $self->gt($tnow);
-#
 
 sub print_xyz_ts {
   _print_ts('print_xyz',@_);
@@ -526,7 +502,7 @@ isa ArrayRef[Atom] that is lazy with public ARRAY traits described in ARRAY_METH
 
 =method tmax
 
-return (count_coords-1) of first atom; checks that count_coords is same for first and last atoms
+return (count_coords-1) if > 0; return 0 otherwise; croaks if not all atoms share the same tmax.
 
 =method translate
 
@@ -549,9 +525,31 @@ optional argument: filename or filehandle.  with no argument, prints xyz formatt
 a filename and an xyz file with that name will be written or overwritten (with warning). pass filehandle 
 for continuous writing to an open filehandle.
 
+=method print_xyz_ts
+
+argument: array_ref containing the values of t to be used for printing.  
+optional argument: filename or filehandle for writing out to file. For example,
+
+  $mol->print_xyz_ts([0 .. 3, 8, 4], 'fun.xyz');
+
+will write the coordinates for all group atoms at t=0,1,2,3,8,4 to a file, in
+that order.
+
 =method print_pdb
 
 same as print_xyz, but for pdb formatted output
+
+=method print_pdb_ts
+
+same as print_xyz_ts, but for pdb formatted output
+
+=method bin_this
+
+argument: Str , return hash_ref of binned $self->Str.
+
+  $hash_ref{$_}++ foreach ( map {$_->$Str} $self->all_atoms );
+
+
 
 =head1 SEE ALSO
 

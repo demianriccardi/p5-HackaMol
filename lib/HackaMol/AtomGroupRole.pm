@@ -27,17 +27,18 @@ has 'atoms' => (
     lazy => 1,
 );
 
-sub tmax {
+#sub tmax {
     # not the best implementation! what about atoms without coords?
     # comparing first and last?  really?!  
     # use coords to calculate tmax,which may be annoying if just interested in charges
-    my $self = shift;
-    return (0) unless $self->count_atoms;
-    my $t0   = $self->get_atoms(0)->count_coords;
-    my $tn   = $self->get_atoms($self->count_atoms - 1)->count_coords;
-    croak "first and last atoms no tmax" unless($t0 == $tn);
-    return ($t0-1);
-}
+#    my $self = shift;
+#    return (0) unless $self->count_atoms;
+  
+#    my $t0   = $self->get_atoms(0)->count_coords;
+#    my $tn   = $self->get_atoms($self->count_atoms - 1)->count_coords;
+#    croak "first and last atoms no tmax" unless($t0 == $tn);
+#    return ($t0-1);
+#}
 
 sub dipole {
     my $self = shift;
@@ -238,6 +239,10 @@ sub _print_ts {
     unless(scalar(@ts)) {
       croak "must pass array with atleast one t";
     }
+    my $tmax = $self->tmax;
+    my $nt = grep {$_ > $tmax} @ts;
+    croak "$nt ts out of bounds" if $nt;
+  
     my $tnow = $self->what_time;
     # take the first out of the loop to setup fh
     $self->gt(shift @ts);
@@ -251,12 +256,30 @@ sub _print_ts {
     $self->gt($tnow);
 }
 
+sub bin_this{
+  #return binned $_->method, what if can't be binned.  bah.  
+  my $self   = shift;
+  my $method = shift;
+  my @ts   = map{$_->$method} $self->all_atoms;
+  my %bin;
+  $bin{$_}++ foreach @ts;
+  return (\%bin);
+}
+
+sub tmax {
+    # still not the best implementation! what about atoms without coords?
+    my $self = shift;
+    my $tbin = $self->bin_this('count_coords');
+    my @ts   = keys(%$tbin);
+    croak "tmax differences within group" if (scalar(@ts)> 1);
+    $ts[0] ? return $ts[0]-1 : return 0;
+}
+
 sub what_time {
     my $self = shift;
-    my @ts   = map{$_->t} $self->all_atoms;
-    my %tbin;
-    $tbin{$_}++ foreach @ts;
-    croak "t differences within group" if (scalar(keys %tbin)> 1);
+    my $tbin = $self->bin_this('t');
+    my @ts   = keys(%$tbin);
+    croak "t differences within group" if (scalar(@ts)> 1);
     return $ts[0];
 }
 

@@ -107,7 +107,7 @@ my $atom6 = HackaMol::Atom->new(
 );
 
 $group->push_atoms($atom4);
-dies_ok{$group->tmax} "first and last tmax not same";
+dies_ok{$group->tmax} "tmax differences within group";
 $group->clear_atoms;
 is($group->count_atoms, 0, 'atom clear atom count');
 warning_is { $group->translate( V( 3,0,0 ) ) }
@@ -215,8 +215,6 @@ ENDMDL
 #HETATM    0  H   ALA     0       1.084   0.022  -0.123  1.00 20.00           H
 #HETATM    0  H   ALA     0       2.331   0.061  -1.003  1.00 20.00           H
 
-#';
-
 #print_pdb tests
 stdout_is(sub{$group->print_pdb},$pdb,"print_pdb no arg");
 #print_xyz tests
@@ -253,6 +251,49 @@ stdout_is(sub{$group->print_xyz},$xyz2,"print_xyz after rotation 180");
 $group->rotate(V(1,0,0), 180, $COM);
 stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
 
+# testing the print_xyz_ts
+{
+  my $xyz = 
+'3
+
+  O   1.000000   0.000000   0.000000
+  H   1.000000   0.000000   0.000000
+  H   1.000000   0.000000   0.000000
+3
+
+  O   2.052740   0.019590  -0.077010
+  H   1.083880   0.021640  -0.123030
+  H   2.330920   0.060980  -1.003320
+';
+  $_->push_coords(V(0,0,0),V(1,0,0),V(2,0,0)) foreach $group->all_atoms;
+  dies_ok{$group->print_xyz_ts( [ 0 .. 9 ])} "print_xyz_ts, some \@ts in array greater than tmax";
+  dies_ok{$group->print_pdb_ts( [ 0 .. 9 ])} "print_pdb_ts, some \@ts in array greater than tmax";
+  stdout_is(sub{$group->print_xyz_ts( [ 4,0 ]) },$xyz, "print_xyz_ts slice reverse");
+  my $pdb =
+'MODEL        1
+HETATM    0 O            0       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H            0       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H            0       2.331   0.061  -1.003  1.00 20.00           H
+ENDMDL
+MODEL        2
+HETATM    0 O            0       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H            0       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H            0       2.331   0.061  -1.003  1.00 20.00           H
+ENDMDL
+MODEL        3
+HETATM    0 O            0       5.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H            0       3.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H            0       4.331   0.061  -1.003  1.00 20.00           H
+ENDMDL
+MODEL        4
+HETATM    0 O            0       0.000   0.000   0.000  1.00 20.00           O
+HETATM    0 H            0       0.000   0.000   0.000  1.00 20.00           H
+HETATM    0 H            0       0.000   0.000   0.000  1.00 20.00           H
+ENDMDL
+';
+
+  stdout_is(sub{$group->print_pdb_ts( [ 0 .. 3 ])},$pdb,"print_pdb_ts series"); 
+}
 
 $group->clear_atoms;
 

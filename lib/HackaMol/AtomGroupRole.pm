@@ -194,6 +194,72 @@ sub rotate {
     $atoms[$_]->set_coords( $tf, $rcor[$_] + $orig ) foreach 0 .. $#rcor;
 }
 
+
+# need a method to ask the current time!
+#ub print_xyz_ts {
+#   # three args: ti, tf, [filename]
+#   my $self = shift;
+#   my $ti   = shift;
+#   my $tf   = shift;
+#   unless(defined($ti) and defined($tf)) {
+#     croak "must pass initial and final t: ti,tf";
+#   }
+#   my $tnow = $self->what_time;
+#   # take the first out of the loop to setup fh
+#   $self->gt($ti);
+#   my $fh = $self->print_xyz(@_);
+
+#   foreach my $t ($ti+1 .. $tf){
+#     $self->gt($t);
+#     $fh = $self->print_xyz($fh);      
+#   } 
+#   # return to original t
+#   $self->gt($tnow);
+#
+
+sub print_xyz_ts {
+  _print_ts('print_xyz',@_);
+}
+
+sub print_pdb_ts {
+  _print_ts('print_pdb',@_);
+}
+
+sub _print_ts {
+    #use one sub for xyz_ts and pdb_ts writing
+    my $print_method = shift;
+    # two args: \@ts, optional filename
+    my $self = shift;
+    my $ts   = shift;
+    unless(defined($ts)) {
+      croak "must pass arrayref containing ts";
+    }
+    my @ts   = @$ts;
+    unless(scalar(@ts)) {
+      croak "must pass array with atleast one t";
+    }
+    my $tnow = $self->what_time;
+    # take the first out of the loop to setup fh
+    $self->gt(shift @ts);
+    my $fh = $self->$print_method(@_);
+ 
+    foreach my $t (@ts){
+      $self->gt($t);
+      $fh = $self->$print_method($fh);
+    }
+    # return to original t
+    $self->gt($tnow);
+}
+
+sub what_time {
+    my $self = shift;
+    my @ts   = map{$_->t} $self->all_atoms;
+    my %tbin;
+    $tbin{$_}++ foreach @ts;
+    croak "t differences within group" if (scalar(keys %tbin)> 1);
+    return $ts[0];
+}
+
 sub print_xyz {
     my $self = shift;
     my $fh = _open_file_unless_fh(shift);

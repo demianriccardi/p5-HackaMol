@@ -120,8 +120,10 @@ Here is a quick summary of a *[step by step post on installing Perl modules] (ht
 
        prompt> echo 'eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)' >> ~/.bash\_profile
 
-    Execution will add the stuff between the quotes to your bash_profile, which enables automatic configuration of cpanminus and local::lib with every new terminal shell.
+    Execution will add the stuff between the quotes to your bash_profile, which enables automatic configuration of cpanminus and local::lib with every new terminal shell. Uninstall, delete this line from .bash\_profile
    
+You are now ready to install anything installable from CPAN!!!
+
   4. install HackaMol
 
        prompt> cpanm HackaMol

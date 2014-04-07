@@ -124,7 +124,7 @@ Here is a quick summary of a *[step by step post on installing Perl modules] (ht
    
 You are now ready to install anything installable from CPAN!!!
 
-  4. install HackaMol
+  \4. install HackaMol
 
        prompt> cpanm HackaMol
        

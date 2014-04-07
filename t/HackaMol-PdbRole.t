@@ -46,4 +46,29 @@ is($obj->icode      , ' '     , 'icode       default');
 is($obj->pdbid      , ' '     , 'pdbid       default');
 is($obj->segid      , ' '     , 'segid       default');
 
+# aa321 tests
+{
+  my $atom = HackaMol::Atom->new(Z=>1);
+  my %aa321 = (
+    ALA=>'A', ARG=>'R', ASN=>'N', ASP=>'D', CYS=>'C',
+    GLU=>'E', GLN=>'Q', GLY=>'G', HIS=>'H', ILE=>'I',
+    LEU=>'L', LYS=>'K', MET=>'M', PHE=>'F', PRO=>'P',
+    SER=>'S', THR=>'T', TRP=>'W', TYR=>'Y', VAL=>'V',
+    SEC=>'U',
+  );
+
+  foreach my $res ((keys %aa321), (map{lc($_)} keys %aa321)){  
+    $atom->resname($res);
+    my $onelett = $aa321{uc($res)};
+    is($atom->aa321, $onelett, "aa321 $res -> $onelett");
+  }
+  $atom->resname("TRD");
+  my $x;
+  warning_is { $x = $atom->aa321}
+  "PDBRole> residue TRD name has no 1 letter code; return X",
+    "warning for unrecognized residue name";
+  is($x, 'X', "aa321 returns X for unrecognized residue name");
+
+}
+
 done_testing();

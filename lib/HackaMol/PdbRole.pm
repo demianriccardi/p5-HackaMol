@@ -2,6 +2,24 @@ package HackaMol::PdbRole;
 
 #ABSTRACT: PdbRole of lazy attributes for HackaMol atoms
 use Moose::Role;
+use Carp;
+
+my %aa321 = (
+  ALA=>'A', ARG=>'R', ASN=>'N', ASP=>'D', CYS=>'C',
+  GLU=>'E', GLN=>'Q', GLY=>'G', HIS=>'H', ILE=>'I',
+  LEU=>'L', LYS=>'K', MET=>'M', PHE=>'F', PRO=>'P',
+  SER=>'S', THR=>'T', TRP=>'W', TYR=>'Y', VAL=>'V',
+  SEC=>'U',
+);
+
+sub aa321 {
+  my $resname = uc($_[0]->resname);
+  unless ( exists($aa321{$resname}) ){
+    carp "PDBRole> residue $resname name has no 1 letter code; return X";
+    return ('X');
+  }
+  return ($aa321{$resname});
+}
 
 has 'record_name', is => 'rw', isa => 'Str', lazy => 1, default => 'HETATM';
 has 'occ',         is => 'rw', isa => 'Num', lazy => 1, default => 1.0;
@@ -95,6 +113,11 @@ __END__
                               segid  
                             )
    );
+    
+   foreach my $resn (qw(TRP TYR GLN ASN ETC)){
+     $atom->resname($resn);
+     print $atom->aa321;
+   }
 
 =head1 DESCRIPTION
 
@@ -102,6 +125,10 @@ PdbRole provides atom attributes for PDB parsing.  All attributes are 'rw' and
 lazy, so they will not contaminate the namespace unless called upon. The
 functionality of the PdbRole may be extended in the future.  An extension 
 (HackaMolX::PDB or HackaMol::X::PDB) will be released soon.
+
+=method aa321
+
+returns 1 letter code for amino acid. Generated from resname attribute. throws a warning and returns 'X' if residue name is unrecognized.
      
 =attr  record_name  
 

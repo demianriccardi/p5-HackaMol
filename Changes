@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * added aa321 to PdbRole; gens 1-letter aa code from resname
+
+0.00_11   2014-04-02 16:46:03EDT-0400 America/New_York
     * minor fix for pdbqt reading: A -> C
   
 0.00_10   2014-04-02 15:27:08EDT-0400 America/New_York

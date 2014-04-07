@@ -132,4 +132,4 @@ You are now ready to install anything installable from CPAN!!!
        
        prompt> cpanm DEMIAN/HackaMol-0.00_12.tar.gz
        
-Feedback and contributions welcome!
+HackaMol is too fun to not be experimental! Feedback and contributions welcome!

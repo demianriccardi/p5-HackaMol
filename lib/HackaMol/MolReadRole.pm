@@ -7,6 +7,13 @@ use Math::Vector::Real;
 use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
 
+has 'hush_read' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    lazy    => 1,
+    default => 0,   
+); 
+
 sub read_file_atoms {
     my $self = shift;
     my $file = shift;
@@ -119,8 +126,9 @@ sub read_pdb_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    carp "MolReadRole> found $something_dirty dirty atoms. check symbols and lookup names"
-      if ($something_dirty);
+    unless($self->hush_read){
+      carp "MolReadRole> found $something_dirty dirty atoms. check symbols and lookup names" if $something_dirty;
+    }
     return (@atoms);
 }
 
@@ -335,6 +343,10 @@ $mol->print_pdb;
 
 The HackaMol::MolReadRole role provided methods for reading common structural files.  Currently,
 pdb and xyz are provided in the core, but others will be likely added.  
+
+=attr hush_read
+
+isa Bool that is lazy. $hack->hush_read(1) will quiet some warnings that may be ignored under some instances.
 
 =method read_file_atoms
 

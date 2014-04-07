@@ -249,6 +249,12 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
     warning_is { @atoms = $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb")}
     "MolReadRole> found 2 dirty atoms. check symbols and lookup names",
       "warning for dirty atoms";
+    # no warning... 
+    is ($hack->hush_read, 0, 'hush_read off');
+    $hack->hush_read(1);
+    is ($hack->hush_read, 1, 'hush_read on');
+     
+    my @watoms = $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb");
 
     my @lsymbols = map { $_->symbol } @atoms;
     

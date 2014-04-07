@@ -98,12 +98,36 @@ capabilities *[Perl Data Language](http://pdl.perl.org)* (PDL) or *[Math::GSL](h
        
 INSTALLATION
 ============
-With cpanminus installed, you will be able to install HackaMol from the commandline with:
+To install HackaMol, I recommend using cpanminus and local::lib. This approach avoids the need for root privileges and uses the system Perl 
+(available on most systems; see Strawberry Perl for Windows). 
+I use *[Perlbrew](http://perlbrew.pl)* to manage local versions of Perl, but Perlbrew is overkill unless your system Perl is very old (if you do use Perlbrew, you won't need local::lib).
+
+Here is a quick summary of a *[step by step post on installing Perl modules] (http://perlmaven.com/install-perl-modules-without-root-rights-on-linux-ubuntu-13-10)*. Below, prompt> denotes your terminal prompt.  
+
+  1. install cpanminus 
+
+       prompt> curl -L http://cpanmin.us | perl - App::cpanminus
+
+    Execution without superuser privileges will complain about not being to write to a path.  This is ok! It will create a perl5 directory in your home directory, in which all modules will be installed. Thus, an uninstall involves deleting the ~/perl5 directory.
+    
+  2. install local::lib
+
+       prompt> ~/perl5/bin/cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)  
+    
+    Execution should install local::lib and configure the cpanm command to know about the ~/perl5 directory in the local shell.  
+
+  3. configure .bash\_profile
+
+       prompt> echo 'eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)' >> ~/.bash\_profile
+
+    Execution will add the stuff between the quotes to your bash_profile, which enables automatic configuration of cpanminus and local::lib with every new terminal shell.
+   
+  4. install HackaMol
+
+       prompt> cpanm HackaMol
        
-       cpanm HackaMol
+    Execution will fail to find HackaMol until it is officially released. For now, you can install the developer release:
        
-once it is officially released. For now, you can install the developer release. Again with cpanminus:
-       
-       cpanm DEMIAN/HackaMol-0.00_12.tar.gz
+       prompt> cpanm DEMIAN/HackaMol-0.00_12.tar.gz
        
 Feedback and contributions welcome!

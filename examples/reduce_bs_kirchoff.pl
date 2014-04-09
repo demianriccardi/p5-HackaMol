@@ -18,7 +18,7 @@ use HackaMol;
 
 my $hack  = HackaMol->new;
 my $mol   = $hack->read_file_mol(shift);
-my $cut   = 5;
+my $cut   = 10;
 my $cut2  = $cut*$cut;
 
 my @mols;

@@ -126,8 +126,12 @@ sub read_pdb_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    unless($self->hush_read){
-      carp "MolReadRole> found $something_dirty dirty atoms. check symbols and lookup names" if $something_dirty;
+    if ($something_dirty){
+      unless($self->hush_read){
+        my $message = "MolReadRole> found $something_dirty dirty atoms. ";
+        $message .= "Check symbols and lookup names";
+        carp $message;
+      }
     }
     return (@atoms);
 }
@@ -229,8 +233,13 @@ sub read_pdbqt_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    carp "MolReadRole> found $something_dirty dirty atoms. check symbols and lookup names"
-      if ($something_dirty);
+    if ($something_dirty){
+      unless($self->hush_read){
+        my $message = "MolReadRole> found $something_dirty dirty atoms. ";
+        $message .= "Check symbols and lookup names";
+        carp $message; 
+      }
+    }  
     return (@atoms);
 }
 

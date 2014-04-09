@@ -43,5 +43,5 @@ actually do QM.  it seems a bit excessive to include even if it they are lazy.
 12. improve the binning in AtomGroupRole.  there is bin_this and then atom_bin 
 stuff etc.
 
-
+13. improve use of hush_read attribute in MolReadRole.  Currently, only used for the dirty carp in PDB reading.
 

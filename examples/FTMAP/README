@@ -5,7 +5,10 @@ Objective: you've run FTMap on a bunch (>1) of configurations of a molecule
           
 1. collect all the FTMap results for blah*pdb (located in FTMaps dir, change 
    this to your taste):
+
 perl collect_nodes.pl blah > blah_nodes.xyz
+
+collect_nodes.pl system calls pull_bs_ftmap.pl
 
 2. you now have an XYZ file with too many sites, let's reduce the sites further
    using a hack that leverages a connectivity (kirchoff) matrix: 
@@ -19,4 +22,6 @@ enough for now.
 
 RESULT:
 
-xyz file containing mercury atoms located at the predicted binding sites  
+xyz file containing mercury atoms located at the predicted binding sites. 
+verify that things are how you like them by loading up the xyz file and all
+the pdbs with your favorite molecular visualizer. 

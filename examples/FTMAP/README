@@ -15,4 +15,8 @@ adjust the cutoff (currently 10 angstroms) in reduce_bs_kirchoff.pl to get more
 or less sites.
 
 steps 1 and 2 could be more elegant via a clustering scheme, but works well 
-enough for now.  
+enough for now. 
+
+RESULT:
+
+xyz file containing mercury atoms located at the predicted binding sites  

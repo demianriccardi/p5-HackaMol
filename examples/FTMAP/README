@@ -1,14 +1,14 @@
 Objective: you've run FTMap on a bunch (>1) of configurations of a molecule 
            that had been aligned beforehand.  You wish to collect up all 
-           the small molecules bound via FTMap and reduce them down to 
-           unique binding sites for virtual screens.
+           the small molecules bound via FTMap's ugly PDBs and reduce them 
+           down to unique binding sites for virtual screens.
           
 1. collect all the FTMap results for blah*pdb (located in FTMaps dir, change 
-   this to your taste)
+   this to your taste):
 perl collect_nodes.pl blah > blah_nodes.xyz
 
 2. you now have an XYZ file with too many sites, let's reduce the sites further
-   using a hack that leverages a connectivity (kirchoff) matrix 
+   using a hack that leverages a connectivity (kirchoff) matrix: 
 perl reduce_bs_kirchoff.pl blah_nodes.xyz  > blah_nodes_red.xyz
 
 adjust the cutoff (currently 10 angstroms) in reduce_bs_kirchoff.pl to get more

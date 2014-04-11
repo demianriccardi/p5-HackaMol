@@ -13,46 +13,40 @@ SYNOPSIS
 ========
        use HackaMol;
        use Math::Vector::Real;
-       use Math::Vector::Real::Random;
-       use Math::Trig;
        
        my $hack = HackaMol->new( name => "hackitup" );
-       my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
-       
+
        # all coordinates from NMR ensemble are loaded into atoms
-       my $mol = HackaMol::Molecule->new(
-           name  => 'trp-cage',
-           atoms => [@atoms]
-       );
+       my $mol  = $hack->read_file_mol("1L2Y.pdb");
        
        #recenter all coordinates to center of mass
-       foreach my $t ( 0 .. $atoms[0]->count_coords - 1 ) {
+       foreach my $t ( 0 .. $mol->tmax) {
            $mol->t($t);
            $mol->translate( -$mol->COM );
        }
        
-       #create array of all alanine, CA atoms
+       #create array of CA atoms with full occupancy 
 
-       my @CAs = grep {$_->name eq 'CA'} 
-                 grep {$_->resname eq 'ALA'} $mol->all_atoms;
-       
-       # print coordinates from t=0 to trp-cage.xyz and return filehandle
+       my @CAs = grep {
+                        $_->name    eq 'CA'  and
+                        $_->occ == 1 
+                      } $mol->all_atoms;
+      
+       #print out the pdb with CA for several models from the NMR 
+       HackaMol::Molecule->new( 
+                                atoms=>[@CAs] 
+                              )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
+
+       # print coordinates to trp-cage.xyz and return filehandle for future
+       # writing
        my $fh = $mol->print_xyz( $mol->name . ".xyz" );
-       
-       # print coordinates for @t=(1..4) to same filehandle
-       foreach my $t ( 1 .. 4 ) {
-           $mol->t($t);
-           $mol->print_xyz($fh);
-       }
-       
-       $mol->t(0);
        foreach ( 1 .. 10 ) {
            $mol->rotate(
                V( 0, 0, 1 ),    # rotation vector
                36,              # rotate by 180 degrees
                V( 5, 0, 0 )     # origin of rotation
            );
-           $mol->print_xyz($fh);
+           $mol->print_xyz($fh); 
        }
        
        # translate/rotate method is provided by AtomGroupRole
@@ -64,7 +58,7 @@ SYNOPSIS
            $_->rotate( V( 1, 1, 1 ), 36, $_->COM ) foreach $mol->all_groups;
            $mol->print_xyz($fh);
        }
-       
+ 
  
 
 DESCRIPTION

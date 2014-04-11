@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use Modern::Perl;
+use YAML::XS;
 
 my %aas = (
     Ala => 'O=C(O)[C@@H](N)C',
@@ -24,15 +25,9 @@ my %aas = (
     Tyr => 'N[C@@H](CC1=CC=C(O)C=C1)C(O)=O',
 );
 
-use Data::Dumper;
 foreach my $aa ( keys(%aas) ) {
     my $smiles = $aas{$aa};
-    my @a      = `obabel -:\"$smiles\" -oxyz --gen3D`;
+    my @a      = `obabel -:\"$smiles\" -opdb --gen3D`;
     chomp @a;
-    print Dumper \@a;
-
-    #system ("obabel -:\"$smiles\" -oxyz -O $aa.xyz --gen3D ");
+    print Dump \@a;
 }
-
-#[Hg2+][CH3-]
-#obabel -:"C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C(C))))))))))))))))))))C" -oxyz --gen3D

@@ -10,6 +10,7 @@
 #
 use Modern::Perl;
 use HackaMol;
+use Statistics::Descriptive;
 
 my $hack  = HackaMol->new ;
 # load all atoms into an array
@@ -30,7 +31,7 @@ foreach my $fe (@Fes){
                           bond_atoms => [$fe],
                           candidates => [@hemes],
 #
-#                         candidates => [grep {$_->symbol eq "N"} @hemes]
+#                         candidates => [grep {$_->symbol eq "N"} @hemes],
 #
                           fudge      => 0.45,
                           max_bonds  => 6,
@@ -39,6 +40,11 @@ foreach my $fe (@Fes){
     my @sym = map{ $_->symbol } $bond->all_atoms;
     printf ("%4s %4s %10.3f\n", @sym, $bond->bond_length); 
   }
+  
+  my $stat = Statistics::Descriptive::Full->new();
+  $stat->add_data(map {$_->bond_length} @fe_bonds);
+  printf ("Avg: %.3f Stdev: %.4f \n", $stat->mean, $stat->standard_deviation); 
+  
 }
 
 

@@ -47,4 +47,22 @@ foreach my $fe (@Fes){
   
 }
 
+# give all protein atoms within 5 angstroms of the cofactors
+# not the most efficient... exercise: make faster
+my %atom_bin;
+foreach my $hemat (@hemes){
+  my @iaround = grep{$hemat->distance($atoms[$_]) <= 5.0 } 0 .. $#atoms;
+  $atom_bin{$_}++ foreach @iaround;
+}
+
+my @iats = sort{$a <=> $b} keys %atom_bin;
+
+my $mol = HackaMol::Molecule->new(atoms=>[@atoms[@iats]]);
+$mol->print_pdb;
+
+
+
+
+
+
 

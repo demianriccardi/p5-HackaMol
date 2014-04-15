@@ -49,6 +49,7 @@ foreach my $fe (@Fes){
 
 # give all protein atoms within 5 angstroms of the cofactors
 # not the most efficient... exercise: make faster
+say "slowly carving 5.0 angstroms around the hemes for printing";
 my %atom_bin;
 foreach my $hemat (@hemes){
   my @iaround = grep{$hemat->distance($atoms[$_]) <= 5.0 } 0 .. $#atoms;

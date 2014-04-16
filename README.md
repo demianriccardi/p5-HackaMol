@@ -43,7 +43,7 @@ SYNOPSIS
        foreach ( 1 .. 10 ) {
            $mol->rotate(
                V( 0, 0, 1 ),    # rotation vector
-               36,              # rotate by 180 degrees
+               36,              # rotate by 36 degrees
                V( 5, 0, 0 )     # origin of rotation
            );
            $mol->print_xyz($fh); 

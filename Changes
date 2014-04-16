@@ -2,7 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
     * added hush_read to MolReadRole    
-    * adding MooseX::StrictConstructor 
+    * added MooseX::StrictConstructor to classes
   
 0.00_12   2014-04-07 10:48:37EDT-0400 America/New_York
     * added aa321 to PdbRole; gens 1-letter aa code from resname

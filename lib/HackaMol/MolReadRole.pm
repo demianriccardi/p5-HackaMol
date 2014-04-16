@@ -1,6 +1,6 @@
 package HackaMol::MolReadRole;
 
-# ABSTRACT: Read XYZ and PDB files
+# ABSTRACT: Read files with molecular information
 use Moose::Role;
 use Carp;
 use Math::Vector::Real;

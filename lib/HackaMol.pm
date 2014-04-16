@@ -9,6 +9,7 @@ use HackaMol::Atom;
 use HackaMol::Bond;
 use HackaMol::Angle;
 use HackaMol::Dihedral;
+use MooseX::StrictConstructor;
 use Scalar::Util qw(refaddr);
 use Carp;
 

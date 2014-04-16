@@ -5,9 +5,10 @@ use 5.008;
 use Moose;
 use namespace::autoclean;
 use Carp;
-use MooseX::Storage;
-with Storage( 'io' => 'StorableFile' ), 'HackaMol::NameRole',
-  'HackaMol::AtomGroupRole';
+use MooseX::StrictConstructor;
+#use MooseX::Storage;
+#with Storage( 'io' => 'StorableFile' ), 
+with 'HackaMol::NameRole', 'HackaMol::AtomGroupRole';
 
 has $_ => (
     is      => 'rw',

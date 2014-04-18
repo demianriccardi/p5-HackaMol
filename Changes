@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * added ScratchRole for managing directories!
 
 0.00_13   2014-04-15 22:09:31EDT-0400 America/New_York
     * added hush_read to MolReadRole    

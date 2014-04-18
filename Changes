@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_14   2014-04-17 21:07:40EDT-0400 America/New_York
     * added ScratchRole for managing directories! Available in HackaMol builder
 
 0.00_13   2014-04-15 22:09:31EDT-0400 America/New_York

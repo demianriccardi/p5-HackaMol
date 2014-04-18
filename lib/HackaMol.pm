@@ -13,7 +13,7 @@ use MooseX::StrictConstructor;
 use Scalar::Util qw(refaddr);
 use Carp;
 
-with 'HackaMol::NameRole', 'HackaMol::MolReadRole';
+with 'HackaMol::NameRole', 'HackaMol::MolReadRole', 'HackaMol::ScratchRole';
 
 sub read_file_append_mol{
     my $self = shift;

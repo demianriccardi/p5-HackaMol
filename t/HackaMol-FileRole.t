@@ -35,10 +35,11 @@ is($obj->input_fn,  't/tmp/blah.inp', "blah.inp name");
 is($obj->output_fn, 't/tmp/blah.out', "blah.out name");
 is($obj->log_fn,    't/tmp/blah.log', "blah.log name");
 
-my $fhlog = $obj->log_fn->openw;
 
 $obj->scratch->mkpath;
 dir_exists_ok($obj->scratch, 'scratch directory does exist after mkpath');
+
+my $fhlog = $obj->log_fn->openw;
 print $fhlog "test 1\n";
 
 $obj->input_fn->spew(join("\n", map{sprintf("testing %i",$_)} 1 .. 10 ));
@@ -69,5 +70,9 @@ is($loglines,$logstring,"log written 3 times and slurped");
   my @lo = <$fho>;
   is_deeply(\@li,\@lo,"input/output filehandles opened and read");
 }
+
+$obj->scratch->rmtree;
+$obj->scratch->remove;
+dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
 
 done_testing();

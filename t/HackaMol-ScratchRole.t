@@ -59,9 +59,9 @@ foreach (0 .. 2){
   system ("touch $file");
 }
 
-is (scalar($obj->scratch->children), 3,     "touched 10 files");
-my @txts = $obj->scratch->children;
-my @list = qw(t/tmp/0.txt t/tmp/1.txt t/tmp/2.txt);
+is (scalar($obj->scratch->children), 3,     "touched 3 files");
+my @txts = sort $obj->scratch->children;
+my @list = sort qw(t/tmp/0.txt t/tmp/1.txt t/tmp/2.txt);
 is_deeply(\@txts,\@list, "return contents of scratch");
 
 $obj->scratch->rmtree;

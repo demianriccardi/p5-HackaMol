@@ -5,8 +5,13 @@
 
 2. need the FileHandleRole... even though it isn't perfect. add it... 
 use Path::Class there is a moosex::role for it.
+>>>>>>>>>> DMR 04-22-2014  
+#  ScratchRole and FileRole have been added, minimally using 
+#  MooseX::Types::Path::Class.  Potential for cool stuff became apparent
+#  while building the tests, but should be encapsulated more within extensions.
+#  ExeRole has been added, again with minimal capabilities. 
 
- 
+2a. or should i switch over to Path::Tiny???!  Argh!
 
 3. basic pdbqt reading support  ------>  DONE! DMR 04-01-2014
   3a. pull the tree of rotatable bonds groups
@@ -48,3 +53,4 @@ stuff etc.
 
 13. improve use of hush_read attribute in MolReadRole.  Currently, only used for the dirty carp in PDB reading.
 
+14. figure out how to get Dist::Zilla to automate version numbers with some sanity

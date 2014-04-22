@@ -3,11 +3,16 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
     * added FileRole for managing inputs, outputs, etc.
 
+0.00_16   2014-04-22 14:27:46EDT-0400 America/New_York
+    * added FileRole for managing files. Loaded into HackaMol.pm builder
+    * added ExeRole  for managing executables.  Loaded into HackaMol.pm builder. Limited functionality
+      can/should be tested with scripts that run exe, capture output, etc.  use Capture::Tiny 
+  
 0.00_15   2014-04-20 20:54:36EDT-0400 America/New_York
     * minor update test for scratchrole
 
 0.00_14   2014-04-17 21:07:40EDT-0400 America/New_York
-    * added ScratchRole for managing directories! Available in HackaMol builder
+    * added ScratchRole for managing directories. Available in HackaMol builder
 
 0.00_13   2014-04-15 22:09:31EDT-0400 America/New_York
     * added hush_read to MolReadRole    

@@ -14,7 +14,7 @@ use Scalar::Util qw(refaddr);
 use Carp;
 
 with 'HackaMol::NameRole', 'HackaMol::MolReadRole', 
-     'HackaMol::ScratchRole', 'HackaMol::FileRole';
+     'HackaMol::ScratchRole', 'HackaMol::FileRole','HackaMol::ExeRole';
 
 sub read_file_append_mol{
     my $self = shift;

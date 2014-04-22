@@ -37,7 +37,7 @@ sub exists_exe {
     return 1;
   }
   else {
-    carp $self->exe . " does not exist ";
+    carp $self->exe . " does not exist";
     return 0;
   } 
 }
@@ -60,7 +60,8 @@ sort of abstraction, it will cowardly left to the extensions to figure out. Reco
 
 isa Str that is rw   
 
-to be constructed from exe, exe_endops, in_fn, out_fn, and then run and captured 
+to be constructed from exe, exe_endops, in_fn, out_fn, etc. Then run and 
+captured, which is left to scripts/interfaces
 
 =attr exe 
 

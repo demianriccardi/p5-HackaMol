@@ -24,56 +24,28 @@ my $obj;
 
 lives_ok {
     $obj = HackaMol->new(
-                         scratch   => "t/tmp",
-                         input_fn  => "t/tmp/blah.inp",
-                         output_fn => "t/tmp/blah.out",
-                         log_fn    => "t/tmp/blah.log",
+                         scratch    => "t/tmp",
+                         in_fn      => "t/tmp/foo",   # create a phony exe
+                         exe        => "t/tmp/foo",
+                         exe_endops => "-bar",
                         );
 }
-'Test creation of an obj with files';
-
-is($obj->input_fn,  't/tmp/blah.inp', "blah.inp name");
-is($obj->output_fn, 't/tmp/blah.out', "blah.out name");
-is($obj->log_fn,    't/tmp/blah.log', "blah.log name");
-
+'Test creation of an obj with files exe, exe_endops';
 
 $obj->scratch->mkpath;
 dir_exists_ok($obj->scratch, 'scratch directory does exist after mkpath');
 
-my $fhlog = $obj->log_fn->openw;
-print $fhlog "test 1\n";
-
-$obj->input_fn->spew(join("\n", map{sprintf("testing %i",$_)} 1 .. 10 ));
-$obj->input_fn->copy_to($obj->output_fn);
-my @outlines = $obj->output_fn->slurp;
-my @inlines  = $obj->input_fn->slurp;
-is_deeply(\@inlines,\@outlines,"input written, copied to output, read back in");
-print $fhlog "test 2\n";
-
-my $string = join("\n", map{sprintf("testing %i",$_)} 11 .. 20 );
-$obj->input_fn->spew($string);
-$obj->output_fn->spew($string);
-my $lines = $obj->input_fn->slurp;
-is($lines,$string,"input written anew and slurped up again");
-
-print $fhlog "test 3";
-close($fhlog);
-
-my $loglines = $obj->log_fn->slurp;
-my $logstring = join("\n", map{sprintf("test %i",$_)} 1 .. 3);
-
-is($loglines,$logstring,"log written 3 times and slurped");
-
-{ #test two open fh
-  my $fhi = $obj->input_fn->openr;
-  my $fho = $obj->output_fn->openr;
-  my @li = <$fhi>;
-  my @lo = <$fho>;
-  is_deeply(\@li,\@lo,"input/output filehandles opened and read");
-}
+$obj->in_fn->spew(join("\n", map{sprintf("run %i",$_)} 1 .. 10 ));
+ok($obj->exists_exe, 'fake exe exists');
+$obj->command($obj->exe . " ". $obj->exe_endops);
+is($obj->command, 't/tmp/foo -bar', "command set t/tmp/foo -bar");
 
 $obj->scratch->rmtree;
 $obj->scratch->remove;
 dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
+
+warning_is { $obj->exists_exe }
+    "t/tmp/foo does not exist",
+     "carp warning if exe does not exist";
 
 done_testing();

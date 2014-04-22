@@ -9,7 +9,7 @@ use Path::Class there is a moosex::role for it.
 #  ScratchRole and FileRole have been added, minimally using 
 #  MooseX::Types::Path::Class.  Potential for cool stuff became apparent
 #  while building the tests, but should be encapsulated more within extensions.
- 
+#  ExeRole has been added, again with minimal capabilities. 
 
 3. basic pdbqt reading support  ------>  DONE! DMR 04-01-2014
   3a. pull the tree of rotatable bonds groups

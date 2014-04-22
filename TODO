@@ -51,3 +51,4 @@ stuff etc.
 
 13. improve use of hush_read attribute in MolReadRole.  Currently, only used for the dirty carp in PDB reading.
 
+14. figure out how to get Dist::Zilla to automate version numbers with some sanity

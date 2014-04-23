@@ -3,6 +3,12 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
     * added FileRole for managing inputs, outputs, etc.
 
+0.00_18   2014-04-23 14:15:49EDT-0400 America/New_York
+    * merged FileRole and ScratchRole into PathRole
+
+0.00_17   2014-04-23 10:46:53EDT-0400 America/New_York
+    * switched FileRole and ScratchRole over to MooseX::Types::Path::Tiny
+
 0.00_16   2014-04-22 14:27:46EDT-0400 America/New_York
     * added FileRole for managing files. Loaded into HackaMol.pm builder
     * added ExeRole  for managing executables.  Loaded into HackaMol.pm builder. Limited functionality

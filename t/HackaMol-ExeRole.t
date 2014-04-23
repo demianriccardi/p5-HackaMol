@@ -40,8 +40,7 @@ ok($obj->exists_exe, 'fake exe exists');
 $obj->command($obj->exe . " ". $obj->exe_endops);
 is($obj->command, 't/tmp/foo -bar', "command set t/tmp/foo -bar");
 
-$obj->scratch->rmtree;
-$obj->scratch->remove;
+$obj->scratch->remove_tree;
 dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
 
 warning_is { $obj->exists_exe }

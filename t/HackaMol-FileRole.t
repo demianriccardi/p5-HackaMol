@@ -13,7 +13,7 @@ my @attributes = qw(
 in_fn
 out_fn
 log_fn
-fort1_fn fort2_fn fort3_fn fort4_fn fort5_fn
+forts
 );
 my @methods = qw(
 );
@@ -25,16 +25,17 @@ my $obj;
 lives_ok {
     $obj = HackaMol->new(
                          scratch   => "t/tmp",
-                         in_fn  => "t/tmp/blah.inp",
-                         out_fn => "t/tmp/blah.out",
+                         in_fn     => "t/tmp/blah.inp",
+                         out_fn    => "t/tmp/blah.out",
                          log_fn    => "t/tmp/blah.log",
+                         forts     => [qw/fort.1 fort.2 fort.3/],                         
                         );
 }
 'Test creation of an obj with files';
 
 is($obj->in_fn,  't/tmp/blah.inp', "blah.inp name");
 is($obj->out_fn, 't/tmp/blah.out', "blah.out name");
-is($obj->log_fn,    't/tmp/blah.log', "blah.log name");
+is($obj->log_fn, 't/tmp/blah.log', "blah.log name");
 
 
 $obj->scratch->mkpath;
@@ -44,7 +45,7 @@ my $fhlog = $obj->log_fn->openw;
 print $fhlog "test 1\n";
 
 $obj->in_fn->spew(join("\n", map{sprintf("testing %i",$_)} 1 .. 10 ));
-$obj->in_fn->copy_to($obj->out_fn);
+$obj->in_fn->copy($obj->out_fn);
 my @outlines = $obj->out_fn->slurp;
 my @inlines  = $obj->in_fn->slurp;
 is_deeply(\@inlines,\@outlines,"input written, copied to output, read back in");
@@ -72,8 +73,7 @@ is($loglines,$logstring,"log written 3 times and slurped");
   is_deeply(\@li,\@lo,"input/output filehandles opened and read");
 }
 
-$obj->scratch->rmtree;
-$obj->scratch->remove;
+$obj->scratch->remove_tree;
 dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
 
 done_testing();

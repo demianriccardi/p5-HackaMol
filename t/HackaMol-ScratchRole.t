@@ -8,6 +8,9 @@ use Test::Warn;
 use Test::Dir;
 use Test::Fatal qw(lives_ok);
 use HackaMol;                # v0.001;#To test for version availability
+use Cwd;
+
+my $cwd = getcwd;
 
 my @attributes = qw(
 data
@@ -30,21 +33,21 @@ lives_ok {
 }
 'Test creation of an obj with directories';
 
-is($obj->scratch, 't/tmp', "scratch set ok");
-is($obj->data   , 't/lib', "data    set ok");
-is($obj->homedir, 't',     "homedir set ok");
+is($obj->scratch, "$cwd/t/tmp", "abspath scratch set ok");
+is($obj->data   , "$cwd/t/lib", "abspath data    set ok");
+is($obj->homedir, "$cwd/t",     "abspath homedir set ok");
 dir_exists_ok($obj->data,        'data directory exists');
 dir_exists_ok($obj->homedir,     'homedir directory exists');
 dir_not_exists_ok($obj->scratch, 'scratch directory does not exist');
 $obj->scratch->mkpath;
 dir_exists_ok($obj->scratch, 'scratch directory does exist after mkpath');
-$obj->scratch->remove;
+$obj->scratch->remove_tree;
 dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
 $obj->scratch->mkpath;
 dir_exists_ok($obj->scratch, 'scratch directory recreated');
 my @storeit;
 foreach (0 .. 2){
-  my $fh = $obj->scratch->tempfile;
+  my $fh = $obj->scratch->tempfile("customXXX")->filehandle("+<");
   print $fh $_ ;
   seek($fh, 0,0);
   while (my $line = <$fh>){
@@ -61,11 +64,10 @@ foreach (0 .. 2){
 
 is (scalar($obj->scratch->children), 3,     "touched 3 files");
 my @txts = sort $obj->scratch->children;
-my @list = sort qw(t/tmp/0.txt t/tmp/1.txt t/tmp/2.txt);
+my @list = map{"$cwd/$_"} sort qw(t/tmp/0.txt t/tmp/1.txt t/tmp/2.txt);
 is_deeply(\@txts,\@list, "return contents of scratch");
 
-$obj->scratch->rmtree;
-$obj->scratch->remove;
+$obj->scratch->remove_tree;
 dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
 
 done_testing();

@@ -3,31 +3,31 @@ package HackaMol::FileRole;
 #ABSTRACT:  
 use 5.008;
 use Moose::Role;
-use MooseX::Types::Path::Class;
+use MooseX::Types::Path::Tiny qw/Path Paths AbsPath/;
 
 has 'in_fn' => (
     is       => 'ro',
-    isa      => 'Path::Class::File',
+    isa      => Path,
     coerce   => 1,
 );
  
 has 'out_fn' => (
     is       => 'ro',
-    isa      => 'Path::Class::File',
+    isa      => Path,
     coerce   => 1,
 );
 
 has 'log_fn' => (
     is       => 'ro',
-    isa      => 'Path::Class::File',
+    isa      => Path,
     coerce   => 1,
 ); 
 
-has "$_\_fn" => (
+has forts => (
     is       => 'ro',
-    isa      => 'Path::Class::File',
+    isa      => Paths,
     coerce   => 1,
-) foreach qw(fort1 fort2 fort3 fort4 fort5);
+);
 
 no Moose::Role;
 

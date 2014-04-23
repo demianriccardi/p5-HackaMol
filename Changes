@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_17   2014-04-23 10:46:53EDT-0400 America/New_York
     * switched FileRole and ScratchRole over to MooseX::Types::Path::Tiny
 
 0.00_16   2014-04-22 14:27:46EDT-0400 America/New_York

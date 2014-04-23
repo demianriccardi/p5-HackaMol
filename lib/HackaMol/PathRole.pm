@@ -19,6 +19,13 @@ has 'out_fn' => (
     predicate => 'has_out_fn', 
 );
 
+has 'err_fn' => (
+    is        => 'ro',
+    isa       => Path,
+    coerce    => 1,
+    predicate => 'has_err_fn',
+);
+
 has 'log_fn' => (
     is       => 'ro',
     isa      => Path,
@@ -82,7 +89,7 @@ isa Path::Tiny coerced via AbsPath that is 'ro'
 
 the absolute path to the directory is constructed
 
-=attr log_fn in_fn out_fn 
+=attr log_fn in_fn out_fn err_fn 
 
 isa Path::Tiny coerced via Path that is 'ro'   
 

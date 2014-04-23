@@ -4,10 +4,10 @@ Object-oriented Perl 5, Moose library for molecular hacking on multiple scales
 
 VERSION
 ========
-developer version 0.00_17 
+developer version 0.00_18 
 Available for testing from cpan.org:
        
-please see *[HackaMol on MetaCPAN](https://metacpan.org/release/DEMIAN/HackaMol-0.00_17) for formatted documentation.  
+please see *[HackaMol on MetaCPAN](https://metacpan.org/release/DEMIAN/HackaMol-0.00_18) for formatted documentation.  
        
 SYNOPSIS
 ========
@@ -124,6 +124,6 @@ Here is a quick summary of a *[step by step post on installing Perl modules] (ht
        
     Execution will fail to find HackaMol until it is officially released. For now, you can install the developer release:
        
-       prompt> cpanm DEMIAN/HackaMol-0.00_17.tar.gz
+       prompt> cpanm DEMIAN/HackaMol-0.00_18.tar.gz
        
 HackaMol is too fun to not be experimental! Feedback and contributions welcome!

@@ -15,10 +15,11 @@ use Path::Class there is a moosex::role for it.
 >>>>>>>>> DMR 04-23-2014
 # switched over to MooseX::Types::Path::Tiny, because documentation is a little better
 # 
+# 
+2c. Combine FileRole and ScratchRole into PathRole.   
 
 3. basic pdbqt reading support  ------>  DONE! DMR 04-01-2014
   3a. pull the tree of rotatable bonds groups
-  3b. add tests!
 
 4. pdbqt writing support (3 should be easier)
 

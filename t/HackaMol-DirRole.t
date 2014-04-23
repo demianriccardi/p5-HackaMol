@@ -16,6 +16,7 @@ my @attributes = qw(
 data
 scratch
 homedir
+dirs
 );
 my @methods = qw(
 );
@@ -29,7 +30,10 @@ lives_ok {
 'Test creation of an obj with nothing';
 
 lives_ok {
-    $obj = HackaMol->new(homedir=>"t", scratch => "t/tmp", data=> "t/lib");
+    $obj = HackaMol->new(homedir=>"t", 
+                        scratch => "t/tmp", 
+                        data=> "t/lib",
+                        dirs => [qw/. .. \/var ~\/bin/ ]);
 }
 'Test creation of an obj with directories';
 
@@ -54,6 +58,7 @@ foreach (0 .. 2){
     is ($line, $_, "tempfile print/read")
   }
 }
+
 
 is (scalar($obj->scratch->children), 0,     "tempfiles were destroyed");
 

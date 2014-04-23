@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * merged FileRole and ScratchRole into PathRole
 
 0.00_17   2014-04-23 10:46:53EDT-0400 America/New_York
     * switched FileRole and ScratchRole over to MooseX::Types::Path::Tiny

@@ -19,7 +19,8 @@ use HackaMol;
       read_file_atoms read_pdb_atoms read_xyz_atoms
     );
 
-    my @roles = qw(HackaMol::MolReadRole HackaMol::NameRole);
+    my @roles = qw(HackaMol::MolReadRole HackaMol::NameRole 
+                   HackaMol::PathRole HackaMol::ExeRole);
 
     map has_attribute_ok( 'HackaMol', $_ ), @attributes;
     map can_ok( 'HackaMol', $_ ), @methods;

@@ -17,6 +17,7 @@ use Path::Class there is a moosex::role for it.
 # 
 # 
 2c. Combine FileRole and ScratchRole into PathRole.   
+#DONE!
 
 3. basic pdbqt reading support  ------>  DONE! DMR 04-01-2014
   3a. pull the tree of rotatable bonds groups
@@ -43,7 +44,7 @@ names. We will use the is_dirty parameter To make more robust and to put the res
 8. storage, persistance, and use of MongoDB!
 
 9. remove the QmMolRol attributes from being loaded.  That should be added through extensions that
-actually do QM.  it seems a bit excessive to include even if it they are lazy.
+actually manage QM.  it seems a bit excessive to include even if it they are lazy.
 
 10. based on reading PDBQT may be able to simplify/rethink atom rotations about a bond.
 

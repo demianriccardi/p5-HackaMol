@@ -27,7 +27,7 @@ say "$distaa $distbb";
 #
 
 cmpthese(
-    100000,
+    2500000,
     {
         'VectorReal' => sub { my $v = vector( 1.1, 2.0, 3.1 ) },
         'MVR' => sub { my $v = V( 1.1, 2.0, 3.1 ) },
@@ -53,7 +53,7 @@ cmpthese(
 );
 
 cmpthese(
-    5000000,
+    500000,
     {
         'MVR dot dist' => sub {
             my $v1 = V( 1.1, 2.0, 3.1 );

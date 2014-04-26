@@ -1,4 +1,4 @@
-# approximate the size of a collection of atoms
+# upper limit size of a collection of atoms
 # 
 use Modern::Perl;
 use HackaMol;

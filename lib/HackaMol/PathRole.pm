@@ -44,7 +44,7 @@ has 'homedir' => (
     is       => 'ro',
     isa      => AbsPath,
     coerce   => 1,
-    predicate => 'has_homedir', 
+    default  => '.',
 );
  
 has 'scratch' => (

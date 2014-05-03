@@ -91,7 +91,7 @@ the absolute path to the directory is constructed
 
 =attr log_fn in_fn out_fn err_fn 
 
-isa Path::Tiny coerced via Path that is 'ro'   
+isa Path::Tiny coerced via Path that is 'rw'   
 
 =attr dirs 
 

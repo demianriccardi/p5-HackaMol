@@ -1,7 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-    * examples are reorganized 
+    * examples are reorganized, still not organized enough #TODO
+    * PathRole files are now 'rw'.  The 'rw' is hard to resist 
 
 0.00_18   2014-04-23 14:15:49EDT-0400 America/New_York
     * merged FileRole and ScratchRole into PathRole

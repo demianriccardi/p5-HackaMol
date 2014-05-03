@@ -6,7 +6,7 @@ use Moose::Role;
 use Carp;
 
 has 'exe'       => (
-                      is  => 'ro',
+                      is  => 'rw',
                       isa => 'Str',
                       predicate => 'has_exe',
                       clearer   => 'clear_exe',
@@ -16,7 +16,7 @@ has 'exe'       => (
 #options after input filename... bleh
 # ie. dftd3 shit.xyz -func b3pw91 -bj              
 has 'exe_endops'       => (
-                      is  => 'ro',
+                      is  => 'rw',
                       isa => 'Str',
                       predicate => 'has_exe_endops',
                       clearer   => 'clear_exe_endops',

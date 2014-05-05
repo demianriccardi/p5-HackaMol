@@ -9,8 +9,8 @@ with 'HackaMol::QmAtomRole';
 has 'multiplicity', is => 'rw', isa => 'Int', lazy => 1, default => 1;
 
 my @tscl = qw(
-  Score
-  Energy
+  score
+  energy
   Etot Eelec Enuc
   qm_dipole_moment ionization_energy gradient_norm
   Hform

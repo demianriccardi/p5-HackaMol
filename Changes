@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_19   2014-05-04 20:48:54EDT-0400 America/New_York
     * examples are reorganized, still not organized enough #TODO
     * PathRole files are now 'rw'.  The 'rw' is hard to resist 
 

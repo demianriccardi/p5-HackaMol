@@ -139,7 +139,7 @@ sub group_by_atom_attr {
 
 }
 
-sub find_disulfides {
+sub find_disulfide_bonds {
     my $self  = shift;
     my @sulf  = grep {$_->Z == 16} grep {$_->resname eq "CYS"} @_;
     my @ss = $self->find_bonds_brute(

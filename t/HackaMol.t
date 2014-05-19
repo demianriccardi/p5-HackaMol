@@ -222,9 +222,9 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
 
 }
 
-{    #find_disulfides
+{    #find_disulfide_bonds
     my $mol = $hack->read_file_mol("t/lib/1V0Z_A.pdb");
-    my @ss  = $hack->find_disulfides( $mol->all_atoms );
+    my @ss  = $hack->find_disulfide_bonds( $mol->all_atoms );
     is( scalar(@ss), 9, "found 9  disulfides in 1V0Z" );
     my @ss_atoms = map { $_->all_atoms } @ss;
     is( scalar(@ss_atoms), 18, "9  disulfides have 18 atoms" );

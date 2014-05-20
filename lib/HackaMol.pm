@@ -351,6 +351,10 @@ separation against the sum of the covalent radii + fudge. It will not test
 for bond between atoms if either atom has >= max_bonds. It does not return 
 a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
 
+=method find_disulfide_bonds
+
+takes a list of atoms and returns the disulfide bonds as bond objects.
+
 =head1 SEE ALSO
 
 =for :list

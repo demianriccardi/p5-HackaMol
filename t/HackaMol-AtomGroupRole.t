@@ -25,6 +25,7 @@ bin_atoms_name all_atoms
 push_atoms get_atoms delete_atoms 
 count_atoms clear_atoms
 rotate translate print_xyz
+fix_serial
 );
 
 map has_attribute_ok( 'HackaMol::AtomGroup', $_ ), @attributes;
@@ -251,6 +252,22 @@ stdout_is(sub{$group->print_xyz},$xyz2,"print_xyz after rotation 180");
 $group->rotate(V(1,0,0), 180, $COM);
 stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
 
+{ 
+#test fix_serial
+  $group->fix_serial(10);
+  my @exp = (10,11,12);
+  my @obs = map {$_->serial} $group->all_atoms;
+  is_deeply(\@exp, \@obs, "fix_serial, start from 10");
+  $group->fix_serial(1);
+  @exp = (1,2,3);
+  @obs = map {$_->serial} $group->all_atoms;
+  is_deeply(\@exp, \@obs, "fix_serial, start from 1");
+  @exp = (0,1,2);
+  $group->fix_serial(0);
+  @obs = map {$_->serial} $group->all_atoms;
+  is_deeply(\@exp, \@obs, "fix_serial, start from 0");
+  $_->serial(0) foreach $group->all_atoms; # return to default 
+}
 # testing the print_xyz_ts
 {
   my $xyz = 

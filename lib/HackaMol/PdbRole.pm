@@ -35,7 +35,6 @@ has "$_" =>  (
                   is        => 'rw', 
                   isa       => 'Int', 
                   lazy      => 1, 
-                  predicate => "has_$_", 
                   default   => 0,
 ) foreach qw(iatom resid serial);
 

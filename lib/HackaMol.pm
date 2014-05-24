@@ -275,9 +275,9 @@ attributes and methods that may be harnessed to coerce molecular computation
 through a common core. The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, and my own experiences as a researcher. 
 
 The library is organized into two regions: HackaMol, the core (contained here)
-that has classes for atoms and molecules, and HackaMolX, the extensions, such as
-HackaMolX::PDB, a parser for protein databank files, and HackaMolX::Calculator,
-an abstract calculator for coercing molecular computation, that use the core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core. Extensions are in the works, but the HackaMolX namespace has not been established yet! 
+that has classes for atoms and molecules, and HackaMol::X, the extensions, such as
+HackaMol::X::Vina (an interface to Autodock Vina) or HackaMol::X::Calculator,
+a more general abstract calculator for coercing molecular computation through a common core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core.  
 
 HackaMol uses Math::Vector::Real (MVR) for all the vector operations. MVR is a
 lightweight solution with a fast XS dropin that overlaps very well with the
@@ -350,6 +350,10 @@ find_bonds_brute uses a bruteforce algorithm that tests the interatomic
 separation against the sum of the covalent radii + fudge. It will not test
 for bond between atoms if either atom has >= max_bonds. It does not return 
 a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
+
+=method find_disulfide_bonds
+
+takes a list of atoms and returns the disulfide bonds as bond objects.
 
 =head1 SEE ALSO
 

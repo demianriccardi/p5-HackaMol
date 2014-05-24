@@ -194,6 +194,15 @@ sub rotate {
     $atoms[$_]->set_coords( $tf, $rcor[$_] + $orig ) foreach 0 .. $#rcor;
 }
 
+sub fix_serial {
+    my @atoms  = shift->all_atoms;
+    my $offset = shift;
+    $offset = 1 unless defined($offset);
+    $atoms[$_]->{serial} = $_ + $offset foreach (0 .. $#atoms);
+    return $offset;
+}
+
+
 sub print_xyz_ts {
   _print_ts('print_xyz',@_);
 }
@@ -549,7 +558,12 @@ argument: Str , return hash_ref of binned $self->Str.
 
   $hash_ref{$_}++ foreach ( map {$_->$Str} $self->all_atoms );
 
+method fix_serial
 
+argument, optional: Int, offset for resetting the serial number of atoms.  
+Returns the offset. 
+
+  $group->fix_serial(0); # serial starts from zero
 
 =head1 SEE ALSO
 

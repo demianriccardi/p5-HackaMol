@@ -12,7 +12,6 @@ my $hack = new HackaMol;
 my @atoms = $hack->read_file_atoms("structures/GSSG.pdb");
 
 my ($ss) = $hack->build_bonds( @atoms[ 14, 34 ] );
-my ($ss2)= $hack->find_disulfide_bonds(@atoms); print $ss2->dump; exit;
 my $mol = HackaMol::Molecule->new( atoms => [@atoms] );
 
 my $bl = $ss->bond_length;

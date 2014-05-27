@@ -26,6 +26,6 @@ my $hetmol = HackaMol::Molecule->new(
         grep { $_->resname eq 'GSH' } @atoms,
     ]
 );
-
+$hetmol->fix_serial(1);
 $hetmol->print_pdb("structures/GSSG.pdb");
 

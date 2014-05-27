@@ -4,7 +4,7 @@ package HackaMol::NameRole;
 use 5.008;
 use Moose::Role;
 
-has 'name', is => 'rw', isa => 'Str', predicate => 'has_name', clearer => 'clear_name';
+has 'name', is => 'rw', isa => 'Str', predicate => 'has_name' , clearer => 'clear_name';
 
 no Moose::Role;
 

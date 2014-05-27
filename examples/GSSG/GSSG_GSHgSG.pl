@@ -27,5 +27,7 @@ $mol->push_atoms(
     )
 );
 
+$mol->fix_serial(1);
+
 $mol->print_pdb("structures/GSHgSG.pdb");
 

@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * adjusted defaults on PdbRole attributes 
 
 0.00_20   2014-05-27 20:41:40EDT-0400 America/New_York
     * added fix_serial method to AtomGroupRole 

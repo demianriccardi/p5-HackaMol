@@ -30,13 +30,9 @@ has 'altloc',      is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'icode',       is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'pdbid',       is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'segid',       is => 'rw', isa => 'Str', lazy => 1, default => ' ';
-
-has "$_" =>  ( 
-                  is        => 'rw', 
-                  isa       => 'Int', 
-                  lazy      => 1, 
-                  default   => 0,
-) foreach qw(iatom resid serial);
+has 'iatom',       is => 'rw', isa => 'Int', lazy => 1, default => 0;
+has 'resid',       is => 'rw', isa => 'Int', lazy => 1, default => 1;
+has 'serial',      is => 'rw', isa => 'Int', lazy => 1, default => 1;
 
 no Moose::Role;
 1;

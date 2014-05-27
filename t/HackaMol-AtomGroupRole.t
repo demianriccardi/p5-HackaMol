@@ -206,9 +206,9 @@ my $xyz1 =
 
 my $pdb =
 'MODEL        1
-HETATM    0 O    UNK     0       2.053   0.020  -0.077  1.00 20.00           O
-HETATM    0 H    UNK     0       1.084   0.022  -0.123  1.00 20.00           H
-HETATM    0 H    UNK     0       2.331   0.061  -1.003  1.00 20.00           H
+HETATM    1 O    UNK     1       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    1 H    UNK     1       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    1 H    UNK     1       2.331   0.061  -1.003  1.00 20.00           H
 ENDMDL
 ';
 # previously ALA as default, but no longer
@@ -288,24 +288,24 @@ stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
   stdout_is(sub{$group->print_xyz_ts( [ 4,0 ]) },$xyz, "print_xyz_ts slice reverse");
   my $pdb =
 'MODEL        1
-HETATM    0 O    UNK     0       2.053   0.020  -0.077  1.00 20.00           O
-HETATM    0 H    UNK     0       1.084   0.022  -0.123  1.00 20.00           H
-HETATM    0 H    UNK     0       2.331   0.061  -1.003  1.00 20.00           H
+HETATM    0 O    UNK     1       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H    UNK     1       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H    UNK     1       2.331   0.061  -1.003  1.00 20.00           H
 ENDMDL
 MODEL        2
-HETATM    0 O    UNK     0       2.053   0.020  -0.077  1.00 20.00           O
-HETATM    0 H    UNK     0       1.084   0.022  -0.123  1.00 20.00           H
-HETATM    0 H    UNK     0       2.331   0.061  -1.003  1.00 20.00           H
+HETATM    0 O    UNK     1       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H    UNK     1       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H    UNK     1       2.331   0.061  -1.003  1.00 20.00           H
 ENDMDL
 MODEL        3
-HETATM    0 O    UNK     0       5.053   0.020  -0.077  1.00 20.00           O
-HETATM    0 H    UNK     0       3.084   0.022  -0.123  1.00 20.00           H
-HETATM    0 H    UNK     0       4.331   0.061  -1.003  1.00 20.00           H
+HETATM    0 O    UNK     1       5.053   0.020  -0.077  1.00 20.00           O
+HETATM    0 H    UNK     1       3.084   0.022  -0.123  1.00 20.00           H
+HETATM    0 H    UNK     1       4.331   0.061  -1.003  1.00 20.00           H
 ENDMDL
 MODEL        4
-HETATM    0 O    UNK     0       0.000   0.000   0.000  1.00 20.00           O
-HETATM    0 H    UNK     0       0.000   0.000   0.000  1.00 20.00           H
-HETATM    0 H    UNK     0       0.000   0.000   0.000  1.00 20.00           H
+HETATM    0 O    UNK     1       0.000   0.000   0.000  1.00 20.00           O
+HETATM    0 H    UNK     1       0.000   0.000   0.000  1.00 20.00           H
+HETATM    0 H    UNK     1       0.000   0.000   0.000  1.00 20.00           H
 ENDMDL
 ';
 

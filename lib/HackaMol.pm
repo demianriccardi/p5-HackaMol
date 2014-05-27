@@ -145,7 +145,7 @@ sub find_disulfide_bonds {
     my @ss = $self->find_bonds_brute(
                                      bond_atoms => [@sulf],
                                      candidates => [@sulf],
-                                     fudge      => 0.45,
+                                     fudge      => 0.65,
                                      max_bonds  => 1,
                                     );
     return @ss;

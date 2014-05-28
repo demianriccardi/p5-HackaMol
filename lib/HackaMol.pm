@@ -360,6 +360,8 @@ takes a list of atoms and returns the disulfide bonds as bond objects.
 * L<HackaMol::Dihedral>
 * L<HackaMol::AtomGroup>
 * L<HackaMol::Molecule>
+* L<HackaMol::X::Calculator>
+* L<HackaMol::X::Vina>
 * L<Protein Data Bank | http://pdb.org>
 * L<VMD | http://www.ks.uiuc.edu/Research/vmd/>
 

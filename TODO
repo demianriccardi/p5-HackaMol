@@ -5,22 +5,6 @@
   - access needs to be fast
   - some datastructures such as KNOWN_NAMES accessible, and such mappings can be mutable.
 
-2. need the FileHandleRole... even though it isn't perfect. add it... 
-use Path::Class there is a moosex::role for it.
->>>>>>>>>> DMR 04-22-2014  
-#  ScratchRole and FileRole have been added, minimally using 
-#  MooseX::Types::Path::Class.  Potential for cool stuff became apparent
-#  while building the tests, but should be encapsulated more within extensions.
-#  ExeRole has been added, again with minimal capabilities. 
-
-2a. or should i switch over to Path::Tiny???!  Argh!
->>>>>>>>> DMR 04-23-2014
-# switched over to MooseX::Types::Path::Tiny, because documentation is a little better
-# 
-# 
-2c. Combine FileRole and ScratchRole into PathRole.   
-#DONE!
-
 3. basic pdbqt reading support  ------>  DONE! DMR 04-01-2014
   3a. pull the tree of rotatable bonds groups
 
@@ -28,33 +12,20 @@ use Path::Class there is a moosex::role for it.
 
 5. refactor test suite
 
-6. damn the pdb.. many programs do not write out the chemical symbol in the ~80 col.  Thus, the only
-obvious way to determine the atom type is via the name, which are not always standard.  Need to have
-a sloppier pdb reading method that will carp a warning or maybe dump a log file with all the unknown 
-names. We will use the is_dirty parameter To make more robust and to put the responsibility on the user...
->>>>>>>>>> DMR 04-01-2014
-#   made the reader set the is_dirty flag for unknown elements.
-#   carping of the number of dirty atoms happens at the end so warning isn't as annoying
+6b. add an attribute that allows a map from names to symbols/Zs to be built
+    in reading pdb files etc
 
-
-  6b. add an attribute that allows a map from names to symbols/Zs to be built
-
- 
 7. improve examples; add more
-  - one with an extended class
+  - one with an extended class meta bizness
 
 8. storage, persistance, and use of MongoDB!
 
-9. remove the QmMolRol attributes from being loaded.  That should be added through extensions that
-actually manage QM.  it seems a bit excessive to include even if it they are lazy.
+9. remove the QmMolRol attributes from being loaded.  That should be added 
+through extensions that actually manage QM.  it seems a bit excessive to 
+include even if it they are lazy. HackaMol::X::Vina depends on score
+attribute.  keep in mind
 
 10. based on reading PDBQT may be able to simplify/rethink atom rotations about a bond.
-
-
-11. document tmax, what_time, print_xyz_ts, print_pdb_ts([], fname) 
-  -check tests for inspiration and add more tests if inspired
->>>>>>>>>>>>>DONE!  DMR 04-02-2014
-
 
 12. improve the binning in AtomGroupRole.  there is bin_this and then atom_bin 
 stuff etc.

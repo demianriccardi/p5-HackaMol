@@ -558,7 +558,11 @@ argument: Str , return hash_ref of binned $self->Str.
 
   $hash_ref{$_}++ foreach ( map {$_->$Str} $self->all_atoms );
 
-method fix_serial
+=method what_time
+
+returns the current setting of t by checking against all members of group.
+
+=method fix_serial
 
 argument, optional: Int, offset for resetting the serial number of atoms.  
 Returns the offset. 

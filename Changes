@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_20   2014-05-27 20:41:40EDT-0400 America/New_York
     * added fix_serial method to AtomGroupRole 
     * find_disulfide_bonds generalized to work with nonprotein sulfurs 
     * GSSG examples added

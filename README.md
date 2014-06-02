@@ -74,15 +74,13 @@ and my own experiences as a researcher.  A goal of this library is to reduce
 the "viscosity" of setting up computations and managing data.
        
 The library is organized into two regions: HackaMol, the core (contained 
-here) that has classes for atoms and molecules, and HackaMolX, the 
-extensions, such as HackaMolX::PDB, a parser for protein databank files, 
-and HackaMolX::Calculator, an abstract calculator for coercing 
+here) that has classes for atoms and molecules, and HackaMol::X, the 
+extensions, such as HackaMol::X::PDB (TODO), a parser for protein databank 
+files,  and HackaMol::X::Calculator, an abstract calculator for coercing 
 computational chemistry, that use the core. The three major goals of the 
 core are for it to be well-tested, well-documented, and easy to install. 
 The goal of the extensions is to provide a more flexible space for 
 researchers to develop and share new methods that use the core. 
-Extensions are in the works, but the HackaMolX namespace has not been 
-established yet! 
        
 HackaMol uses *[Math::Vector::Real](https://metacpan.org/module/Math::Vector::Real)* (MVR) for all the vector operations. 
 MVR is a lightweight solution with a fast XS dropin that overlaps very 

@@ -457,7 +457,7 @@ no arguments. return dipole calculated from charges and coordinates as Math::Vec
 
 no arguments. return center of mass calculated from masses and coordinates as Math::Vector::Real object  
  
-=method COM
+=method COZ
 
 no arguments. return center of nuclear charge calculated from Zs and coordinates as Math::Vector::Real object  
 

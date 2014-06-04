@@ -335,25 +335,25 @@ stores coordinates in place.
 
 =method angle_bend_atoms
 
-takes Angle object, an angle (degress), and active atoms as arguments. rotates the active atoms
+takes Angle object, an angle (degrees), and active atoms as arguments. rotates the active atoms
 about the vector normal to be angle and stores rotated coordinates in place 
 ($atom->set_coords($mol->t,$rotated_coor)).
 
 =method angle_bend_groups
 
-takes Angle object, an angle (degress), and active groups as arguments. rotates the atoms
+takes Angle object, an angle (degrees), and active groups as arguments. rotates the atoms
 in the active groups about the vector normal to be angle and stores rotated coordinates 
 in place ($atom->set_coords($mol->t,$rotated_coor)).
 
 =method dihedral_rotate_atoms
 
-takes Dihedral object, an angle (degress), and active atoms as arguments. rotates the active atoms
+takes Dihedral object, an angle (degrees), and active atoms as arguments. rotates the active atoms
 about the dihedral and stores rotated coordinates in place 
 ($atom->set_coords($mol->t,$rotated_coor)).
 
 =method dihedral_rotate_groups
 
-takes Dihedral object, an angle (degress), and active groups as arguments. rotates atoms in 
+takes Dihedral object, an angle (degrees), and active groups as arguments. rotates atoms in 
 groups about the dihedral and stores rotated coordinates in place 
 ($atom->set_coords($mol->t,$rotated_coor)).
 

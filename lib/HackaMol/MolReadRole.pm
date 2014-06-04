@@ -76,7 +76,7 @@ sub read_pdb_atoms {
             $name    = _trim($name);
             $resName = _trim($resName);
             $resSeq  = _trim($resSeq);
-            $resSeq  = 0 if ( $resSeq < 0 );
+            #$resSeq  = 0 if ( $resSeq < 0 );
             $serial  = _trim($serial);
             $segID   = _trim($segID);
   
@@ -183,7 +183,7 @@ sub read_pdbqt_atoms {
             $name    = _trim($name);
             $resName = _trim($resName);
             $resSeq  = _trim($resSeq);
-            $resSeq  = 0 if ( $resSeq < 0 );
+            #$resSeq  = 0 if ( $resSeq < 0 );
             $serial  = _trim($serial);
             $charge  = _trim($charge);
             $ADTtype = _trim($ADTtype);

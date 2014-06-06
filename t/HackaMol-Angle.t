@@ -151,7 +151,7 @@ $angle1->ang_fc(1.0);
 cmp_ok( abs( 0.25 - $angle1->angle_energy ),
     '<', 1E-7, 'simple angle energy test' );
 
-$angle1->angle_energy_func(
+$angle1->angle_efunc(
     sub {
         my $a   = shift;
         my $sum = 0;

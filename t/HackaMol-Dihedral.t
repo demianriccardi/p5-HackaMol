@@ -79,7 +79,7 @@ $dihe->dihe_mult(2);
 $dihe->dihe_dphase(0.1);
 cmp_ok(abs(0.9-$dihe->torsion_energy), '<', 1E-2, 'simple torsion energy test');
 
-$dihe->torsion_energy_func(
+$dihe->torsion_efunc(
                           sub {
                                my $a = shift;
                                my $sum = 0;
@@ -88,7 +88,7 @@ $dihe->torsion_energy_func(
                               }
                           );
 
-$dihe->improper_dihe_energy_func($dihe->torsion_energy_func);
+$dihe->improper_dihe_efunc($dihe->torsion_efunc);
 
 cmp_ok (
         abs($dihe->torsion_energy(1,2,3,4) - 10*$dihe->dihe_deg),

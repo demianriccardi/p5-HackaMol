@@ -58,7 +58,6 @@ sub bond_length {
 
 sub bond_energy {
     my $self = shift;
-    return (0) unless ( $self->bond_fc > 0 );
     my $energy = &{ $self->bond_efunc }( $self, @_ );
     return ($energy);
 }

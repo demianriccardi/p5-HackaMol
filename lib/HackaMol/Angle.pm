@@ -75,7 +75,6 @@ sub _build_angle_efunc {
 
 sub angle_energy {
     my $self = shift;
-    return (0) unless ( $self->ang_fc > 0 );
     my $energy = &{ $self->angle_efunc }( $self, @_ );
     return ($energy);
 }

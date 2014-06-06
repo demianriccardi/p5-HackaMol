@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
     * adjusted defaults on PdbRole attributes 
+    * energy_func no longer return 0 without calculation for default force constant params 
+    * energy_func -> efunc rename
 
 0.00_20   2014-05-27 20:41:40EDT-0400 America/New_York
     * added fix_serial method to AtomGroupRole 

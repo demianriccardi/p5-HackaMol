@@ -26,14 +26,14 @@ has $_ => (
     clearer => "clear_$_",
 ) foreach qw(bond_fc bond_length_eq);
 
-has 'bond_energy_func' => (
+has 'bond_efunc' => (
     is      => 'rw',
     isa     => 'CodeRef',
-    builder => "_build_bond_energy_func",
+    builder => "_build_bond_efunc",
     lazy    => 1,
 );
 
-sub _build_bond_energy_func {
+sub _build_bond_efunc {
 
     #my $self = shift; #self is passed by moose, but we don't use it here
     my $subref = sub {
@@ -59,7 +59,7 @@ sub bond_length {
 sub bond_energy {
     my $self = shift;
     return (0) unless ( $self->bond_fc > 0 );
-    my $energy = &{ $self->bond_energy_func }( $self, @_ );
+    my $energy = &{ $self->bond_efunc }( $self, @_ );
     return ($energy);
 }
 
@@ -156,11 +156,11 @@ potentials.
 
 isa Num that is lazy and rw. default = 0.  Equilibrium bond length.
 
-=attr bond_energy_func
+=attr bond_efunc
 
 isa CodeRef that is lazy and rw. default uses builder to generate harmonic 
 potential from the bond_fc, bond_length_eq, and bond_length.  See the 
-_build_bond_energy_func, if interested in changing the function form.
+_build_bond_efunc, if interested in changing the function form.
 
 =method bond_vector
 
@@ -174,13 +174,13 @@ the bond.
 
 =method bond_energy
 
-arguments, as many as you want. Calculates energy using the bond_energy_func 
+arguments, as many as you want. Calculates energy using the bond_efunc 
 described below, if the attribute, bond_fc > 0.  The bond_energy method calls 
-the bond_energy_func as follows: 
+the bond_efunc as follows: 
 
-my $energy = &{$self->bond_energy_func}($self,@_);
+my $energy = &{$self->bond_efunc}($self,@_);
 
-which will pass $self and that in @_ array to bond_energy_func, which can be 
+which will pass $self and that in @_ array to bond_efunc, which can be 
 redefined.
 
 =head1 SEE ALSO

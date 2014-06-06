@@ -55,14 +55,14 @@ sub ang_rad {
     return ( $atoms[1]->angle_rad( $atoms[0], $atoms[2] ) );
 }
 
-has 'angle_energy_func' => (
+has 'angle_efunc' => (
     is      => 'rw',
     isa     => 'CodeRef',
-    builder => "_build_angle_energy_func",
+    builder => "_build_angle_efunc",
     lazy    => 1,
 );
 
-sub _build_angle_energy_func {
+sub _build_angle_efunc {
 
     #my $self = shift; #self is passed by moose, but we don't use it here
     my $subref = sub {
@@ -76,7 +76,7 @@ sub _build_angle_energy_func {
 sub angle_energy {
     my $self = shift;
     return (0) unless ( $self->ang_fc > 0 );
-    my $energy = &{ $self->angle_energy_func }( $self, @_ );
+    my $energy = &{ $self->angle_efunc }( $self, @_ );
     return ($energy);
 }
 
@@ -157,10 +157,10 @@ isa Num that is lazy and rw. default = 0.  force constant for harmonic potential
 isa Num that is lazy and rw. default = 0.  Equilibrium angle.  The ang method 
 returns angle in degrees.
 
-=attr angle_energy_func
+=attr angle_efunc
 
 isa CodeRef that is lazy and rw. default uses builder to generate harmonic 
-potential from the angle_fc, ang_eq, and ang.  See the _build_angle_energy_func,
+potential from the angle_fc, ang_eq, and ang.  See the _build_angle_efunc,
 if interested in changing the function form.
 
 =method ang_normvec
@@ -183,13 +183,13 @@ no arguments. returns the angle (radians) between the atom21 and atom23 vectors.
 
 =method angle_energy
 
-arguments, as many as you want. Calculates energy using the angle_energy_func 
+arguments, as many as you want. Calculates energy using the angle_efunc 
 described below, if the attribute, angle_fc > 0.  The angle_energy method calls 
-the angle_energy_func as follows: 
+the angle_efunc as follows: 
 
-my $energy = &{$self->angle_energy_func}($self,@_);
+my $energy = &{$self->angle_efunc}($self,@_);
 
-which will pass $self and that in @_ array to angle_energy_func, which, similar 
+which will pass $self and that in @_ array to angle_efunc, which, similar 
 to the Bond class, can be redefined.
 
 =head1 SEE ALSO

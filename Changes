@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_21   2014-07-25 13:29:06-04:00 America/Indiana/Indianapolis
     * adjusted defaults on PdbRole attributes 
     * energy_func no longer return 0 without calculation for default force constant params 
     * energy_func -> efunc rename

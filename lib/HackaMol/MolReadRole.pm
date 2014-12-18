@@ -303,7 +303,7 @@ sub read_xyz_atoms {
 sub _trim {
     my $string = shift;
     $string =~ s/^\s+//;
-    $string =~ s/\s+$//;
+ #   $string =~ s/\s+$//; #unpack will delete the \s+ in the end;
     return $string;
 }
 

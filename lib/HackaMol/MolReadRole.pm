@@ -6,6 +6,7 @@ use Carp;
 use Math::Vector::Real;
 use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
+use HackaMol::Atom;#add the code,the Role may better to understand
 
 has 'hush_read' => (
     is      => 'rw',

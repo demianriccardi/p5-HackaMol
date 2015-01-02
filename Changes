@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * reorganize examples.  Still need more
 
 0.00_21   2014-07-25 13:29:06-04:00 America/Indiana/Indianapolis
     * adjusted defaults on PdbRole attributes 

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-# repetitive calculation of the average vector length for a sphere of random vectors
-# shows capabilities of using MCE to use multiple cores.
+# repetitive calculation of the average vector length for a sphere 
+# of random vectors shows capabilities of using MCE to use multiple cores.
 use Modern::Perl;
 use Math::Vector::Real;
 use Math::Vector::Real::Random;

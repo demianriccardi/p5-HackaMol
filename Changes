@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.00_22   2015-01-02 11:04:34-05:00 America/Indiana/Indianapolis
     * reorganize examples.  Still need more
     * reformat TODO list to follow P5 conventions
 

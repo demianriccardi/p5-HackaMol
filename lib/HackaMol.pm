@@ -263,21 +263,21 @@ __END__
    
 =head1 DESCRIPTION
    
-The HackaMol library enables users to build simple, yet powerful scripts 
-for carrying out computational work on molecules at multiple scales. The 
-molecular object system organizes atoms within molecules using groups, 
-bonds, angles, and dihedrals.  HackaMol seeks to provide intuitive 
-attributes and methods that may be harnessed to coerce molecular computation 
-through a common core. The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, and my own experiences as a researcher. 
+The HackaMol library simplifies powerful scripting of multiscale molecular modeling and analysis. HackaMol seeks to 
+provide intuitive attributes and methods that may be harnessed to coerce molecular computation through a common core. 
+The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, 
+and our own experiences as researchers. 
 
 The library is organized into two regions: HackaMol, the core (contained here)
 that has classes for atoms and molecules, and HackaMol::X, the extensions, such as
 HackaMol::X::Vina (an interface to Autodock Vina) or HackaMol::X::Calculator,
-a more general abstract calculator for coercing molecular computation through a common core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core.  
+a more general abstract calculator for interfacing external programs. The three major goals of the core are for it to 
+be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space 
+for researchers to develop and share new methods that use the core.  
 
-HackaMol uses Math::Vector::Real (MVR) for all the vector operations. MVR is a
-lightweight solution with a fast XS dropin that overlaps very well with the
-desirables for working with atoms and coarse grained molecules. Extensions that treat much larger systems will definitely benefit from the capabilities L<PDL> or L<Math::GSL>.
+HackaMol uses Math::Vector::Real (MVR) for all the vector operations. The methods of MVR overlap very well with those
+needed for working with atoms and coarse grained molecules. MVR is a lightweight solution with an XS drop-in that makes 
+vector analyses very fast. Extensions that treat much larger systems will definitely benefit from the capabilities of L<PDL>.
 
 The HackaMol class (loaded in Synopsis) uses the core classes to provide some object 
 building utilities described below.  This class consumes HackaMol::MolReadRole to 

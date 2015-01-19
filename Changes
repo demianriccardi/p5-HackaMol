@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * fixed the github link for metacpan.
+
+0.011     2015-01-19 15:26:19-05:00 America/Indiana/Indianapolis
     * fixed version issue using dzil.
 
 0.01      2015-01-12 16:31:52-05:00 America/Indiana/Indianapolis

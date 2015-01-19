@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    * fixed version issue using dzil.
 
 0.01      2015-01-12 16:31:52-05:00 America/Indiana/Indianapolis
     * first release: 0.01

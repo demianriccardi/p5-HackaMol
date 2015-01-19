@@ -1,7 +1,9 @@
 # Fix Kwalitee via CPAN
 
+
 # TESTS
 * refactor test suite
+* get the directory path tests to work on windows
 
 # Examples 
 * improve examples; add more

@@ -6,6 +6,7 @@ use Test::Moose;
 use Test::More;
 use Test::Warn;
 use Test::Dir;
+use Path::Tiny;
 use Test::Fatal qw(lives_ok);
 use HackaMol;                # v0.001;#To test for version availability
 use Cwd;
@@ -31,9 +32,9 @@ lives_ok {
 
 lives_ok {
     $obj = HackaMol->new(homedir=>"t", 
-                        scratch => "t/tmp", 
-                        data=> "t/lib",
-                        dirs => [qw/. .. \/var ~\/bin/ ]);
+                        scratch => path("t/tmp"), #add path cmd for windows... 
+                        data=> path("t/lib"),
+                        dirs => [qw/lib examples/ ]);
 }
 'Test creation of an obj with directories';
 
@@ -62,17 +63,9 @@ foreach (0 .. 2){
 
 is (scalar($obj->scratch->children), 0,     "tempfiles were destroyed");
 
-foreach (0 .. 2){
-  my $file = $obj->scratch."/$_.txt";
-  system ("touch $file");
-}
-
-is (scalar($obj->scratch->children), 3,     "touched 3 files");
-my @txts = sort $obj->scratch->children;
-my @list = map{"$cwd/$_"} sort qw(t/tmp/0.txt t/tmp/1.txt t/tmp/2.txt);
-is_deeply(\@txts,\@list, "return contents of scratch");
-
 $obj->scratch->remove_tree;
 dir_not_exists_ok($obj->scratch, 'scratch directory deleted!');
 
 done_testing();
+
+

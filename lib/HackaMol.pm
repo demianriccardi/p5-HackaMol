@@ -27,7 +27,8 @@ sub fetch_pdbid{
   $pdbid =~ s/\.pdb//; #just in case
   $pdbid .= '.pdb';
   my $pdb = get($self->pdbserver.$pdbid);
-  return (split($pdb));
+  return ( $pdb );
+
 }
 
 sub read_file_append_mol{

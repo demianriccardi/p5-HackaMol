@@ -15,21 +15,8 @@ use Scalar::Util qw(refaddr);
 use Carp;
 
 with 'HackaMol::NameRole', 'HackaMol::MolReadRole', 
-     'HackaMol::PathRole','HackaMol::ExeRole';
+     'HackaMol::PathRole','HackaMol::ExeRole', 'HackaMol::FileFetchRole';
 
-has 'pdbserver',   is => 'rw', isa => 'Str', lazy => 1, default => 'http://pdb.org/pdb/files/';
-
-sub fetch_pdbid{
-  #return array of lines from pdb downloaded from pdb.org
-  use LWP::Simple;
-  my $self = shift;
-  my $pdbid = shift;
-  $pdbid =~ s/\.pdb//; #just in case
-  $pdbid .= '.pdb';
-  my $pdb = get($self->pdbserver.$pdbid);
-  return ( $pdb );
-
-}
 
 sub read_file_append_mol{
     my $self = shift;

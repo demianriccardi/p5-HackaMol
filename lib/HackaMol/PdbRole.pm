@@ -33,6 +33,18 @@ has 'segid',       is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'iatom',       is => 'rw', isa => 'Int', lazy => 1, default => 0;
 has 'resid',       is => 'rw', isa => 'Int', lazy => 1, default => 1;
 has 'serial',      is => 'rw', isa => 'Int', lazy => 1, default => 1;
+has 'pdbserver'    is => 'rw', isa => 'Str', lazy => 1, default => 'http://pdb.org/pdb/files/';
+
+sub fetch_pdbid{
+  #return array of lines from pdb downloaded from pdb.org
+  use LWP::Simple;
+  my $self = shift;
+  my $pdbid = shift;
+  $pdbid ~= s/\.pdb//; #just in case
+  $pdbid .= '.pdb';
+  my $pdb = get($self->pdbserver.$pdbid);
+  return (split($pdb));
+}
 
 no Moose::Role;
 1;

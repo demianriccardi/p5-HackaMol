@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * added FileFetchRole that uses LWP to get and getstore files from pdb.org
 
 0.013     2015-02-01 20:13:47-05:00 America/New_York
   * fixed t/HackaMol-DirRole.t for windows installs

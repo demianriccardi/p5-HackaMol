@@ -15,7 +15,7 @@ sub _fix_pdbid{
 }
 
 sub get_pdbid{
-  #return array of lines from pdb downloaded from pdb.org
+  #return pdb contents downloaded from pdb.org
   use LWP::Simple;
   my $self = shift;
   my $pdbid = _fix_pdbid(shift);  
@@ -31,10 +31,10 @@ sub getstore_pdbid{
   my $fpdbid = shift || $pdbid;
   if (-f $fpdbid and not $self->overwrite){
     carp "$fpdbid exists, set self->overwrite(1) to overwrite";
-    carp "you can load this file using something like HackaMol->new->file_load_mol";
+    carp "you can load this file using something like HackaMol->new->read_file_mol";
   }
-  my $pdb = getstore($self->pdbserver.$pdbid,$fpdbid);
-  return ( $pdb );
+  my $rc = getstore($self->pdbserver.$pdbid,$fpdbid);
+  return ( $rc );
 }
 
 no Moose::Role;
@@ -61,9 +61,8 @@ fetches a pdb from pdb.org and returns the file in a string.
 =method getstore_pdbid 
 
 arguments: pdbid and filename for writing (optional). 
-Fetches a pdb from pdb.org and does two things: 1. returns the file in a string (as does get_pdbid) 
-and 2. stores it in your working directory unless {it exists and overwrite(0)}. If a filename is not
-passed to the method, it will write to pdbid.pdb.
+Fetches a pdb from pdb.org and stores it in your working directory unless {it exists and overwrite(0)}. If a filename is not
+passed to the method, it will write to $pdbid.pdb. use get_pdbid to return contents
 
 =attr overwrite    
  

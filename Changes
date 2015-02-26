@@ -1,7 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-
+  * Fix dist.ini dependencies for testing lib versions
+  
 0.014     2015-02-17 22:33:21-05:00 America/Indiana/Indianapolis
   * added FileFetchRole that uses LWP to get and getstore files from pdb.org
   * notebooks

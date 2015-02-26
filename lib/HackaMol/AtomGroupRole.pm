@@ -312,8 +312,13 @@ sub _open_file_unless_fh {
     my $fh = \*STDOUT;   # default to standard out
                          # if argument is passed, check if filehandle
     if ( defined($file) ) {
-        if ( ref($file) and reftype($file) eq "GLOB" ) {
-            $fh = $file;
+        if ( ref($file) ) {
+            if (reftype($file) eq "GLOB"){
+              $fh = $file;
+            }
+            else {
+              croak "trying write to reference that is not a GLOB";
+            }
         }
         else {
             carp "overwrite $file" if ( -e $file );

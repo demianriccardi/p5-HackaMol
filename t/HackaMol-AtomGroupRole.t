@@ -243,6 +243,8 @@ my $xyz2 =
   H   2.330920  -0.016939   0.740498
 ';
 
+dies_ok{$group->print_xyz($group)} "die of print to strange reference";
+
 $group->rotate(V(1,0,0), 180, $COM,1);
 $group->gt(1);
 
@@ -258,10 +260,10 @@ stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
   my @exp = (10,11,12);
   my @obs = map {$_->serial} $group->all_atoms;
   is_deeply(\@exp, \@obs, "fix_serial, start from 10");
-  $group->fix_serial(1);
+  $group->fix_serial(); # default
   @exp = (1,2,3);
   @obs = map {$_->serial} $group->all_atoms;
-  is_deeply(\@exp, \@obs, "fix_serial, start from 1");
+  is_deeply(\@exp, \@obs, "fix_serial, default start from 1");
   @exp = (0,1,2);
   $group->fix_serial(0);
   @obs = map {$_->serial} $group->all_atoms;
@@ -283,6 +285,8 @@ stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz after rotation 180 again");
   H   2.330920   0.060980  -1.003320
 ';
   $_->push_coords(V(0,0,0),V(1,0,0),V(2,0,0)) foreach $group->all_atoms;
+  dies_ok{$group->print_xyz_ts()} "dies_ok print_xyz_ts, without \@ts";
+  dies_ok{$group->print_xyz_ts([])} "dies_ok print_xyz_ts, with empty \@ts";
   dies_ok{$group->print_xyz_ts( [ 0 .. 9 ])} "print_xyz_ts, some \@ts in array greater than tmax";
   dies_ok{$group->print_pdb_ts( [ 0 .. 9 ])} "print_pdb_ts, some \@ts in array greater than tmax";
   stdout_is(sub{$group->print_xyz_ts( [ 4,0 ]) },$xyz, "print_xyz_ts slice reverse");

@@ -19,8 +19,8 @@ use HackaMol;
       read_file_atoms read_pdb_atoms read_xyz_atoms
     );
 
-    my @roles = qw(HackaMol::MolReadRole HackaMol::NameRole 
-                   HackaMol::PathRole HackaMol::ExeRole);
+    my @roles = qw(HackaMol::MolReadRole HackaMol::NameRole
+      HackaMol::PathRole HackaMol::ExeRole);
 
     map has_attribute_ok( 'HackaMol', $_ ), @attributes;
     map can_ok( 'HackaMol', $_ ), @methods;
@@ -63,7 +63,7 @@ use HackaMol;
     my $mol = HackaMol::Molecule->new(
         name       => 'bg_mol',
         atoms      => [ $group->all_atoms ],
-        atomgroups => [ $group ]
+        atomgroups => [$group]
     );
 
     is( $group->count_atoms, $natoms, "group atom count: $natoms" );
@@ -132,8 +132,6 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
     "BAD t->1 PDB Atom 1 serial 2 resname ASN has changed",
       "carp warning for bad model in pdb file";
 
-    dies_ok { $hack->read_file_append_mol("bah.xyz") } "append_mol";
-
 }
 
 {    # read xyz filed with different but same representations
@@ -148,16 +146,25 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
 
 my $mol1 = $hack->read_file_mol("t/lib/1L2Y_mod123.pdb");
 is( $mol1->tmax, 2, "index of last coords for each atom" );
-$hack->read_file_append_mol( "t/lib/1L2Y_mod123.pdb", $mol1 );
-is( $mol1->tmax, 5, "index of last coords for each atom after append" );
-dies_ok{$hack->read_file_append_mol( "Hg.2-18w.xyz", $mol1 )} 
-  "can not append if number of atoms are different" ;
-{
-  my $mol = $hack->read_file_mol("t/lib/Hg.2-18w.xyz");
-  dies_ok{$hack->read_file_append_mol("Zn.2-18w.xyz", $mol)}
-  "can not append if atoms are different";
-}
 
+#read_file append tests
+dies_ok {
+    $hack->read_file_append_mol("bah.xyz")
+}
+"read_file_append_mol> dies ok if no molecule object passed";
+
+$hack->read_file_append_mol( "t/lib/1L2Y_mod123.pdb", $mol1 );
+is( $mol1->tmax, 5,
+    "read_file_append_mol> index of last coords for each atom after append" );
+
+dies_ok { $hack->read_file_append_mol( "Hg.2-18w.xyz", $mol1 ) }
+"read_file_append_mol> dies ok if number of atoms are different";
+
+{
+    my $mol = $hack->read_file_mol("t/lib/Hg.2-18w.xyz");
+    dies_ok { $hack->read_file_append_mol( "Zn.2-18w.xyz", $mol ) }
+    "read_file_append_mol> dies ok if atoms are different";
+}
 
 #test group generation
 my @gresids = $hack->group_by_atom_attr( 'resid',  $mol1->all_atoms );
@@ -247,34 +254,35 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
 
 {    # guess element from name make them dirty if don't exist in lookup
     my @atoms;
-    warning_is { @atoms = $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb")}
+    warning_is { @atoms = $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb") }
     "MolReadRole> found 2 dirty atoms. Check symbols and lookup names",
       "warning for dirty atoms";
-    # no warning... 
-    is ($hack->hush_read, 0, 'hush_read off');
+
+    # no warning...
+    is( $hack->hush_read, 0, 'hush_read off' );
     $hack->hush_read(1);
-    is ($hack->hush_read, 1, 'hush_read on');
-     
+    is( $hack->hush_read, 1, 'hush_read on' );
+
     my @watoms = $hack->read_file_atoms("t/lib/1L2Y_noelem.pdb");
 
     my @lsymbols = map { $_->symbol } @atoms;
-    
-    my @dirty = grep {$_->is_dirty} @atoms;
-    is (scalar(@dirty),2, "2 dirty atoms");  
+
+    my @dirty = grep { $_->is_dirty } @atoms;
+    is( scalar(@dirty), 2, "2 dirty atoms" );
     my @esymbols = qw(N C C O C C O N H H H H H H H H N C C O C C
       C C H H H H H H H H H H H H);
     is_deeply( \@lsymbols, \@esymbols, "symbols set from names" );
 
 }
 
-{ # pdbqt reading tests
+{    # pdbqt reading tests
     my @atoms;
     my $hack = HackaMol->new;
-    warning_is { @atoms = $hack->read_file_atoms("t/lib/test.pdbqt")}
+    warning_is { @atoms = $hack->read_file_atoms("t/lib/test.pdbqt") }
     "MolReadRole> found 27 dirty atoms. Check symbols and lookup names",
       "warning for dirty atoms";
-    my $mol = HackaMol::Molecule->new(name=>"drugs", atoms=>[@atoms]);
-    is ($mol->tmax, 8, "9 models in  test.pdbqt")
+    my $mol = HackaMol::Molecule->new( name => "drugs", atoms => [@atoms] );
+    is( $mol->tmax, 8, "9 models in  test.pdbqt" )
 }
 
 done_testing();

@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.016     2015-02-26 21:41:39-05:00 America/Indiana/Indianapolis
   * dist.ini dependencies again
 
 0.015     2015-02-26 15:25:55-05:00 America/Indiana/Indianapolis

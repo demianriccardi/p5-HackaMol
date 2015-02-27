@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * dist.ini dependencies again
 
 0.015     2015-02-26 15:25:55-05:00 America/Indiana/Indianapolis
   * Fix dist.ini dependencies for testing lib versions

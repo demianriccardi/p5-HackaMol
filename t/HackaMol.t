@@ -148,22 +148,26 @@ my $mol1 = $hack->read_file_mol("t/lib/1L2Y_mod123.pdb");
 is( $mol1->tmax, 2, "index of last coords for each atom" );
 
 #read_file append tests
-dies_ok {
-    $hack->read_file_append_mol("bah.xyz")
-}
-"read_file_append_mol> dies ok if no molecule object passed";
+{
+  
+  my $mol = $hack->read_file_mol("t/lib/Hg.2-18w.xyz");
 
-$hack->read_file_append_mol( "t/lib/1L2Y_mod123.pdb", $mol1 );
-is( $mol1->tmax, 5,
+  dies_ok { $hack->read_file_append_mol( "t/lib/Zn.2-18w.xyz", $mol ) }
+    "read_file_append_mol> dies ok if atoms are different";
+
+  dies_ok {
+    $hack->read_file_append_mol("bah.xyz")
+  }
+  "read_file_append_mol> dies ok if no molecule object passed";
+
+  $hack->read_file_append_mol( "t/lib/Hg.2-18w.xyz", $mol );
+  $hack->read_file_append_mol( "t/lib/Hg.2-18w.xyz", $mol );
+  is( $mol1->tmax, 2,
     "read_file_append_mol> index of last coords for each atom after append" );
 
-dies_ok { $hack->read_file_append_mol( "Hg.2-18w.xyz", $mol1 ) }
-"read_file_append_mol> dies ok if number of atoms are different";
+  dies_ok { $hack->read_file_append_mol( "t/lib/1L2Y_mod123.pdb", $mol ) }
+    "read_file_append_mol> dies ok if number of atoms are different";
 
-{
-    my $mol = $hack->read_file_mol("t/lib/Hg.2-18w.xyz");
-    dies_ok { $hack->read_file_append_mol( "Zn.2-18w.xyz", $mol ) }
-    "read_file_append_mol> dies ok if atoms are different";
 }
 
 #test group generation

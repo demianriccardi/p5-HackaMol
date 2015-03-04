@@ -25,11 +25,14 @@ sub read_file_append_mol{
 
     my @atoms = $self->read_file_atoms($file);
     my @matoms= $mol->all_atoms;
-    unless (scalar(@matoms) == scalar(@atoms) ){
-     # croak "number of atoms not same";
+
+    if (scalar(@matoms) != scalar(@atoms) ){
+      croak "file_append_mol> number of atoms not same";
     }
     foreach my $i (0 .. $#atoms) {
-     # croak "atom mismatch" unless ($matoms[$i]->Z == $atoms[$i]->Z); 
+      if ($matoms[$i]->Z != $atoms[$i]->Z){
+        croak "file_append_mol> atom mismatch";
+      }
       $matoms[$i]->push_coords($_) foreach ($atoms[$i]->all_coords);
     }
 }

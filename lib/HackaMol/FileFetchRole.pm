@@ -31,7 +31,6 @@ sub getstore_pdbid{
   my $fpdbid = shift || $pdbid;
   if (-f $fpdbid and not $self->overwrite){
     carp "$fpdbid exists, set self->overwrite(1) to overwrite";
-    carp "you can load this file using something like HackaMol->new->read_file_mol";
   }
   my $rc = getstore($self->pdbserver.$pdbid,$fpdbid);
   return ( $rc );

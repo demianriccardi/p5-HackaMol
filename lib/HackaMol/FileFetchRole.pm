@@ -28,7 +28,8 @@ sub getstore_pdbid{
   use LWP::Simple;
   my $self = shift;
   my $pdbid = _fix_pdbid(shift);
-  my $fpdbid = shift || $pdbid;
+  my $fpdbid = shift ;
+  $fpdbid = $pdbid unless defined($fpdbid);
   if (-f $fpdbid and not $self->overwrite){
     carp "$fpdbid exists, set self->overwrite(1) to overwrite";
   }

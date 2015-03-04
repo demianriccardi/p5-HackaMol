@@ -25,7 +25,7 @@ bin_atoms_name all_atoms
 push_atoms get_atoms delete_atoms 
 count_atoms clear_atoms
 rotate translate print_xyz
-fix_serial
+fix_serial tmax what_time
 );
 
 map has_attribute_ok( 'HackaMol::AtomGroup', $_ ), @attributes;
@@ -329,5 +329,16 @@ is_deeply($bin_hr,{}, "empty bin_hr");
 is_deeply($z_hr,{}, "empty z_hr");
 
 unlink($tfl);
+
+#test what_time method
+{
+  $group->push_atoms($atom1, $atom2, $atom3);
+  $atom1->push_coords(V(0, 1, 2),V(3,4,5));
+  $atom1->t(2);
+  warning_is { $group->what_time } 
+    "what_time> t differences within group!!", 
+    "carp warning> if atoms are different ts";
+
+}
 
 done_testing();

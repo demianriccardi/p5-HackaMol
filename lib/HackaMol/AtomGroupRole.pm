@@ -251,7 +251,7 @@ sub what_time {
     my $self = shift;
     my $tbin = $self->bin_this('t');
     my @ts   = keys(%$tbin);
-    croak "t differences within group" if (scalar(@ts)> 1);
+    carp "what_time> t differences within group!!" if (scalar(@ts)> 1);
     return $ts[0];
 }
 

@@ -5,7 +5,7 @@ use Moose::Role;
 use Carp;
 
 has 'pdbserver',   is => 'rw', isa => 'Str', lazy => 1, default => 'http://pdb.org/pdb/files/';
-has 'overwrite',   is => 'ro', isa => 'Bool', lazy => 1, default => 0;
+has 'overwrite',   is => 'rw', isa => 'Bool', lazy => 1, default => 0;
 
 sub _fix_pdbid{
   my $pdbid = shift;

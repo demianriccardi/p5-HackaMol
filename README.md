@@ -2,7 +2,7 @@ HackaMol
 ========
 Object-oriented Perl 5, Moose library for molecular hacking on multiple scales
 
-VERSION 0.016
+VERSION 0.017
 ============
        
 Please see *[HackaMol on MetaCPAN](https://metacpan.org/release/HackaMol) for formatted documentation.  
@@ -11,8 +11,10 @@ SYNOPSIS
 ========
        use HackaMol;
        use Math::Vector::Real;
-       
        my $hack = HackaMol->new( name => "hackitup" );
+
+       my $pdb  = '1L2Y.pdb';
+       my $fpdb = $hack->getstore_pdbid("$pdb");
 
        # all coordinates from NMR ensemble are loaded into atoms
        my $mol  = $hack->read_file_mol("1L2Y.pdb");

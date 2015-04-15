@@ -484,18 +484,15 @@ no arguments. returns the norm of the dipole in debye (assuming charges in elect
 
 =method bin_atoms
 
-no arguments. returns two hash references. The histogram of atom symbols, and a
-map from symbol-> Z for the same keys.  The second hash reference was added, 
-to be able to sort by Z in the absence of Atom objects.
+Called with no arguments. Returns a hash with a count for each unique atom symbol.
 
 =method count_unique_atoms
 
-no arguments. returns the number of keys in each hash returned by bin_atoms
+no arguments. returns the number of unique atoms 
 
 =method bin_atoms_name
 
-no arguments. returns a string summary of the atoms in the group.  Take the bin_atoms hashes, sorts
-by Z and generates something like OH2 for water or O2H2 for peroxide.
+no arguments. returns a string summary of the atoms in the group sorted by decreasing atomic number. For example; OH2 for water or O2H2 for peroxide.
 
 =attr atoms
 

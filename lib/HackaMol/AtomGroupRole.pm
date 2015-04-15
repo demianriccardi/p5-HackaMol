@@ -113,12 +113,14 @@ sub dipole_moment {
 }
 
 sub bin_atoms {
-# Called with no arguments.  
-# Returns a hash with a count of unique atom symbols
+
+    # Called with no arguments.
+    # Returns a hash with a count of unique atom symbols
     my $self   = shift;
     my $bin_hr = $self->bin_this('symbol');
-    return ( $bin_hr );
+    return ($bin_hr);
 }
+
 sub count_unique_atoms {
     my $self   = shift;
     my $bin_hr = $self->bin_atoms;
@@ -126,6 +128,7 @@ sub count_unique_atoms {
 }
 
 sub bin_atoms_name {
+
     # return something like C4H10 sort in order of descending Z
     my $self   = shift;
     my $bin_hr = $self->bin_atoms;
@@ -149,7 +152,7 @@ sub translate {
     my $tf   = shift;
 
     my @atoms = $self->all_atoms;
-    do{carp "no atoms to translate"; return} unless (@atoms);
+    do { carp "no atoms to translate"; return } unless (@atoms);
     $tf = $atoms[0]->t unless ( defined($tf) );
 
     foreach my $at (@atoms) {
@@ -159,6 +162,7 @@ sub translate {
 }
 
 sub rotate {
+
     #rotate about origin. having origin allows rotation of subgroup
     #without having to translate everything.
     my $self = shift;
@@ -182,86 +186,92 @@ sub fix_serial {
     my @atoms  = shift->all_atoms;
     my $offset = shift;
     $offset = 1 unless defined($offset);
-    $atoms[$_]->{serial} = $_ + $offset foreach (0 .. $#atoms);
+    $atoms[$_]->{serial} = $_ + $offset foreach ( 0 .. $#atoms );
     return $offset;
 }
 
-
 sub print_xyz_ts {
-  _print_ts('print_xyz',@_);
+    _print_ts( 'print_xyz', @_ );
 }
 
 sub print_pdb_ts {
-  _print_ts('print_pdb',@_);
+    _print_ts( 'print_pdb', @_ );
 }
 
 sub _print_ts {
+
     #use one sub for xyz_ts and pdb_ts writing
     my $print_method = shift;
+
     # two args: \@ts, optional filename
     my $self = shift;
     my $ts   = shift;
-    unless(defined($ts)) {
-      croak "must pass arrayref containing ts";
+    unless ( defined($ts) ) {
+        croak "must pass arrayref containing ts";
     }
-    my @ts   = @$ts;
-    unless(scalar(@ts)) {
-      croak "must pass array with atleast one t";
+    my @ts = @$ts;
+    unless ( scalar(@ts) ) {
+        croak "must pass array with atleast one t";
     }
     my $tmax = $self->tmax;
-    my $nt = grep {$_ > $tmax} @ts;
+    my $nt = grep { $_ > $tmax } @ts;
     croak "$nt ts out of bounds" if $nt;
-  
+
     my $tnow = $self->what_time;
+
     # take the first out of the loop to setup fh
-    $self->gt(shift @ts);
+    $self->gt( shift @ts );
     my $fh = $self->$print_method(@_);
- 
-    foreach my $t (@ts){
-      $self->gt($t);
-      $fh = $self->$print_method($fh);
+
+    foreach my $t (@ts) {
+        $self->gt($t);
+        $fh = $self->$print_method($fh);
     }
+
     # return to original t
     $self->gt($tnow);
 }
 
-sub bin_this{
-  #return hash{$_->method}++
-  my $self   = shift;
-  my $method = shift;
+sub bin_this {
 
-  return ( {} ) unless $self->count_atoms;
+    #return hash{$_->method}++
+    my $self   = shift;
+    my $method = shift;
 
-  my @atoms  = $self->all_atoms;
-  # just test the first one...
-  croak "Atom does not do $method" unless $atoms[0]->can($method);
+    return ( {} ) unless $self->count_atoms;
 
-  my $bin;
-  $bin->{$_}++ foreach (map{ $_->$method } @atoms);
-  return ($bin);
+    my @atoms = $self->all_atoms;
+
+    # just test the first one...
+    croak "Atom does not do $method" unless $atoms[0]->can($method);
+
+    my $bin;
+    $bin->{$_}++ foreach ( map { $_->$method } @atoms );
+    return ($bin);
 
 }
 
 sub tmax {
+
     # still not the best implementation! what about atoms without coords?
     my $self = shift;
     my $tbin = $self->bin_this('count_coords');
     my @ts   = keys(%$tbin);
-    croak "tmax differences within group" if (scalar(@ts)> 1);
-    $ts[0] ? return $ts[0]-1 : return 0;
+    croak "tmax differences within group" if ( scalar(@ts) > 1 );
+    $ts[0] ? return $ts[0] - 1 : return 0;
 }
 
 sub what_time {
     my $self = shift;
     my $tbin = $self->bin_this('t');
     my @ts   = keys(%$tbin);
-    carp "what_time> t differences within group!!" if (scalar(@ts)> 1);
+    carp "what_time> t differences within group!!" if ( scalar(@ts) > 1 );
     return $ts[0];
 }
 
 sub print_xyz {
     my $self = shift;
-    my $fh = _open_file_unless_fh(shift);
+    my $fh   = _open_file_unless_fh(shift);
 
     my @atoms = $self->all_atoms;
     print $fh $self->count_atoms . "\n\n";
@@ -278,50 +288,57 @@ sub print_xyz {
 
 sub print_pdb {
     my $self = shift;
-    my $fh = _open_file_unless_fh(shift);
+    my $fh   = _open_file_unless_fh(shift);
 
     my @atoms = $self->all_atoms;
-    printf $fh ("MODEL       %2i\n",$atoms[0]->t+1); 
+    printf $fh ( "MODEL       %2i\n", $atoms[0]->t + 1 );
     foreach my $at (@atoms) {
-        
+
         printf $fh (
+
             #"%-6s%5i  %-3s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
-            #      12         21         
-            "%-6s%5i %-4s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n",
-            ( map{$at->$_} qw ( 
-                              record_name 
-                              serial 
-                              name 
-                              altloc  
-                              resname
-                              chain
-                              resid
-                              icode
-                            )
-            ), @{ $at->get_coords( $at->t ) },
-            $at->occ, $at->bfact, $at->segid,$at->symbol,# $at->charge
+            #      12         21
+"%-6s%5i %-4s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n",
+            (
+                map { $at->$_ }
+                  qw (
+                  record_name
+                  serial
+                  name
+                  altloc
+                  resname
+                  chain
+                  resid
+                  icode
+                  )
+            ),
+            @{ $at->get_coords( $at->t ) },
+            $at->occ,
+            $at->bfact,
+            $at->segid,
+            $at->symbol,    # $at->charge
         );
 
     }
-    print $fh "ENDMDL\n"; 
-    
-    return ($fh);    # returns filehandle for future writing
+    print $fh "ENDMDL\n";
+
+    return ($fh);           # returns filehandle for future writing
 
 }
 
 sub _open_file_unless_fh {
 
-    my $file = shift;    # could be file or filehandle
+    my $file = shift;       # could be file or filehandle
 
-    my $fh = \*STDOUT;   # default to standard out
-                         # if argument is passed, check if filehandle
+    my $fh = \*STDOUT;      # default to standard out
+                            # if argument is passed, check if filehandle
     if ( defined($file) ) {
         if ( ref($file) ) {
-            if (reftype($file) eq "GLOB"){
-              $fh = $file;
+            if ( reftype($file) eq "GLOB" ) {
+                $fh = $file;
             }
             else {
-              croak "trying write to reference that is not a GLOB";
+                croak "trying write to reference that is not a GLOB";
             }
         }
         else {
@@ -332,7 +349,6 @@ sub _open_file_unless_fh {
 
     return ($fh);
 }
-
 
 no Moose::Role;
 

@@ -326,7 +326,6 @@ cmp_ok ($group->total_Z, '==', 0, 'cleared total Z'  );
 my ($bin_hr,$z_hr) = $group->bin_atoms;
 
 is_deeply($bin_hr,{}, "empty bin_hr");
-is_deeply($z_hr,{}, "empty z_hr");
 
 unlink($tfl);
 

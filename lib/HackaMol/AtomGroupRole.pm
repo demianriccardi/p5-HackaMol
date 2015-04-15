@@ -113,28 +113,28 @@ sub dipole_moment {
 }
 
 sub bin_atoms {
+# Called with no arguments.  
+# Returns a hash with a count of unique atom symbols
     my $self   = shift;
     my $bin_hr = {};
-    my $z_hr   = {};
-    return ( $bin_hr, $z_hr ) unless $self->count_atoms;
-    foreach my $atom ( $self->all_atoms ) {
-        $bin_hr->{ $atom->symbol }++;
-        $z_hr->{ $atom->symbol } = $atom->Z;
-    }
-    return ( $bin_hr, $z_hr );
-}
+    return ( $bin_hr ) unless $self->count_atoms;
 
+    $bin_hr->{ $_->symbol }++ foreach $self->all_atoms;
+    return ( $bin_hr );
+}
 sub count_unique_atoms {
-    my $self = shift;
-    my ( $bin_hr, $z_hr ) = $self->bin_atoms;
+    my $self   = shift;
+    my $bin_hr = $self->bin_atoms;
     return ( scalar( keys %{$bin_hr} ) );
 }
 
 sub bin_atoms_name {
-
     # return something like C4H10 sort in order of descending Z
-    my $self = shift;
-    my ( $bin_hr, $z_hr ) = $self->bin_atoms;
+    my $self   = shift;
+    my $bin_hr = $self->bin_atoms;
+    my $z_hr;
+    $z_hr->{ $_->symbol } = $_->Z foreach $self->all_atoms;
+
     my @names = map {
         my $name = $_ . $bin_hr->{$_};
         $name =~ s/(\w+)1$/$1/;

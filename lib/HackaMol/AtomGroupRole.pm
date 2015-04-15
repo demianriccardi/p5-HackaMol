@@ -116,10 +116,7 @@ sub bin_atoms {
 # Called with no arguments.  
 # Returns a hash with a count of unique atom symbols
     my $self   = shift;
-    my $bin_hr = {};
-    return ( $bin_hr ) unless $self->count_atoms;
-
-    $bin_hr->{ $_->symbol }++ foreach $self->all_atoms;
+    my $bin_hr = $self->bin_this('symbol');
     return ( $bin_hr );
 }
 sub count_unique_atoms {
@@ -229,13 +226,20 @@ sub _print_ts {
 }
 
 sub bin_this{
-  #return binned $_->method, what if can't be binned.  bah.  
+  #return hash{$_->method}++
   my $self   = shift;
   my $method = shift;
-  my @ts   = map{$_->$method} $self->all_atoms;
-  my %bin;
-  $bin{$_}++ foreach @ts;
-  return (\%bin);
+
+  return ( {} ) unless $self->count_atoms;
+
+  my @atoms  = $self->all_atoms;
+  # just test the first one...
+  croak "Atom does not do $method" unless $atoms[0]->can($method);
+
+  my $bin;
+  $bin->{$_}++ foreach (map{ $_->$method } @atoms);
+  return ($bin);
+
 }
 
 sub tmax {

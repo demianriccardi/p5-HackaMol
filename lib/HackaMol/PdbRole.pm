@@ -2,7 +2,47 @@ package HackaMol::PdbRole;
 
 #ABSTRACT: PdbRole of lazy attributes for HackaMol atoms
 use Moose::Role;
+use LWP::Simple;
 use Carp;
+
+
+#something like this: $mol->fetch_pdbid(); PDBRole may be the best place for it 
+sub fetch_pdbid
+{
+	my $self=shift;
+	my $pdbid=shift;
+	my $file;
+	if(length($pdbid)==4)
+	{
+		$file=$pdbid;
+	}
+	else
+	{
+		$file=$pdbid.'.pdb';
+	}
+	if(-f $file)
+	{
+		return 1;
+	}
+	else
+	{
+		getstore("http://pdb.org/pdb/files/$file","$file")  or carp "please check the pdbid:$pdbid";
+	}
+	
+	
+}
+
+sub fetch_pdbids
+{
+	my $self=shift;
+	my $pdbids=shift;
+	foreach my $pdbid(@pdbids)
+	{
+	$self->fetch_pdbid($pdbid);
+  }
+	
+}
+
 
 my %aa321 = (
   ALA=>'A', ARG=>'R', ASN=>'N', ASP=>'D', CYS=>'C',

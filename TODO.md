@@ -36,3 +36,5 @@ stuff etc.
 
 # Core Management
 * figure out how to get Dist::Zilla to automate version numbers with some sanity
+
+#add more todos!

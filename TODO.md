@@ -1,13 +1,4 @@
 # Fix Kwalitee via CPAN
-
-# new features
-*make this easier:
-**use LWP::Simple;
-**my $pdb = "2cba.pdb";
-**my $fpdb = getstore("http://pdb.org/pdb/files/$pdb","$pdb") unless (-f $pdb);
-* something like this: $mol->fetch_pdbid(); PDBRole may be the best place for it 
-
-
 # TESTS
 * refactor test suite
 * get the directory path tests to work on windows

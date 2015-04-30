@@ -14,10 +14,10 @@ SYNOPSIS
        my $hack = HackaMol->new( name => "hackitup" );
 
        my $pdb  = '1L2Y.pdb';
-       my $fpdb = $hack->getstore_pdbid("$pdb");
+       my $fpdb = $hack->getstore_pdbid($pdb);
 
        # all coordinates from NMR ensemble are loaded into atoms
-       my $mol  = $hack->read_file_mol("1L2Y.pdb");
+       my $mol  = $hack->read_file_mol($pdb);
        
        #recenter all coordinates to center of mass
        foreach my $t ( 0 .. $mol->tmax) {

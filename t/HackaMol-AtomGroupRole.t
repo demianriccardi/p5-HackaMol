@@ -85,7 +85,6 @@ foreach my $t (0 .. 2){
   cmp_ok(abs($group->dipole_moment-$dipole_moments[$t]), '<' , 0.001, "dipole moment at t=$t");
 }
 
-
 my $atom4 = HackaMol::Atom->new(
     name    => 'H',
     charges => [0.0],

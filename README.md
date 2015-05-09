@@ -9,6 +9,7 @@ Please see *[HackaMol on MetaCPAN](https://metacpan.org/release/HackaMol) for fo
        
 SYNOPSIS
 ========
+```perl
        use HackaMol;
        use Math::Vector::Real;
        my $hack = HackaMol->new( name => "hackitup" );
@@ -34,7 +35,7 @@ SYNOPSIS
        HackaMol::Molecule->new( 
                                 atoms=>[@CAs] 
                               )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
- 
+``` 
 
 DESCRIPTION
 ============

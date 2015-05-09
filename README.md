@@ -12,12 +12,10 @@ SYNOPSIS
        use HackaMol;
        use Math::Vector::Real;
        my $hack = HackaMol->new( name => "hackitup" );
-
-       my $pdb  = '1L2Y.pdb';
-       my $fpdb = $hack->getstore_pdbid($pdb);
+       my $fpdb = $hack->getstore_pdbid('1L2Y.pdb');
 
        # all coordinates from NMR ensemble are loaded into atoms
-       my $mol  = $hack->read_file_mol($pdb);
+       my $mol  = $hack->read_file_mol($fpdb);
        
        #recenter all coordinates to center of mass
        foreach my $t ( 0 .. $mol->tmax) {
@@ -36,29 +34,6 @@ SYNOPSIS
        HackaMol::Molecule->new( 
                                 atoms=>[@CAs] 
                               )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
-
-       # print coordinates to trp-cage.xyz and return filehandle for future
-       # writing
-       my $fh = $mol->print_xyz( $mol->name . ".xyz" );
-       foreach ( 1 .. 10 ) {
-           $mol->rotate(
-               V( 0, 0, 1 ),    # rotation vector
-               36,              # rotate by 36 degrees
-               V( 5, 0, 0 )     # origin of rotation
-           );
-           $mol->print_xyz($fh); 
-       }
-       
-       # translate/rotate method is provided by AtomGroupRole
-       # populate groups byatom resid attr
-       my @groups = $hack->group_by_atom_attr( 'resid', $mol->all_atoms );
-       $mol->push_groups(@groups);
-       
-       foreach my $ang ( 1 .. 10 ) {
-           $_->rotate( V( 1, 1, 1 ), 36, $_->COM ) foreach $mol->all_groups;
-           $mol->print_xyz($fh);
-       }
- 
  
 
 DESCRIPTION
@@ -68,12 +43,7 @@ for carrying out computational work on molecules at multiple scales. The
 molecular object system organizes atoms within molecules using groups, bonds, 
 angles, and dihedrals.  HackaMol seeks to provide intuitive attributes and 
 methods that may be harnessed to coerce computational chemistry through a 
-common core. The library is inspired by 
-*[PerlMol](http://www.perlmol.org)*, *[BioPerl](http://bioperl.org)*, *[MMTSB](http://www.mmtsb.org)*, 
-and my own experiences as a researcher.  A goal of this library is to reduce
-the "viscosity" of setting up computations and managing data.
-       
-The library is organized into two regions: HackaMol, the core (contained 
+common core. It is organized into two regions: HackaMol, the core (contained 
 here) that has classes for atoms and molecules, and HackaMol::X, the 
 extensions, such as HackaMol::X::PDB (TODO), a parser for protein databank 
 files,  and HackaMol::X::Calculator, an abstract calculator for coercing 
@@ -81,12 +51,6 @@ computational chemistry, that use the core. The three major goals of the
 core are for it to be well-tested, well-documented, and easy to install. 
 The goal of the extensions is to provide a more flexible space for 
 researchers to develop and share new methods that use the core. 
-       
-HackaMol uses *[Math::Vector::Real](https://metacpan.org/module/Math::Vector::Real)* (MVR) for all the vector operations. 
-MVR is a lightweight solution with a fast XS dropin that overlaps very 
-well with the desirables for working with atomic coordinates. Extensions 
-that treat much larger systems will definitely benefit from the 
-capabilities *[Perl Data Language](http://pdl.perl.org)* (PDL) or *[Math::GSL](https://metacpan.org/module/Math::GSL)*.
        
 INSTALLATION
 ============

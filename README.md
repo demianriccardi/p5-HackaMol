@@ -87,8 +87,6 @@ Here is a quick summary of a *[step by step post on installing Perl modules] (ht
 
        prompt> cpanm HackaMol
        
-I use Dist::Zilla and a bunch of plugins to manage the CPAN releases. Dist::Zilla is widely used but fairly dependency heavy.  after installing Dist::Zilla
-  1. prompt> dzil build 
-  2. prompt> cpanm $HackaMolsomething.tar.gz
+I use Dist::Zilla and a bunch of plugins to manage the CPAN releases. Dist::Zilla is widely used but fairly dependency heavy. You can install Dist::Zilla and build the library from the github clone, but that shouldn't be necessary. 
 
 HackaMol is too fun to not be experimental! Feedback and contributions welcome!

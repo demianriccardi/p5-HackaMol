@@ -13,12 +13,8 @@ SYNOPSIS
 ========
 ```perl
        use HackaMol;
-       use Math::Vector::Real;
-       my $hack = HackaMol->new( name => "hackitup" );
-       my $fpdb = $hack->getstore_pdbid('1L2Y.pdb');
-
-       # all coordinates from NMR ensemble are loaded into atoms
-       my $mol  = $hack->read_file_mol($fpdb);
+       my $mol = HackaMol->new->getstore_pdbid('1L2Y.pdb');
+       # 1LY2 is an NMR structure of TRP-cage with multiple models
        
        #recenter all coordinates to center of mass
        foreach my $t ( 0 .. $mol->tmax) {

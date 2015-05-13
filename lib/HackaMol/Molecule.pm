@@ -10,7 +10,7 @@ use Scalar::Util qw(refaddr);
 use MooseX::StrictConstructor;
 #use MooseX::Storage;
 #with Storage( 'io' => 'StorableFile' ), 
-with 'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole',
+with 'HackaMol::PhysVecMVRRole',
   'HackaMol::BondsAnglesDihedralsRole', 'HackaMol::QmMolRole';
 
 extends 'HackaMol::AtomGroup';

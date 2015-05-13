@@ -15,11 +15,5 @@
 # clean-up classes
 * remove the QmMolRol attributes from being loaded by default. keep role for extensions.  Make sure all current extensions pass tests. e.g. HackaMol::X::Vina depends on score attribute.  
 * based on reading PDBQT may be able to simplify/rethink atom rotations about a bond.
-* improve the binning in AtomGroupRole.  there is bin_this and then atom_bin 
-stuff etc.
 * improve use of hush_read attribute in MolReadRole.  Currently, only used for the dirty carp in PDB reading.
 
-# Core Management
-* figure out how to get Dist::Zilla to automate version numbers with some sanity
-
-#add more todos!

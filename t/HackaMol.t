@@ -15,7 +15,7 @@ use HackaMol;
     my @attributes = qw(name);
     my @methods    = qw(
       build_bonds build_angles build_dihedrals
-      group_by_atom_attr read_file_mol read_file_append_mol
+      group_by_atom_attr read_file_mol read_file_push_coords_mol
       read_file_atoms read_pdb_atoms read_xyz_atoms
     );
 
@@ -147,26 +147,26 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
 my $mol1 = $hack->read_file_mol("t/lib/1L2Y_mod123.pdb");
 is( $mol1->tmax, 2, "index of last coords for each atom" );
 
-#read_file append tests
+#read_file push_coords tests
 {
   
   my $mol = $hack->read_file_mol("t/lib/Hg.2-18w.xyz");
 
-  dies_ok { $hack->read_file_append_mol( "t/lib/Zn.2-18w.xyz", $mol ) }
-    "read_file_append_mol> dies ok if atoms are different";
+  dies_ok { $hack->read_file_push_coords_mol( "t/lib/Zn.2-18w.xyz", $mol ) }
+    "read_file_push_coords_mol> dies ok if atoms are different";
 
   dies_ok {
-    $hack->read_file_append_mol("bah.xyz")
+    $hack->read_file_push_coords_mol("bah.xyz")
   }
-  "read_file_append_mol> dies ok if no molecule object passed";
+  "read_file_push_coords_mol> dies ok if no molecule object passed";
 
-  $hack->read_file_append_mol( "t/lib/Hg.2-18w.xyz", $mol );
-  $hack->read_file_append_mol( "t/lib/Hg.2-18w.xyz", $mol );
+  $hack->read_file_push_coords_mol( "t/lib/Hg.2-18w.xyz", $mol );
+  $hack->read_file_push_coords_mol( "t/lib/Hg.2-18w.xyz", $mol );
   is( $mol1->tmax, 2,
-    "read_file_append_mol> index of last coords for each atom after append" );
+    "read_file_push_coords_mol> index of last coords for each atom after append" );
 
-  dies_ok { $hack->read_file_append_mol( "t/lib/1L2Y_mod123.pdb", $mol ) }
-    "read_file_append_mol> dies ok if number of atoms are different";
+  dies_ok { $hack->read_file_push_coords_mol( "t/lib/1L2Y_mod123.pdb", $mol ) }
+    "read_file_push_coords_mol> dies ok if number of atoms are different";
 
 }
 

@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * simplify atoms_bin in AtomGroupRole
+  * support for Z-matrix reading
 
 0.017     2015-02-27 09:15:16-05:00 America/Indiana/Indianapolis
 

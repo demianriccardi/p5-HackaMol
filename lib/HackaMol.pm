@@ -18,7 +18,7 @@ with 'HackaMol::NameRole', 'HackaMol::MolReadRole',
      'HackaMol::PathRole','HackaMol::ExeRole', 'HackaMol::FileFetchRole';
 
 
-sub read_file_append_mol{
+sub read_file_push_coords_mol{
     my $self = shift;
     my $file = shift;
     my $mol  = shift or croak "must pass molecule to add coords to";
@@ -27,11 +27,11 @@ sub read_file_append_mol{
     my @matoms= $mol->all_atoms;
 
     if (scalar(@matoms) != scalar(@atoms) ){
-      croak "file_append_mol> number of atoms not same";
+      croak "file_push_coords_mol> number of atoms not same";
     }
     foreach my $i (0 .. $#atoms) {
       if ($matoms[$i]->Z != $atoms[$i]->Z){
-        croak "file_append_mol> atom mismatch";
+        croak "file_push_coords_mol> atom mismatch";
       }
       $matoms[$i]->push_coords($_) foreach ($atoms[$i]->all_coords);
     }
@@ -51,7 +51,7 @@ sub build_bonds {
     #take a list of n, atoms; walk down list and generate bonds
     my $self  = shift;
     my @atoms = @_;
-    croak "<2 atoms passed to build_dihedrals" unless ( @atoms > 1 );
+    croak "<2 atoms passed to build_bonds" unless ( @atoms > 1 );
     my @bonds;
     # build the bonds
     my $k = 0;
@@ -73,7 +73,7 @@ sub build_angles {
     #take a list of n, atoms; walk down list and generate angles
     my $self  = shift;
     my @atoms = @_;
-    croak "<3 atoms passed to build_dihedrals" unless ( @atoms > 2 );
+    croak "<3 atoms passed to build_angles" unless ( @atoms > 2 );
     my @angles;
 
     # build the angles
@@ -273,25 +273,51 @@ The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://biop
 and our own experiences as researchers. 
 
 The library is organized into two regions: HackaMol, the core (contained here)
-that has classes for atoms and molecules, and HackaMol::X, the extensions, such as
-HackaMol::X::Vina (an interface to Autodock Vina) or HackaMol::X::Calculator,
-a more general abstract calculator for interfacing external programs. The three major goals of the core are for it to 
-be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space 
-for researchers to develop and share new methods that use the core.  
+that has classes for atoms and molecules, and HackaMol::X, the extensions, 
+such as HackaMol::X::Vina (an interface to Autodock Vina) or 
+HackaMol::X::Calculator, a more general abstract calculator for interfacing 
+external programs. The three major goals of the core are for it to be 
+well-tested, well-documented, and easy to install. The goal of the extensions 
+is to provide a more flexible space for researchers to develop and share 
+new methods that use the core.  
 
-HackaMol uses Math::Vector::Real (MVR) for all the vector operations. The methods of MVR overlap very well with those
-needed for working with atoms and coarse grained molecules. MVR is a lightweight solution with an XS drop-in that makes 
-vector analyses very fast. Extensions that treat much larger systems will definitely benefit from the capabilities of L<PDL>.
+HackaMol uses Math::Vector::Real (MVR) for all the vector operations. The 
+methods of MVR overlap very well with those needed for working with atoms 
+and coarse grained molecules. MVR is a lightweight solution with an XS 
+drop-in that makes vector analyses very fast. Extensions that treat much 
+larger systems will definitely benefit from the capabilities of L<PDL>.
 
-The HackaMol class (loaded in Synopsis) uses the core classes to provide some object 
-building utilities described below.  This class consumes HackaMol::MolReadRole to 
-provide structure readers for xyz and pdb coordinates.  
+The HackaMol class (loaded in Synopsis) uses the core classes to provide some 
+object building utilities described below.  This class consumes 
+HackaMol::MolReadRole to provide structure readers for xyz and pdb coordinates.  
 See L<Open Babel|http://openbabel.org> if other formats needed 
 (All suggestions, contributions welcome!).  
 
 =attr name 
 
 name is a rw str provided by HackaMol::NameRole.
+
+=method read_file_atoms
+
+one argument: filename.
+
+This method parses the file (e.g. file.xyz, file.pdb) and returns an 
+array of HackaMol::Atom objects.
+
+=method read_file_mol
+
+one argument: filename.
+
+This method parses the file (e.g. file.xyz, file.pdb) and returns a 
+HackaMol::Molecule object.
+
+=method read_file_push_coords_mol
+
+two arguments: filename and a HackaMol::Molecule object. 
+
+This method reads the coordinates from a file and pushes them into the atoms 
+contained in the molecule. Thus, the atoms in the molecule and the atoms in 
+the file must be the same.
 
 =method build_bonds
 
@@ -326,13 +352,16 @@ will return two dihedrals: D1356 and D3569
 
 =method group_by_atom_attr
 
-takes atom attribute and a list of atoms as arguments and builds AtomGroup objects by attribute.
-Grouping by graphical searches are needed! 
+arguments are an atom attribute and then a list of atoms. 
+
+This method builds AtomGroup objects that are grouped by attribute.
 
 =method find_bonds_brute 
 
-takes hash argument list and returns bonds.  Find bonds between bond_atoms and 
-the candidates.
+The arguments are key_value pairs of bonding criteria (see example below). 
+
+This method returns bonds between bond_atoms and the candidates using the 
+criteria (many of wich have defaults).
 
   my @oxy_bonds = $hack->find_bonds_brute(
                                     bond_atoms => [$hg],
@@ -353,7 +382,9 @@ a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
 
 =method find_disulfide_bonds
 
-takes a list of atoms and returns the disulfide bonds as bond objects.
+the argument is a list of atoms, e.g. '($mol->all_atoms)'. 
+
+this method returns disulfide bonds as bond objects.
 
 =head1 SEE ALSO
 

@@ -228,17 +228,27 @@ __END__
    
 =head1 DESCRIPTION
 
-The HackaMol library enables users to build simple, yet powerful scripts for carrying out computational work on molecules at multiple scales. The molecular object system organizes atoms within molecules using groups, bonds, angles, and dihedrals. HackaMol seeks to provide intuitive attributes and methods that may be harnessed to coerce computational chemistry through a common core. It is organized into two regions: HackaMol, the core (contained here) that has classes for atoms and molecules, and HackaMol::X, the extensions, such as HackaMol::X::PDB (TODO), a parser for protein databank files, and HackaMol::X::Calculator, an abstract calculator for coercing computational chemistry, that use the core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core.   
+The L<HackaMol publication | http://pubs.acs.org/doi/abs/10.1021/ci500359e> has
+a more complete description of the library (<pdf available from researchgate | http://www.researchgate.net/profile/Demian_Riccardi/publication/273778191_HackaMol_an_object-oriented_Modern_Perl_library_for_molecular_hacking_on_multiple_scales/links/550ebec60cf27526109e6ade.pdf >). 
 
-HackaMol uses Math::Vector::Real (MVR) for all the vector operations. The 
-methods of MVR overlap very well with those needed for working with atoms 
-and coarse grained molecules. MVR is a lightweight solution with an XS 
-drop-in that makes vector analyses very convenient and reasonably fast. 
-Extensions that treat much larger systems will definitely benefit from the 
-capabilities of L<PDL>.
+Citation: J. Chem. Inf. Model., 2015, 55 (4), pp 721–726 
 
-See L<Open Babel|http://openbabel.org> if other formats needed 
-(All suggestions, contributions welcome!).  
+Loading the HackaMol library in a script with 
+ 
+       use HackaMol;
+
+provides attributes and methods of a builder class. It also loads all the 
+classes provided by the core so including them is not necessary, e.g.:
+ 
+       use HackaMol::Atom;
+       use HackaMol::Bond;
+       use HackaMol::Angle;
+       use HackaMol::Dihedral;
+       use HackaMol::AtomGroup;
+       use HackaMol::Molecule;
+
+The methods described below, facilitate the creation of objects from files and
+other objects.
 
 =attr name 
 

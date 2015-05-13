@@ -217,7 +217,6 @@ __END__
 =head1 SYNOPSIS
 
        use HackaMol;
-       use Math::Vector::Real;
 
        my $hack = HackaMol->new( name => "hackitup" );
 
@@ -242,54 +241,18 @@ __END__
                                 atoms=>[@CAs]
                               )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
 
-       # print coordinates to trp-cage.xyz and return filehandle for future
-       # writing
-       my $fh = $mol->print_xyz( $mol->name . ".xyz" );
-       foreach ( 1 .. 10 ) {
-           $mol->rotate(
-               V( 0, 0, 1 ),    # rotation vector
-               36,              # rotate by 36 degrees
-               V( 5, 0, 0 )     # origin of rotation
-           );
-           $mol->print_xyz($fh);
-       }
-
-       # translate/rotate method is provided by AtomGroupRole
-       # populate groups byatom resid attr
-       my @groups = $hack->group_by_atom_attr( 'resid', $mol->all_atoms );
-       $mol->push_groups(@groups);
-
-       foreach my $ang ( 1 .. 10 ) {
-           $_->rotate( V( 1, 1, 1 ), 36, $_->COM ) foreach $mol->all_groups;
-           $mol->print_xyz($fh);
-       }
-
    
 =head1 DESCRIPTION
-   
-The HackaMol library simplifies powerful scripting of multiscale molecular modeling and analysis. HackaMol seeks to 
-provide intuitive attributes and methods that may be harnessed to coerce molecular computation through a common core. 
-The library is inspired by L<PerlMol|http://www.perl.org>, L<BioPerl|http://bioperl.org>, L<MMTSB|http://www.mmtsb.org>, 
-and our own experiences as researchers. 
 
-The library is organized into two regions: HackaMol, the core (contained here)
-that has classes for atoms and molecules, and HackaMol::X, the extensions, 
-such as HackaMol::X::Vina (an interface to Autodock Vina) or 
-HackaMol::X::Calculator, a more general abstract calculator for interfacing 
-external programs. The three major goals of the core are for it to be 
-well-tested, well-documented, and easy to install. The goal of the extensions 
-is to provide a more flexible space for researchers to develop and share 
-new methods that use the core.  
+The HackaMol library enables users to build simple, yet powerful scripts for carrying out computational work on molecules at multiple scales. The molecular object system organizes atoms within molecules using groups, bonds, angles, and dihedrals. HackaMol seeks to provide intuitive attributes and methods that may be harnessed to coerce computational chemistry through a common core. It is organized into two regions: HackaMol, the core (contained here) that has classes for atoms and molecules, and HackaMol::X, the extensions, such as HackaMol::X::PDB (TODO), a parser for protein databank files, and HackaMol::X::Calculator, an abstract calculator for coercing computational chemistry, that use the core. The three major goals of the core are for it to be well-tested, well-documented, and easy to install. The goal of the extensions is to provide a more flexible space for researchers to develop and share new methods that use the core.   
 
 HackaMol uses Math::Vector::Real (MVR) for all the vector operations. The 
 methods of MVR overlap very well with those needed for working with atoms 
 and coarse grained molecules. MVR is a lightweight solution with an XS 
-drop-in that makes vector analyses very fast. Extensions that treat much 
-larger systems will definitely benefit from the capabilities of L<PDL>.
+drop-in that makes vector analyses very convenient and reasonably fast. 
+Extensions that treat much larger systems will definitely benefit from the 
+capabilities of L<PDL>.
 
-The HackaMol class (loaded in Synopsis) uses the core classes to provide some 
-object building utilities described below.  This class consumes 
-HackaMol::MolReadRole to provide structure readers for xyz and pdb coordinates.  
 See L<Open Babel|http://openbabel.org> if other formats needed 
 (All suggestions, contributions welcome!).  
 

@@ -216,31 +216,15 @@ __END__
 
 =head1 SYNOPSIS
 
+       # simple example: load pdb file and extract the disulfide bonds
+
        use HackaMol;
 
        my $hack = HackaMol->new( name => "hackitup" );
+       my @atoms  = $hack->read_file_atoms("1KNI.pdb");
+       my @disulfide_bonds = $hack->find_disulfide_bonds(@atoms);
 
-       # all coordinates from NMR ensemble are loaded into atoms
-       my $mol  = $hack->read_file_mol("1L2Y.pdb");
-
-       #recenter all coordinates to center of mass
-       foreach my $t ( 0 .. $mol->tmax) {
-           $mol->t($t);
-           $mol->translate( -$mol->COM );
-       }
-
-       #create array of CA atoms with full occupancy
-
-       my @CAs = grep {
-                        $_->name    eq 'CA'  and
-                        $_->occ == 1
-                      } $mol->all_atoms;
-
-       #print out the pdb with CA for several models from the NMR
-       HackaMol::Molecule->new(
-                                atoms=>[@CAs]
-                              )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
-
+       print $_->dump foreach @disulfide_bonds;
    
 =head1 DESCRIPTION
 

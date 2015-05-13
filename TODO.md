@@ -1,23 +1,8 @@
 # Fix Kwalitee via CPAN
-# TESTS
-* refactor test suite
-* get the directory path tests to work on windows
 
 # Examples 
 * improve examples; add more
 * add one with an extended class meta bizness
-
-# HackaMol::PeriodicTable needs to be reengineered 
-* the data should be of higher quality
-* access needs to be fast
-* some datastructures such as KNOWN_NAMES accessible, and such mappings can be mutable.
-
-# pdbqt files
-* pull the tree of rotatable bonds groups
-* pdbqt writing support 
-
-# methods and attributes 
-* add an attribute that allows a map from names to symbols/Zs to be built in reading pdb files etc
 
 # DREAMS
 * storage

@@ -6,14 +6,17 @@ use Carp;
 use Math::Vector::Real;
 use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
-use HackaMol::Atom;#add the code,the Role may better to understand
+use HackaMol::Atom;    #add the code,the Role may better to understand
+use List::MoreUtils qw(singleton);
+
+with 'HackaMol::NERFRole';
 
 has 'hush_read' => (
     is      => 'rw',
     isa     => 'Bool',
     lazy    => 1,
-    default => 0,   
-); 
+    default => 0,
+);
 
 sub read_file_atoms {
     my $self = shift;
@@ -29,42 +32,45 @@ sub read_file_atoms {
     elsif ( $file =~ m/\.xyz$/ ) {
         @atoms = $self->read_xyz_atoms($file);
     }
+    elsif ( $file =~ m/\.zmat$/ ) {
+        @atoms = $self->read_zmat_atoms($file);
+    }
     else {
         croak "$file format not supported";
     }
     return (@atoms);
 }
 
-
-
 sub read_pdb_atoms {
 
     #read pdb file and generate list of Atom objects
-    my $self  = shift;
-    my $file  = shift;
-    my $fh = FileHandle->new("<$file") or croak "unable to open $file";
+    my $self = shift;
+    my $file = shift;
+    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
-    my $q_tbad = 0;
+    my $q_tbad          = 0;
     my $something_dirty = 0;
 
     while (<$fh>) {
 
         if (/^(?:MODEL\s+(\d+))/) {
+
             #$t = $1 - 1; # I don't like this!!  set increment t instead.. below
-            $n = 0;
-            $q_tbad = 0; # flag a bad model and never read again!
+            $n      = 0;
+            $q_tbad = 0;    # flag a bad model and never read again!
         }
-        elsif (/^(?:ENDMDL)/){
+        elsif (/^(?:ENDMDL)/) {
             $t++;
         }
         elsif (/^(?:HETATM|ATOM)/) {
             next if $q_tbad;
             my (
-                $record_name, $serial, $name, $altloc,  $resName,
-                $chainID,     $resSeq, $icod, $x,       $y,
-                $z,           $occ,    $B,    $segID,   $element, $charge
+                $record_name, $serial,  $name,    $altloc,
+                $resName,     $chainID, $resSeq,  $icod,
+                $x,           $y,       $z,       $occ,
+                $B,           $segID,   $element, $charge
             ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x6A4A2A2", $_;
 
             if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
@@ -73,18 +79,19 @@ sub read_pdb_atoms {
             if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
             else                       { $chainID = ' ' }
 
-            
             $name    = _trim($name);
             $resName = _trim($resName);
             $resSeq  = _trim($resSeq);
+
             #$resSeq  = 0 if ( $resSeq < 0 );
-            $serial  = _trim($serial);
-            $segID   = _trim($segID);
-  
+            $serial = _trim($serial);
+            $segID  = _trim($segID);
+
             $element = ucfirst( lc( _trim($element) ) );
             my $qdirt = 0;
-            ($element,$qdirt) = _element_name($name) unless ($element =~ /\w+/);
-            $something_dirty++ if ($qdirt); 
+            ( $element, $qdirt ) = _element_name($name)
+              unless ( $element =~ /\w+/ );
+            $something_dirty++ if ($qdirt);
             my $xyz = V( $x, $y, $z );
 
             if ( $t == 0 ) {
@@ -100,24 +107,26 @@ sub read_pdb_atoms {
                     bfact       => $B * 1,
                     resname     => $resName,
                     resid       => $resSeq,
-                    segid       => $segID ,
+                    segid       => $segID,
                     altloc      => $altloc,
                 );
-                $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty; 
+                $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty;
             }
             else {
                 #croak condition if atom changes between models
-                if ( $name ne $atoms[$n]->name
-                    or $element ne $atoms[$n]->symbol ) {
-                  my $carp_message = "BAD t->$t PDB Atom $n "
-                                    ."serial $serial resname $resName "
-                                    ."has changed";
-                  carp $carp_message;
-                  $q_tbad = $t; # this is a bad model!
-                  #wipe out all the coords prior
-                  $atoms[$_]->delete_coords($t) foreach 0 .. $n-1; 
-                  $t--;
-                  next;
+                if (   $name ne $atoms[$n]->name
+                    or $element ne $atoms[$n]->symbol )
+                {
+                    my $carp_message =
+                        "BAD t->$t PDB Atom $n "
+                      . "serial $serial resname $resName "
+                      . "has changed";
+                    carp $carp_message;
+                    $q_tbad = $t;    # this is a bad model!
+                                     #wipe out all the coords prior
+                    $atoms[$_]->delete_coords($t) foreach 0 .. $n - 1;
+                    $t--;
+                    next;
                 }
                 $atoms[$n]->set_coords( $t, $xyz );
             }
@@ -127,71 +136,73 @@ sub read_pdb_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    if ($something_dirty){
-      unless($self->hush_read){
-        my $message = "MolReadRole> found $something_dirty dirty atoms. ";
-        $message .= "Check symbols and lookup names";
-        carp $message;
-      }
+    if ($something_dirty) {
+        unless ( $self->hush_read ) {
+            my $message = "MolReadRole> found $something_dirty dirty atoms. ";
+            $message .= "Check symbols and lookup names";
+            carp $message;
+        }
     }
     return (@atoms);
 }
 
 sub read_pdbqt_atoms {
-    # this is too similar to reading pdb for it too exist separately... think about
-    my $self  = shift;
-    my $file  = shift;
-    
+
+ # this is too similar to reading pdb for it too exist separately... think about
+    my $self = shift;
+    my $file = shift;
+
     my $fh = FileHandle->new("<$file") or croak "unable to open $file";
 
-    # $RtBrnch{ROOT}{iatoms}    = LIST integers of atoms in root 
-    # $RtBrnch{BRNCH1}{iatoms}  = LIST integers of atoms in BRNCH1 
-    # $RtBrnch{BRNCH1}{ROOT}    = LIST two integers of rotable bond for BRNCH1
-    # $RtBrnch{BRNCH2}{iatoms}  = LIST integers of atoms in BRNCH2
-    # $RtBrnch{BRNCH2}{SBRNCH1} iatoms}  = LIST integers of atoms in BRNCH2
-    # each branch is rigid block of atoms
-    #  NONONONONO!!!!  for now, just read in atoms.  We'll figure out how to save the tree later 
-    my %RtBrnch; 
+# $RtBrnch{ROOT}{iatoms}    = LIST integers of atoms in root
+# $RtBrnch{BRNCH1}{iatoms}  = LIST integers of atoms in BRNCH1
+# $RtBrnch{BRNCH1}{ROOT}    = LIST two integers of rotable bond for BRNCH1
+# $RtBrnch{BRNCH2}{iatoms}  = LIST integers of atoms in BRNCH2
+# $RtBrnch{BRNCH2}{SBRNCH1} iatoms}  = LIST integers of atoms in BRNCH2
+# each branch is rigid block of atoms
+#  NONONONONO!!!!  for now, just read in atoms.  We'll figure out how to save the tree later
+    my %RtBrnch;
 
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
-    my $q_tbad = 0;
+    my $q_tbad          = 0;
     my $something_dirty = 0;
 
     while (<$fh>) {
 
         if (/^(?:MODEL\s+(\d+))/) {
-            $n = 0;
-            $q_tbad = 0; # flag a bad model and never read again!
+            $n      = 0;
+            $q_tbad = 0;    # flag a bad model and never read again!
         }
-        elsif (/^(?:ENDMDL)/){
+        elsif (/^(?:ENDMDL)/) {
             $t++;
         }
         elsif (/^(?:HETATM|ATOM)/) {
             next if $q_tbad;
             my (
-                $record_name, $serial, $name, $altloc,  $resName,
-                $chainID,     $resSeq, $icod, $x,       $y,
-                $z,           $occ,    $B,    $charge,  $ADTtype
+                $record_name, $serial, $name, $altloc, $resName,
+                $chainID,     $resSeq, $icod, $x,      $y,
+                $z,           $occ,    $B,    $charge, $ADTtype
             ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x4A6x1A2", $_;
+
 #ATOM      1  O   LIG d   1       8.299   4.799  79.371  0.00  0.00    -0.292 OA
 #-----|----|x---||--|x|---||xxx-------|-------|-------|-----|-----|xxxx-----|x-|
 
             if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
             else                       { $chainID = ' ' }
 
-            
             $name    = _trim($name);
             $resName = _trim($resName);
             $resSeq  = _trim($resSeq);
+
             #$resSeq  = 0 if ( $resSeq < 0 );
             $serial  = _trim($serial);
             $charge  = _trim($charge);
             $ADTtype = _trim($ADTtype);
-  
-            my ($element,$qdirt) = _element_name($ADTtype);
-            $element = 'C' if ($element eq 'A'); #aromatic, is this dirty?
-            $something_dirty++ if ($qdirt); 
+
+            my ( $element, $qdirt ) = _element_name($ADTtype);
+            $element = 'C' if ( $element eq 'A' );    #aromatic, is this dirty?
+            $something_dirty++ if ($qdirt);
             my $xyz = V( $x, $y, $z );
 
             if ( $t == 0 ) {
@@ -207,24 +218,26 @@ sub read_pdbqt_atoms {
                     bfact       => $B * 1,
                     resname     => $resName,
                     resid       => $resSeq,
-                    segid       => $ADTtype ,
+                    segid       => $ADTtype,
                     altloc      => $altloc,
                 );
-                $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty; 
+                $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty;
             }
             else {
                 #croak condition if atom changes between models
-                if ( $name ne $atoms[$n]->name
-                    or $element ne $atoms[$n]->symbol ) {
-                  my $carp_message = "BAD t->$t PDB Atom $n "
-                                    ."serial $serial resname $resName "
-                                    ."has changed";
-                  carp $carp_message;
-                  $q_tbad = $t; # this is a bad model!
-                  #wipe out all the coords prior
-                  $atoms[$_]->delete_coords($t) foreach 0 .. $n-1; 
-                  $t--;
-                  next;
+                if (   $name ne $atoms[$n]->name
+                    or $element ne $atoms[$n]->symbol )
+                {
+                    my $carp_message =
+                        "BAD t->$t PDB Atom $n "
+                      . "serial $serial resname $resName "
+                      . "has changed";
+                    carp $carp_message;
+                    $q_tbad = $t;    # this is a bad model!
+                                     #wipe out all the coords prior
+                    $atoms[$_]->delete_coords($t) foreach 0 .. $n - 1;
+                    $t--;
+                    next;
                 }
                 $atoms[$n]->set_coords( $t, $xyz );
             }
@@ -234,22 +247,122 @@ sub read_pdbqt_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    if ($something_dirty){
-      unless($self->hush_read){
-        my $message = "MolReadRole> found $something_dirty dirty atoms. ";
-        $message .= "Check symbols and lookup names";
-        carp $message; 
-      }
-    }  
+    if ($something_dirty) {
+        unless ( $self->hush_read ) {
+            my $message = "MolReadRole> found $something_dirty dirty atoms. ";
+            $message .= "Check symbols and lookup names";
+            carp $message;
+        }
+    }
     return (@atoms);
+}
+
+sub read_zmat_atoms {
+
+    #xyz file and generate list of Atom object
+    my $self = shift;
+    my $file = shift;
+    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
+
+    my @atoms;
+    my ( $n, $t ) = ( 0, 0 );
+
+    my $nat  = undef;
+    my @zmat = <$fh>;
+    chomp @zmat;
+    #use Data::Dumper; 
+    #print Dumper \@zmat; exit;
+
+    # we have 5 types of extensions
+    # A. SYM 0 x y z
+    # B. SYM
+    # C. SYM i R
+    # D. SYM i R j Ang
+    # E. SYM i R j Ang k Tors
+    # we need to filter the indices (can't lose the location)
+
+    #type A
+    my @iA = grep { $zmat[$_] =~ m/^\s*\w+\s+0(\s+\d+\.*\d*){3}/ } 0 .. $#zmat;
+    my @inA = singleton( 0 .. $#zmat, @iA );
+    #type B
+    my @iB = grep { $zmat[$_] =~ m/^\s*\w+\s*$/ } @inA;
+    #type C
+    my @iC = grep { $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d+\.*\d*)\s*$/ } @inA;
+    #type D
+    my @iD = grep { $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d+\.*\d*){2}\s*$/ } @inA;
+    #type E
+    my @iE = grep {
+        $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d+.*\d*){2}\s+\d+\s+-*\d+.*\d*\s*$/
+    } @inA;
+
+    foreach my $ia (@iA) {
+        my ( $sym, $iat1, @xyz ) = split( / /, $zmat[$ia] );
+        $atoms[$ia] = HackaMol::Atom->new(
+                        symbol => $sym,
+                        coords => [ V(@xyz) ]
+        );
+    }
+
+    #print Dump 'A', \%mol;
+
+    foreach my $ib (@iB) {
+        my $sym = $zmat[$ib];
+        my $a   = $self->init;
+        $atoms[$ib] = HackaMol::Atom->new(
+            symbol => $sym,
+            coords => [$a]
+        );
+    }
+
+    #print Dump 'B', \%mol;
+
+    foreach my $ic (@iC) {
+        my ( $sym, $iat1, $R ) = split( / /, $zmat[$ic] );
+        my $a = $atoms[ $iat1 - 1 ]->xyz;
+        my $b = $self->extend_a( $a, $R );
+        $atoms[$ic] = HackaMol::Atom->new(
+            symbol => $sym,
+            coords => [$b]
+        );
+    }
+
+    #print Dump 'C', \%mol;
+
+    foreach my $id (@iD) {
+        my ( $sym, $iat1, $R, $iat2, $ang ) = split( / /, $zmat[$id] );
+        my $a = $atoms[ $iat1 - 1 ]->xyz;
+        my $b = $atoms[ $iat2 - 1 ]->xyz;
+        my $c = $self->extend_ab( $b, $a, $R, $ang );
+        $atoms[$id] = HackaMol::Atom->new(
+            symbol => $sym,
+            coords => [$c]
+        );
+    }
+
+    #print Dump 'D', \%mol;
+
+    foreach my $ie (@iE) {
+        my ( $sym, $iat1, $R, $iat2, $ang, $iat3, $tor ) =
+          split( / /, $zmat[$ie] );
+        my $a = $atoms[ $iat1 - 1 ]->xyz;
+        my $b = $atoms[ $iat2 - 1 ]->xyz;
+        my $c = $atoms[ $iat3 - 1 ]->xyz;
+        my $d = $self->extend_abc( $c, $b, $a, $R, $ang, $tor );
+        $atoms[$ie] = HackaMol::Atom->new(
+            symbol => $sym,
+            coords => [$d]
+        );
+    }
+    return (@atoms);
+
 }
 
 sub read_xyz_atoms {
 
-    #read pdb file and generate list of Atom objects
-    my $self  = shift;
-    my $file  = shift;
-    my $fh = FileHandle->new("<$file") or croak "unable to open $file";
+    #read xyz file and generate list of Atom objects
+    my $self = shift;
+    my $file = shift;
+    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
@@ -272,12 +385,18 @@ sub read_xyz_atoms {
             my $xyz   = V( @stuff[ 1, 2, 3 ] );
             if ( $t == 0 ) {
                 if ( $sym =~ /\d/ ) {
-                    $atoms[$n] =
-                      HackaMol::Atom->new(name=> "at$n", Z => $sym, coords => [$xyz] );
+                    $atoms[$n] = HackaMol::Atom->new(
+                        name   => "at$n",
+                        Z      => $sym,
+                        coords => [$xyz]
+                    );
                 }
                 else {
-                    $atoms[$n] =
-                      HackaMol::Atom->new(name=> "at$n", symbol => $sym, coords => [$xyz] );
+                    $atoms[$n] = HackaMol::Atom->new(
+                        name   => "at$n",
+                        symbol => $sym,
+                        coords => [$xyz]
+                    );
                 }
             }
             else {
@@ -304,10 +423,10 @@ sub read_xyz_atoms {
 sub _trim {
     my $string = shift;
     $string =~ s/^\s+//;
- #   $string =~ s/\s+$//; #unpack will delete the \s+ in the end;
+
+    #   $string =~ s/\s+$//; #unpack will delete the \s+ in the end;
     return $string;
 }
-
 
 sub _qstring_num {
 
@@ -320,17 +439,19 @@ sub _qstring_num {
 
 }
 
-sub _element_name{
-# guess the element using the atom name
-  my $name  = uc(shift);
-  my $dirt  = 0;
-  unless (exists($KNOWN_NAMES{$name})){
-    #carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
-    $dirt = 1;
-    my $symbol = substr $name, 0,1;  #doesn't work if two letters for symbol
-    return ($symbol,$dirt);
-  }
-  return ($KNOWN_NAMES{$name},$dirt);
+sub _element_name {
+
+    # guess the element using the atom name
+    my $name = uc(shift);
+    my $dirt = 0;
+    unless ( exists( $KNOWN_NAMES{$name} ) ) {
+
+#carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
+        $dirt = 1;
+        my $symbol = substr $name, 0, 1; #doesn't work if two letters for symbol
+        return ( $symbol, $dirt );
+    }
+    return ( $KNOWN_NAMES{$name}, $dirt );
 }
 
 no Moose::Role;

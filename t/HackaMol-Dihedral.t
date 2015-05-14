@@ -17,7 +17,7 @@ my @methods = qw(
 torsion_energy improper_dihe_energy dihe_deg dihe_rad
 );
 
-my @roles = qw(HackaMol::AtomGroupRole);
+my @roles = qw(HackaMol::Roles::AtomGroupRole);
 
 map has_attribute_ok( 'HackaMol::Dihedral', $_ ), @attributes;
 map can_ok( 'HackaMol::Dihedral', $_ ), @methods;

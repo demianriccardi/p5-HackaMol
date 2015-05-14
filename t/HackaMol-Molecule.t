@@ -19,7 +19,10 @@ my @methods = qw(
   delete_groups count_groups all_bonds_atoms all_angles_atoms
   all_dihedrals_atoms dihedral_rotate_atoms
 );
-my @roles = qw(HackaMol::PhysVecMVRRole HackaMol::BondsAnglesDihedralsRole HackaMol::AtomGroupRole);
+my @roles = qw(
+              HackaMol::Roles::PhysVecMVRRole 
+              HackaMol::Roles::BondsAnglesDihedralsRole 
+              HackaMol::Roles::AtomGroupRole);
 
 map has_attribute_ok( 'HackaMol::Molecule', $_ ), @attributes;
 map can_ok( 'HackaMol::Molecule', $_ ), @methods;

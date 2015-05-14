@@ -17,7 +17,7 @@ my @methods = qw(
 bond_length bond_vector 
 );
 
-my @roles = qw(HackaMol::AtomGroupRole);
+my @roles = qw(HackaMol::Roles::AtomGroupRole);
 
 map has_attribute_ok( 'HackaMol::Bond', $_ ), @attributes;
 map can_ok( 'HackaMol::Bond', $_ ), @methods;

@@ -1,4 +1,4 @@
-package HackaMol::ExeRole;
+package HackaMol::Roles::ExeRole;
 
 #ABSTRACT:  
 use 5.008;

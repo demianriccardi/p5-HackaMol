@@ -1,4 +1,4 @@
-package HackaMol::FileFetchRole;
+package HackaMol::Roles::FileFetchRole;
 
 #ABSTRACT: Role for using LWP::Simple to fetch files from www 
 use Moose::Role;

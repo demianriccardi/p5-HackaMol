@@ -1,4 +1,4 @@
-package HackaMol::PdbRole;
+package HackaMol::Roles::PdbRole;
 
 #ABSTRACT: PdbRole of lazy attributes for HackaMol atoms
 use Moose::Role;

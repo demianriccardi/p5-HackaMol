@@ -1,10 +1,10 @@
-package HackaMol::QmMolRole;
+package HackaMol::Roles::QmMolRole;
 
 #ABSTRACT: provides attributes needed for quantum chemistry calculations
 # this will need updating as needs arise
 use Moose::Role;
 
-with 'HackaMol::QmAtomRole';
+with 'HackaMol::Roles::QmAtomRole';
 
 has 'multiplicity', is => 'rw', isa => 'Int', lazy => 1, default => 1;
 

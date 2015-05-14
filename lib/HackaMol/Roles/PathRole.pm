@@ -1,4 +1,4 @@
-package HackaMol::PathRole;
+package HackaMol::Roles::PathRole;
 
 #ABSTRACT:  
 use 5.008;

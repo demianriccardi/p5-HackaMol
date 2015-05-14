@@ -1,4 +1,4 @@
-package HackaMol::NERFRole;
+package HackaMol::Roles::NERFRole;
  # ABSTRACT: Role providing Natural extension reference frame implementation for molecular building 
 
 use 5.008;

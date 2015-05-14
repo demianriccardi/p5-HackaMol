@@ -1,4 +1,4 @@
-package HackaMol::QmAtomRole;
+package HackaMol::Roles::QmAtomRole;
 
 #ABSTRACT: simple role that provides attributes needed for setting up quantum chemistry calculations
 use Moose::Role;

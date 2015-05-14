@@ -8,8 +8,10 @@ use Carp;
 use MooseX::StrictConstructor;
 #use MooseX::Storage;
 #with Storage( 'io' => 'StorableFile' ),
-with  'HackaMol::NameRole', 'HackaMol::PhysVecMVRRole',
-  'HackaMol::PdbRole',  'HackaMol::QmAtomRole';
+with  'HackaMol::Roles::NameRole', 
+      'HackaMol::Roles::PhysVecMVRRole',
+      'HackaMol::Roles::PdbRole',  
+      'HackaMol::Roles::QmAtomRole';
 use HackaMol::PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 

@@ -15,7 +15,7 @@ my @methods = qw(
   ang_deg ang_rad ang_normvec angle_energy clear_ang_eq clear_ang_fc has_ang_eq has_ang_fc
 );
 
-my @roles = qw(HackaMol::AtomGroupRole);
+my @roles = qw(HackaMol::Roles::AtomGroupRole);
 
 map has_attribute_ok( 'HackaMol::Angle', $_ ), @attributes;
 map can_ok( 'HackaMol::Angle', $_ ), @methods;

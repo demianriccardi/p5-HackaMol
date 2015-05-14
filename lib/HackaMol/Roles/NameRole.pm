@@ -1,4 +1,4 @@
-package HackaMol::NameRole;
+package HackaMol::Roles::NameRole;
 
 #ABSTRACT: provides name attribute
 use 5.008;

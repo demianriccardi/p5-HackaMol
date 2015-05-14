@@ -1,4 +1,4 @@
-package HackaMol::AtomGroupRole;
+package HackaMol::Roles::AtomGroupRole;
 
 #ABSTRACT: Role for a group of atoms
 use Moose::Role;

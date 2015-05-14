@@ -1,4 +1,4 @@
-package HackaMol::PhysVecMVRRole;
+package HackaMol::Roles::PhysVecMVRRole;
 
 # ABSTRACT: Provides the core of HackaMol Atom and Molecule classes.
 use Math::Vector::Real;

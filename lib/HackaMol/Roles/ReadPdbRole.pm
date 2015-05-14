@@ -1,28 +1,19 @@
-package HackaMol::MolReadRole;
+package HackaMol::Roles::ReadPdbRole;
 
 # ABSTRACT: Read files with molecular information
 use Moo::Role;
+use strictures 2;
 use Carp;
 use Math::Vector::Real;
 use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
 
-sub read_pdbqt_atoms {
+sub read_pdb_atoms {
 
- # this is too similar to reading pdb for it too exist separately... think about
+    #read pdb file and generate list of Atom objects
     my $self = shift;
     my $file = shift;
-
-    my $fh = FileHandle->new("<$file") or croak "unable to open $file";
-
-# $RtBrnch{ROOT}{iatoms}    = LIST integers of atoms in root
-# $RtBrnch{BRNCH1}{iatoms}  = LIST integers of atoms in BRNCH1
-# $RtBrnch{BRNCH1}{ROOT}    = LIST two integers of rotable bond for BRNCH1
-# $RtBrnch{BRNCH2}{iatoms}  = LIST integers of atoms in BRNCH2
-# $RtBrnch{BRNCH2}{SBRNCH1} iatoms}  = LIST integers of atoms in BRNCH2
-# each branch is rigid block of atoms
-#  NONONONONO!!!!  for now, just read in atoms.  We'll figure out how to save the tree later
-    my %RtBrnch;
+    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
@@ -32,6 +23,8 @@ sub read_pdbqt_atoms {
     while (<$fh>) {
 
         if (/^(?:MODEL\s+(\d+))/) {
+
+            #$t = $1 - 1; # I don't like this!!  set increment t instead.. below
             $n      = 0;
             $q_tbad = 0;    # flag a bad model and never read again!
         }
@@ -41,13 +34,14 @@ sub read_pdbqt_atoms {
         elsif (/^(?:HETATM|ATOM)/) {
             next if $q_tbad;
             my (
-                $record_name, $serial, $name, $altloc, $resName,
-                $chainID,     $resSeq, $icod, $x,      $y,
-                $z,           $occ,    $B,    $charge, $ADTtype
-            ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x4A6x1A2", $_;
+                $record_name, $serial,  $name,    $altloc,
+                $resName,     $chainID, $resSeq,  $icod,
+                $x,           $y,       $z,       $occ,
+                $B,           $segID,   $element, $charge
+            ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x6A4A2A2", $_;
 
-#ATOM      1  O   LIG d   1       8.299   4.799  79.371  0.00  0.00    -0.292 OA
-#-----|----|x---||--|x|---||xxx-------|-------|-------|-----|-----|xxxx-----|x-|
+            if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
+            else                      { $charge = 0 }
 
             if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
             else                       { $chainID = ' ' }
@@ -57,12 +51,13 @@ sub read_pdbqt_atoms {
             $resSeq  = _trim($resSeq);
 
             #$resSeq  = 0 if ( $resSeq < 0 );
-            $serial  = _trim($serial);
-            $charge  = _trim($charge);
-            $ADTtype = _trim($ADTtype);
+            $serial = _trim($serial);
+            $segID  = _trim($segID);
 
-            my ( $element, $qdirt ) = _element_name($ADTtype);
-            $element = 'C' if ( $element eq 'A' );    #aromatic, is this dirty?
+            $element = ucfirst( lc( _trim($element) ) );
+            my $qdirt = 0;
+            ( $element, $qdirt ) = _element_name($name)
+              unless ( $element =~ /\w+/ );
             $something_dirty++ if ($qdirt);
             my $xyz = V( $x, $y, $z );
 
@@ -79,7 +74,7 @@ sub read_pdbqt_atoms {
                     bfact       => $B * 1,
                     resname     => $resName,
                     resid       => $resSeq,
-                    segid       => $ADTtype,
+                    segid       => $segID,
                     altloc      => $altloc,
                 );
                 $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty;
@@ -118,6 +113,14 @@ sub read_pdbqt_atoms {
     return (@atoms);
 }
 
+sub _trim {
+    my $string = shift;
+    $string =~ s/^\s+//;
+
+    #   $string =~ s/\s+$//; #unpack will delete the \s+ in the end;
+    return $string;
+}
+
 sub _qstring_num {
 
     # _qstring something like 2+  or 2-
@@ -143,8 +146,6 @@ sub _element_name {
     }
     return ( $KNOWN_NAMES{$name}, $dirt );
 }
-
-no Moose::Role;
 
 1;
 

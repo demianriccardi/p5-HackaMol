@@ -14,9 +14,11 @@ use MooseX::StrictConstructor;
 use Scalar::Util qw(refaddr);
 use Carp;
 
-with 'HackaMol::NameRole', 'HackaMol::MolReadRole', 
-     'HackaMol::PathRole','HackaMol::ExeRole', 'HackaMol::FileFetchRole';
-
+with 'HackaMol::Roles::NameRole', 
+     'HackaMol::Roles::MolReadRole', 
+     'HackaMol::Roles::PathRole',
+     'HackaMol::Roles::ExeRole', 
+     'HackaMol::Roles::FileFetchRole';
 
 sub read_file_push_coords_mol{
     my $self = shift;

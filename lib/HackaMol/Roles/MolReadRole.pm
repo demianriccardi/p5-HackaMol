@@ -1,4 +1,4 @@
-package HackaMol::MolReadRole;
+package HackaMol::Roles::MolReadRole;
 
 # ABSTRACT: Read files with molecular information
 use Moose::Role;
@@ -9,7 +9,7 @@ use FileHandle;
 use HackaMol::Atom;    #add the code,the Role may better to understand
 use List::MoreUtils qw(singleton);
 
-with 'HackaMol::NERFRole';
+with 'HackaMol::Roles::NERFRole';
 
 has 'hush_read' => (
     is      => 'rw',

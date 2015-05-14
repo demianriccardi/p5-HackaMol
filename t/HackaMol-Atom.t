@@ -41,7 +41,11 @@ dummy
 );
 #todo add tests for storage!
 
-my @roles = qw(HackaMol::PdbRole HackaMol::QmAtomRole HackaMol::PhysVecMVRRole);
+my @roles = qw(
+              HackaMol::Roles::PdbRole 
+              HackaMol::Roles::QmAtomRole 
+              HackaMol::Roles::PhysVecMVRRole
+);
 
 map has_attribute_ok( 'HackaMol::Atom', $_ ), @attributes;
 map can_ok( 'HackaMol::Atom', $_ ), @methods;

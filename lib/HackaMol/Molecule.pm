@@ -10,8 +10,9 @@ use Scalar::Util qw(refaddr);
 use MooseX::StrictConstructor;
 #use MooseX::Storage;
 #with Storage( 'io' => 'StorableFile' ), 
-with 'HackaMol::PhysVecMVRRole',
-  'HackaMol::BondsAnglesDihedralsRole', 'HackaMol::QmMolRole';
+with 'HackaMol::Roles::PhysVecMVRRole',
+     'HackaMol::Roles::BondsAnglesDihedralsRole', 
+     'HackaMol::Roles::QmMolRole';
 
 extends 'HackaMol::AtomGroup';
 

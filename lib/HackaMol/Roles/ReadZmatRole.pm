@@ -23,9 +23,14 @@ sub read_zmat_atoms {
     my ( $n, $t ) = ( 0, 0 );
 
     my $nat  = undef;
+  
     my @zmat = <$fh>;
-    @zmat = grep {!/^\#/} @zmat;
+    @zmat = _collapse(@zmat);
     chomp @zmat;
+    my @var  = grep {/=/} @zmat;
+    @zmat    = grep {!/^\#/} @zmat;
+    chomp @zmat;
+
     #use Data::Dumper; 
     #print Dumper \@zmat; exit;
 
@@ -50,6 +55,9 @@ sub read_zmat_atoms {
     my @iE = grep {
         $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d*\.*\d*){2}\s+\d+\s+-*\d*\.*\d*\s*$/
     } @inA;
+
+    my $diff = @zmat - (@iA+@iB+@iC+@iD+@iE); #scalar context
+    croak "something funky with your zmatrix: $diff" if ( $diff );
 
     foreach my $ia (@iA) {
         my ( $sym, $iat1, @xyz ) = split( / /, $zmat[$ia] );
@@ -112,6 +120,28 @@ sub read_zmat_atoms {
     }
     return (@atoms);
 
+}
+
+sub _collapse{
+    my @Zmat = @_;
+
+    chomp @Zmat;
+
+    my %var  =  map {
+                      my ($key,$val) = map{ s/^\s+|\s+$//; $_ } split(/=/,$_);
+                      $key => $val,
+                    }
+                grep {/=/} @Zmat;
+
+    @Zmat    = grep {!/^\#|=/} @Zmat;
+
+    foreach my $line (@Zmat){
+      my @vals = split (/ /, $line);
+      next unless @vals > 2;
+      $line = join(' ', $vals[0], map{ exists($var{$_}) ? $var{$_} : $_ } @vals[1 .. $#vals] );
+    }
+    # print Dump \@Zmat;
+    return (@Zmat);
 }
 
 1;

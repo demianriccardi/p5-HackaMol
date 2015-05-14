@@ -1,11 +1,11 @@
-package HackaMol::Roles::MolReadRole;
+package HackaMol::Roles::ReadPdbqtRole;
 
 # ABSTRACT: Read files with molecular information
 use Moo::Role;
-use Carp;
+use strictures 2;
+use HackaMol::PeriodicTable qw(%KNOWN_NAMES _element_name _trim _qstring_num);
 use Math::Vector::Real;
-use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
-use FileHandle;
+use Carp;
 
 sub read_pdbqt_atoms {
 
@@ -117,34 +117,6 @@ sub read_pdbqt_atoms {
     }
     return (@atoms);
 }
-
-sub _qstring_num {
-
-    # _qstring something like 2+  or 2-
-    my $string = shift;
-    $string =~ s/\+//;
-    $string =~ s/(.*?)(\-)/$2$1/;
-    $string = sprintf( "%g", $string );
-    return $string;
-
-}
-
-sub _element_name {
-
-    # guess the element using the atom name
-    my $name = uc(shift);
-    my $dirt = 0;
-    unless ( exists( $KNOWN_NAMES{$name} ) ) {
-
-#carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
-        $dirt = 1;
-        my $symbol = substr $name, 0, 1; #doesn't work if two letters for symbol
-        return ( $symbol, $dirt );
-    }
-    return ( $KNOWN_NAMES{$name}, $dirt );
-}
-
-no Moose::Role;
 
 1;
 

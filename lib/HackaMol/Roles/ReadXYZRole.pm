@@ -1,4 +1,4 @@
-package HackaMol::Roles::ReadXYZRole;
+package HackaMol::Roles::ReadXyzRole;
 
 # ABSTRACT: Read files with molecular information
 use Moo::Role;

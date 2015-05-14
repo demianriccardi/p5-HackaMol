@@ -1,9 +1,11 @@
 package HackaMol::PeriodicTable;
+
+#ABSTRACT: package for period table data... needs to change
 use 5.008;
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(%KNOWN_NAMES %ATOM_MULTIPLICITY @EXHEAT @ELEMENTS
-  %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII);
+  %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII _element_name _trim _qstring_num);
 
 # lifted from Ivan's PerlMol
 our @ELEMENTS = qw(
@@ -530,6 +532,41 @@ $KNOWN_NAMES{$_} = 'S' foreach qw(S SD SG);
 $KNOWN_NAMES{$_} = 'Cl' foreach qw(CLA);
 $KNOWN_NAMES{$_} = 'Na' foreach qw(SOD);
 $KNOWN_NAMES{$_} = 'K'  foreach qw(POT);
+
+sub _trim {
+    my $string = shift;
+    $string =~ s/^\s+//;
+
+    #   $string =~ s/\s+$//; #unpack will delete the \s+ in the end;
+    return $string;
+}
+
+sub _qstring_num {
+
+    # _qstring something like 2+  or 2-
+    my $string = shift;
+    $string =~ s/\+//;
+    $string =~ s/(.*?)(\-)/$2$1/;
+    $string = sprintf( "%g", $string );
+    return $string;
+
+}
+
+sub _element_name {
+
+    # guess the element using the atom name
+    my $name = uc(shift);
+    my $dirt = 0;
+    unless ( exists( $KNOWN_NAMES{$name} ) ) {
+
+#carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
+        $dirt = 1;
+        my $symbol = substr $name, 0, 1; #doesn't work if two letters for symbol
+        return ( $symbol, $dirt );
+    }
+    return ( $KNOWN_NAMES{$name}, $dirt );
+}
+
 
 1;
 

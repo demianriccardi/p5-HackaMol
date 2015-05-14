@@ -3,7 +3,7 @@ package HackaMol::Roles::ReadZmatRole;
 # ABSTRACT: Read files with molecular information
 use Moo::Role;
 use strictures 2;
-use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
+use HackaMol::PeriodicTable qw(%KNOWN_NAMES _trim);
 use Math::Vector::Real;
 use Carp;
 use List::MoreUtils qw(singleton);
@@ -63,6 +63,7 @@ sub read_zmat_atoms {
     foreach my $ib (@iB) {
         my $sym = $zmat[$ib];
         my $a   = $self->init;
+        $sym =~ s/^\s+|\s+$//;
         $atoms[$ib] = HackaMol::Atom->new(
             symbol => $sym,
             coords => [$a]
@@ -81,7 +82,7 @@ sub read_zmat_atoms {
         );
     }
 
-    #print Dump 'C', \%mol;
+#    print Dump 'C', \@atoms;
 
     foreach my $id (@iD) {
         my ( $sym, $iat1, $R, $iat2, $ang ) = split( / /, $zmat[$id] );
@@ -89,7 +90,7 @@ sub read_zmat_atoms {
         my $b = $atoms[ $iat2 - 1 ]->xyz;
         my $c = $self->extend_ab( $b, $a, $R, $ang );
         $atoms[$id] = HackaMol::Atom->new(
-            symbol => $sym,
+            symbol => _trim($sym),
             coords => [$c]
         );
     }
@@ -104,7 +105,7 @@ sub read_zmat_atoms {
         my $c = $atoms[ $iat3 - 1 ]->xyz;
         my $d = $self->extend_abc( $c, $b, $a, $R, $ang, $tor );
         $atoms[$ie] = HackaMol::Atom->new(
-            symbol => $sym,
+            symbol => _trim($sym),
             coords => [$d]
         );
     }

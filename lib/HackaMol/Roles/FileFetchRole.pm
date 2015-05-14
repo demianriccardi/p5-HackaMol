@@ -34,7 +34,7 @@ sub getstore_pdbid{
     carp "$fpdbid exists, set self->overwrite(1) to overwrite";
   }
   my $rc = getstore($self->pdbserver.$pdbid,$fpdbid);
-  return ( $rc );
+  return ( $fpdbid, $rc );
 }
 
 no Moose::Role;

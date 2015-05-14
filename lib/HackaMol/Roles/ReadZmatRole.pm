@@ -62,6 +62,7 @@ sub read_zmat_atoms {
     foreach my $ia (@iA) {
         my ( $sym, $iat1, @xyz ) = split( / /, $zmat[$ia] );
         $atoms[$ia] = HackaMol::Atom->new(
+                        name   => $sym.$ia,
                         symbol => $sym,
                         coords => [ V(@xyz) ]
         );
@@ -74,6 +75,7 @@ sub read_zmat_atoms {
         my $a   = $self->init;
         $sym =~ s/^\s+|\s+$//;
         $atoms[$ib] = HackaMol::Atom->new(
+            name   => $sym.$ib,
             symbol => $sym,
             coords => [$a]
         );
@@ -86,6 +88,7 @@ sub read_zmat_atoms {
         my $a = $atoms[ $iat1 - 1 ]->xyz;
         my $b = $self->extend_a( $a, $R );
         $atoms[$ic] = HackaMol::Atom->new(
+            name   => $sym.$ic,
             symbol => $sym,
             coords => [$b]
         );
@@ -99,6 +102,7 @@ sub read_zmat_atoms {
         my $b = $atoms[ $iat2 - 1 ]->xyz;
         my $c = $self->extend_ab( $b, $a, $R, $ang );
         $atoms[$id] = HackaMol::Atom->new(
+            name   => $sym.$id,
             symbol => _trim($sym),
             coords => [$c]
         );
@@ -114,6 +118,7 @@ sub read_zmat_atoms {
         my $c = $atoms[ $iat3 - 1 ]->xyz;
         my $d = $self->extend_abc( $c, $b, $a, $R, $ang, $tor );
         $atoms[$ie] = HackaMol::Atom->new(
+            name   => $sym.$ie,
             symbol => _trim($sym),
             coords => [$d]
         );

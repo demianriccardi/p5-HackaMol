@@ -20,6 +20,13 @@ with 'HackaMol::Roles::NameRole',
      'HackaMol::Roles::ExeRole', 
      'HackaMol::Roles::FileFetchRole';
 
+sub pdbid_mol {
+  my $self  = shift;
+  my $pdbid = shift || croak "pass pdbid";
+  my ($file,$rc) = $self->getstore_pdbid($pdbid);
+  return($self->read_file_mol($file));
+}
+
 sub read_file_push_coords_mol{
     my $self = shift;
     my $file = shift;

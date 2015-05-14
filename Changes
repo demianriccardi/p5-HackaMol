@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * Improve POD for the reading
+
+0.018     2015-05-14 14:23:22-04:00 America/Indiana/Indianapolis
   * simplify atoms_bin in AtomGroupRole
   * Rework POD for HackaMol.pm
   * support for Z-matrix reading

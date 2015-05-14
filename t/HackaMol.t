@@ -150,11 +150,11 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
 my $mol1 = $hack->read_file_mol("t/lib/1L2Y_mod123.pdb");
 is( $mol1->tmax, 2, "index of last coords for each atom" );
 
-{
-  my $mol = $hack->read_file_mol("t/lib/shit.zmat");
-  $mol->print_xyz;
-  exit;
-}
+#{
+#  my $mol = $hack->read_file_mol("t/lib/shit.zmat");
+#  $mol->print_xyz;
+#  exit;
+#}
 
 #read_file push_coords tests
 {

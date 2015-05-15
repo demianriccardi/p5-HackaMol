@@ -1,3 +1,6 @@
 use HackaMol;
-my $mol = HackaMol->new->read_file_mol(shift);
+use Modern::Perl;
+
+my $bld = HackaMol->new;
+my $mol = $bld->read_file_mol(shift);
 $mol->print_pdb;

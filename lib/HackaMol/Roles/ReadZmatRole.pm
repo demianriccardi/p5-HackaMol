@@ -43,7 +43,7 @@ sub read_zmat_atoms {
     # we need to filter the indices (can't lose the location)
 
     #type A
-    my @iA = grep { $zmat[$_] =~ m/^\s*\w+\s+0(\s+\d*\.*\d*){3}/ } 0 .. $#zmat;
+    my @iA = grep { $zmat[$_] =~ m/^\s*\w+\s+0(\s+-*\d*\.*\d*){3}/ } 0 .. $#zmat;
     my @inA = singleton( 0 .. $#zmat, @iA );
     #type B
     my @iB = grep { $zmat[$_] =~ m/^\s*\w+\s*$/ } @inA;

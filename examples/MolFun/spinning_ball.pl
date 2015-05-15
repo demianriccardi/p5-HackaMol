@@ -9,10 +9,8 @@ use Modern::Perl;
 use HackaMol;
 use Math::Vector::Real;
 
-my $hack = HackaMol->new( name => "hackitup" );
-my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb");
-
-my $mol = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms] );
+my $bld = HackaMol->new( name => "build" );
+my $mol = $bld->pdbid_mol('1l2y');
 
 $mol->translate( -$mol->COM );
 $mol->translate( V( 90, 0, 0 ) );

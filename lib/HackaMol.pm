@@ -229,12 +229,10 @@ __END__
 
        use HackaMol;
 
-       my $pdb = "1KNI.pdb";
        my $bldr = HackaMol->new( name => 'builder');
-       $bldr->getstore_pdbid($pdb);
+       my $mol  = $bldr->pdbid_mol('1kni');
 
-       my @atoms  = $hack->read_file_atoms("1KNI.pdb");
-       my @disulfide_bonds = $hack->find_disulfide_bonds(@atoms);
+       my @disulfide_bonds = $bldr->find_disulfide_bonds( $mol->all_atoms );
 
        print $_->dump foreach @disulfide_bonds;
 
@@ -267,6 +265,15 @@ other objects.
 =attr name 
 
 name is a rw str provided by HackaMol::NameRole.
+
+=method pdbid_mol
+
+one argument: pdbid
+
+This method will download the pdb, unless it exists, and load it into a 
+HackaMol::Molecule object. For example,
+
+      my $mol = HackaMol->new->pdbid_mol('2cba');
 
 =method read_file_atoms
 

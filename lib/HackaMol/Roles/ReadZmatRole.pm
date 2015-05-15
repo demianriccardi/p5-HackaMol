@@ -28,7 +28,7 @@ sub read_zmat_atoms {
     @zmat = _collapse(@zmat);
     chomp @zmat;
     my @var  = grep {/=/} @zmat;
-    @zmat    = grep {!/^\#/} @zmat;
+    @zmat    = grep {!/(^\#)|(^\s*$)/} @zmat;
     chomp @zmat;
 
     #use Data::Dumper; 
@@ -55,21 +55,18 @@ sub read_zmat_atoms {
     my @iE = grep {
         $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d*\.*\d*){2}\s+\d+\s+-*\d*\.*\d*\s*$/
     } @inA;
-
     my $diff = @zmat - (@iA+@iB+@iC+@iD+@iE); #scalar context
     croak "something funky with your zmatrix: $diff" if ( $diff );
 
     foreach my $ia (@iA) {
-        my ( $sym, $iat1, @xyz ) = split( / /, $zmat[$ia] );
+        my ( $sym, $iat1, @xyz ) = split( ' ', $zmat[$ia] );
         $atoms[$ia] = HackaMol::Atom->new(
                         name   => $sym.$ia,
                         symbol => $sym,
                         coords => [ V(@xyz) ]
         );
     }
-
-    #print Dump 'A', \%mol;
-
+   
     foreach my $ib (@iB) {
         my $sym = $zmat[$ib];
         my $a   = $self->init;
@@ -81,10 +78,10 @@ sub read_zmat_atoms {
         );
     }
 
-    #print Dump 'B', \%mol;
+   # print Dump 'B', \@atoms;
 
     foreach my $ic (@iC) {
-        my ( $sym, $iat1, $R ) = split( / /, $zmat[$ic] );
+        my ( $sym, $iat1, $R ) = split( ' ', $zmat[$ic] );
         my $a = $atoms[ $iat1 - 1 ]->xyz;
         my $b = $self->extend_a( $a, $R );
         $atoms[$ic] = HackaMol::Atom->new(
@@ -94,10 +91,10 @@ sub read_zmat_atoms {
         );
     }
 
-#    print Dump 'C', \@atoms;
+   # print Dump 'C', \@atoms;
 
     foreach my $id (@iD) {
-        my ( $sym, $iat1, $R, $iat2, $ang ) = split( / /, $zmat[$id] );
+        my ( $sym, $iat1, $R, $iat2, $ang ) = split( ' ', $zmat[$id] );
         my $a = $atoms[ $iat1 - 1 ]->xyz;
         my $b = $atoms[ $iat2 - 1 ]->xyz;
         my $c = $self->extend_ab( $b, $a, $R, $ang );
@@ -108,11 +105,11 @@ sub read_zmat_atoms {
         );
     }
 
-    #print Dump 'D', \%mol;
+    # print Dump 'D', \@atoms;
 
     foreach my $ie (@iE) {
         my ( $sym, $iat1, $R, $iat2, $ang, $iat3, $tor ) =
-          split( / /, $zmat[$ie] );
+          split( ' ', $zmat[$ie] );
         my $a = $atoms[ $iat1 - 1 ]->xyz;
         my $b = $atoms[ $iat2 - 1 ]->xyz;
         my $c = $atoms[ $iat3 - 1 ]->xyz;
@@ -133,7 +130,7 @@ sub _collapse{
     chomp @Zmat;
 
     my %var  =  map {
-                      my ($key,$val) = map{ s/^\s+|\s+$//; $_ } split(/=/,$_);
+                      my ($key,$val) = map{ s/^\s+|\s+$//; $_ } split(/\s*=\s*/,$_);
                       $key => $val,
                     }
                 grep {/=/} @Zmat;

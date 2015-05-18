@@ -25,14 +25,7 @@ sub read_zmat_atoms {
     my $nat  = undef;
   
     my @zmat = <$fh>;
-    @zmat = _collapse(@zmat);
-    chomp @zmat;
-    my @var  = grep {/=/} @zmat;
-    @zmat    = grep {!/(^\#)|(^\s*$)/} @zmat;
-    chomp @zmat;
-
-    #use Data::Dumper; 
-    #print Dumper \@zmat; exit;
+    @zmat = _substitute_variables(@zmat);
 
     # we have 5 types of extensions
     # A. SYM 0 x y z
@@ -45,18 +38,31 @@ sub read_zmat_atoms {
     #type A
     my @iA = grep { $zmat[$_] =~ m/^\s*\w+\s+0(\s+-*\d*\.*\d*){3}/ } 0 .. $#zmat;
     my @inA = singleton( 0 .. $#zmat, @iA );
+
     #type B
     my @iB = grep { $zmat[$_] =~ m/^\s*\w+\s*$/ } @inA;
+
     #type C
     my @iC = grep { $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d*\.*\d*)\s*$/ } @inA;
+
     #type D
     my @iD = grep { $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d*\.*\d*){2}\s*$/ } @inA;
+
     #type E
     my @iE = grep {
         $zmat[$_] =~ m/^\s*\w+(\s+\d+\s+\d*\.*\d*){2}\s+\d+\s+-*\d*\.*\d*\s*$/
     } @inA;
+
     my $diff = @zmat - (@iA+@iB+@iC+@iD+@iE); #scalar context
-    croak "something funky with your zmatrix: $diff" if ( $diff );
+    
+    if ($diff){
+      print "Lines in Z-matrix: ", scalar (@zmat), " Number of lines to be processed: ", scalar (@zmat) - $diff, "\n";
+      print "Lines missed: ", $diff, "\n";
+      print "\n\nHere is your Z-matrix:\n";
+      print $_ foreach @zmat;
+      print "Indices of lines to be processed: ", join("\n", @iA, @iB, @iC, @iD, @iE);      
+      croak "\nThere is something funky with your zmatrix";
+    }
 
     foreach my $ia (@iA) {
         my ( $sym, $iat1, @xyz ) = split( ' ', $zmat[$ia] );
@@ -124,25 +130,31 @@ sub read_zmat_atoms {
 
 }
 
-sub _collapse{
+sub _substitute_variables{
     my @Zmat = @_;
 
     chomp @Zmat;
 
+    my %bin;
     my %var  =  map {
                       my ($key,$val) = map{ s/^\s+|\s+$//; $_ } split(/\s*=\s*/,$_);
+                      $bin{$key}++;
                       $key => $val,
-                    }
-                grep {/=/} @Zmat;
+                    } grep {/=/} @Zmat;
 
-    @Zmat    = grep {!/^\#|=/} @Zmat;
+    # check for double entry of variables
+    my @too_many = grep {$bin{$_}>1} keys(%bin);     
+    if (@too_many) {
+      carp "ReadZMatRole> you have more than one entry for these variables: ". join("\n", @too_many);
+    }
+
+    @Zmat    = grep {!/(^\#)|=|(^\s*$)/} @Zmat;
 
     foreach my $line (@Zmat){
       my @vals = split (/ /, $line);
       next unless @vals > 2;
       $line = join(' ', $vals[0], map{ exists($var{$_}) ? $var{$_} : $_ } @vals[1 .. $#vals] );
     }
-    # print Dump \@Zmat;
     return (@Zmat);
 }
 

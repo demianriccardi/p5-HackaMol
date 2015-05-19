@@ -282,7 +282,12 @@ sub print_xyz {
         );
     }
 
-    return ($fh);    # returns filehandle for future writing
+    if (defined wantarray()){
+      return ($fh);           # returns filehandle for future writing
+    }
+    else{
+      close $fh;
+    }
 
 }
 
@@ -322,7 +327,12 @@ sub print_pdb {
     }
     print $fh "ENDMDL\n";
 
-    return ($fh);           # returns filehandle for future writing
+    if (defined wantarray()){
+      return ($fh);           # returns filehandle for future writing
+    }
+    else{
+      close $fh;
+    }
 
 }
 

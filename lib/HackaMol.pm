@@ -236,12 +236,12 @@ __END__
 
        print $_->dump foreach @disulfide_bonds;
 
-See the above executed in this L<linked notebook | https://github.com/demianriccardi/p5-IPerl-Notebooks/blob/master/HackaMol/HackaMol-Synopsis.ipynb>
+See the above executed in this L<linked notebook|https://github.com/demianriccardi/p5-IPerl-Notebooks/blob/master/HackaMol/HackaMol-Synopsis.ipynb>
 
 =head1 DESCRIPTION
 
-The L<HackaMol publication | http://pubs.acs.org/doi/abs/10.1021/ci500359e> has
-a more complete description of the library (L<pdf available from researchgate| http://www.researchgate.net/profile/Demian_Riccardi/publication/273778191_HackaMol_an_object-oriented_Modern_Perl_library_for_molecular_hacking_on_multiple_scales/links/550ebec60cf27526109e6ade.pdf>). 
+The L<HackaMol publication|http://pubs.acs.org/doi/abs/10.1021/ci500359e> has
+a more complete description of the library (L<pdf available from researchgate|http://www.researchgate.net/profile/Demian_Riccardi/publication/273778191_HackaMol_an_object-oriented_Modern_Perl_library_for_molecular_hacking_on_multiple_scales/links/550ebec60cf27526109e6ade.pdf>). 
 
 Citation: J. Chem. Inf. Model., 2015, 55, 721 
 
@@ -375,6 +375,6 @@ this method returns disulfide bonds as bond objects.
 * L<HackaMol::Molecule>
 * L<HackaMol::X::Calculator>
 * L<HackaMol::X::Vina>
-* L<Protein Data Bank | http://pdb.org>
-* L<VMD | http://www.ks.uiuc.edu/Research/vmd/>
+* L<Protein Data Bank|http://pdb.org>
+* L<VMD|http://www.ks.uiuc.edu/Research/vmd/>
 

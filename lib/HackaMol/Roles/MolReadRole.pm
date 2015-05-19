@@ -73,12 +73,17 @@ __END__
 
    # build molecule from xyz [pdb,pdbqt] file
    my $mol    = $hack->read_file_mol("some.xyz");
-   $mol->print_pdb; # not so easy from xyz to pdb! 
+   $mol->print_pdb; # 
 
 =head1 DESCRIPTION
 
-The HackaMol::MolReadRole role provided methods for reading common structural files.  Currently,
-pdb and xyz are provided in the core, but others will be likely added.  
+The HackaMol::Role::MolReadRole role provides methods for reading common structural files.  Currently,
+pdb, pdbqt, Z-matrix, and xyz are provided.  The methods are all provided in separate roles.  Adding 
+additional formats is straightforward: 
+
+    1. Add a Role that parses the file and returns a list of HackaMol::Atoms. 
+
+    2. Add the code here to consume the role and call the method based on the file ending.
 
 =attr hush_read
 
@@ -86,31 +91,18 @@ isa Bool that is lazy. $hack->hush_read(1) will quiet some warnings that may be 
 
 =method read_file_atoms
 
-takes the name of the file as input, parses the file, builds Atom objects, and returns them.
-Matches the filename extension and calls on either read_pdb_atoms or read_xyz_atoms
+one argument: the name of a file (.xyz, .pdb, .pdbqt, .zmat)
 
-=method read_pdb_atoms
-
-takes the name of the file as input, parses the pdb file to return the list of built 
-Atom objects. This is a barebones parser.  A more advanced PDB parser will be released 
-soon as an extension. 
-
-According to the PDB specification, the element symbol should be present in columns 77-78.  
-The element is often ommitted by programs, such as charmm, that can write pdbs because it makes the
-file larger, and the information is accessible somewhere else. Unfortunately, other programs require
-the information.  HackaMol::MolReadRole, loads a hash (KNOWN_NAMES) from HackaMol::PeriodicTable 
-that maps common names to the element (e.g. POT => 'K'). read_pdb_atoms will carp if the name is 
-not in the hash, and then set the element to the first letter of the name. This will be improved when
-HackaMol::PeriodicTable is improved. See TODO.
-
-=method read_xyz_atoms
-
-takes the name of the file as input, parses the xyz file to return the list of built 
-Atom objects.  
+returns a list of HackaMol::Atom objects
 
 =head1 SEE ALSO
 
 =for :list
 * L<HackaMol>
-* L<Protein Data Bank | http://pdb.org>
+* L<HackaMol::Roles::ReadXyzRole>
+* L<HackaMol::Roles::ReadPdbRole>
+* L<HackaMol::Roles::ReadPdbqtRole>
+* L<HackaMol::Roles::ReadZmatRole>
+* L<HackaMol::Atom>
+* L<HackaMol::Molecule>
 

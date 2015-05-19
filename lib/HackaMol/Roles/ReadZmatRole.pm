@@ -164,63 +164,40 @@ __END__
 
 =head1 SYNOPSIS
 
-   use HackaMol;
-
-   my $hack   = HackaMol->new( name => "hackitup" );
-
-   # build array of carbon atoms from pdb [xyz,pdbqt] file
-   my @carbons  = grep {
-                        $_->symbol eq "C"
-                       } $hack->read_file_atoms("t/lib/1L2Y.pdb"); 
-
-   my $Cmol     = HackaMol::Molecule->new(
-                        name => "carbonprotein", 
-                        atoms => [ @carbons ]
-                  );
-
-   $Cmol->print_pdb;   
-   $Cmol->print_xyz;     
-
-   # build molecule from xyz [pdb,pdbqt] file
-   my $mol    = $hack->read_file_mol("some.xyz");
-   $mol->print_pdb; # not so easy from xyz to pdb! 
+   my @atoms = HackaMol->new
+                       ->read_zmat_atoms("some.zmat");
 
 =head1 DESCRIPTION
 
-The HackaMol::MolReadRole role provided methods for reading common structural files.  Currently,
-pdb and xyz are provided in the core, but others will be likely added.  
+The HackaMol::Roles::ReadZmatRole provides read_zmat_atoms for the flexible reading of Z-matrix files. 
+It supports inline cartesian coordinates and variables as in the following example:
 
-=attr hush_read
+N 0     -12.781   3.620  15.274 
+C 0     -11.976   4.652  15.944 
+C 0     -12.722   6.019  15.985 
+O 0     -13.133   6.378  14.897 
+C 2  CBCA 3 CBCAC 4 CBCACO 
+C 5  CBCA 2 CBCAC 3 CG1CBCAC
+C 5  CBCA 2 CBCAC 3 CG2CBCAC
+CBCA    = 1.54
+CBCA    = 1.54
+CBCA    = 1.54
+CBCAC   = 113.4
+CBCACO  = 71.85
+CG1CBCAC = 54. 
+CG2CBCAC = 180.
 
-isa Bool that is lazy. $hack->hush_read(1) will quiet some warnings that may be ignored under some instances.
+=method read_zmat_atoms
 
-=method read_file_atoms
-
-takes the name of the file as input, parses the file, builds Atom objects, and returns them.
-Matches the filename extension and calls on either read_pdb_atoms or read_xyz_atoms
-
-=method read_pdb_atoms
-
-takes the name of the file as input, parses the pdb file to return the list of built 
-Atom objects. This is a barebones parser.  A more advanced PDB parser will be released 
-soon as an extension. 
-
-According to the PDB specification, the element symbol should be present in columns 77-78.  
-The element is often ommitted by programs, such as charmm, that can write pdbs because it makes the
-file larger, and the information is accessible somewhere else. Unfortunately, other programs require
-the information.  HackaMol::MolReadRole, loads a hash (KNOWN_NAMES) from HackaMol::PeriodicTable 
-that maps common names to the element (e.g. POT => 'K'). read_pdb_atoms will carp if the name is 
-not in the hash, and then set the element to the first letter of the name. This will be improved when
-HackaMol::PeriodicTable is improved. See TODO.
-
-=method read_xyz_atoms
-
-takes the name of the file as input, parses the xyz file to return the list of built 
-Atom objects.  
+One argument: the filename
+Returns a list of HackaMol::Atom objects.
 
 =head1 SEE ALSO
 
 =for :list
 * L<HackaMol>
-* L<Protein Data Bank | http://pdb.org>
+* L<HackaMol::Atom>
+* L<HackaMol::Roles::MolReadRole>
+* L<Protein Data Bank|http://pdb.org>
+
 

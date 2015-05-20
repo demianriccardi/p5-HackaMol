@@ -21,8 +21,6 @@ sub read_zmat_atoms {
 
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
-
-    my $nat  = undef;
   
     my @zmat = <$fh>;
     @zmat = _substitute_variables(@zmat);

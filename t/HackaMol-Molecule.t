@@ -29,7 +29,7 @@ map can_ok( 'HackaMol::Molecule', $_ ), @methods;
 map does_ok( 'HackaMol::Molecule', $_ ), @roles;
 
 my $hack  = HackaMol->new(name => "hackitup");
-my @atoms = $hack->read_file_atoms("t/lib/2LL5_mod123.pdb"); 
+my @atoms = $hack->read_file_atoms("t/lib/2ll5_mod123.pdb"); 
 
 my $max_t = $atoms[0]->count_coords - 1;
 
@@ -37,7 +37,7 @@ my $mol = HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms] );
 
 is( $mol->count_atoms, 283, 'number of atoms: 283' );
 # check mass of molecule.  Have not checked whether the number
-# for 2LL5 is actually correct.
+# for 2ll5 is actually correct.
 cmp_ok(abs(2124.20656-$mol->mass),'<', 1E-7, "mass of the molecule" );
 #dubious test, Rgs COMs generated from HackaMol, double check
 my @Rgt =
@@ -112,7 +112,7 @@ $bond_count += $_->bond_count foreach $mol->all_atoms;
 is( $bond_count, 0, "bond count is 0 after mol->clear_bonds" );
 
 #push in a bunch of bonds, angles and dihedrals and do some rotations
-#using backbone and ignoring the circular sequence of 2LL5
+#using backbone and ignoring the circular sequence of 2ll5
 my @bbatoms = grep { $_->name eq 'N' or $_->name eq 'CA' or $_->name eq 'C' }
   $mol->all_atoms;
 

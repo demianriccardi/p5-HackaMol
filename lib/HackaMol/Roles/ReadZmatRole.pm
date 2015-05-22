@@ -124,6 +124,7 @@ sub read_zmat_atoms {
             coords => [$d]
         );
     }
+    $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
     return (@atoms);
 
 }

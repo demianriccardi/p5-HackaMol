@@ -24,6 +24,10 @@ count_unique_atoms
 bin_atoms_name all_atoms 
 push_atoms get_atoms delete_atoms 
 count_atoms clear_atoms
+select_atoms map_atoms
+first_atoms sort_atoms
+splice_atoms insert_atoms
+shuffle_atoms
 rotate translate print_xyz
 fix_serial tmax what_time
 );

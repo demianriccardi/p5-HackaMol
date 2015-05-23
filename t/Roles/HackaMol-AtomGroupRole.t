@@ -24,6 +24,7 @@ count_unique_atoms
 bin_atoms_name all_atoms 
 push_atoms get_atoms delete_atoms 
 count_atoms clear_atoms
+natoms 
 select_atoms map_atoms
 first_atoms sort_atoms
 splice_atoms insert_atoms

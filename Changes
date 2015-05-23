@@ -1,7 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-
+  * HackaMol::Molecule atomgroups -> groups
+  * a molecule can now be built from a list of groups. e.g.  HackaMol::Molecule->new(groups=>[@groups])
+  
 0.022     2015-05-22 15:03:09-04:00 America/Indiana/Indianapolis
   * added a bunch of array traits to the AtomGroupRole
   * fixed Zmatrix Reader bug

@@ -16,21 +16,28 @@ with 'HackaMol::Roles::PhysVecMVRRole',
 
 extends 'HackaMol::AtomGroup';
 
-has 'atomgroups' => (
+has 'groups' => (
     traits  => ['Array'],
     is      => 'ro',
     isa     => 'ArrayRef[HackaMol::AtomGroup]',
     default => sub { [] },
     lazy    => 1,
     handles => {
-        "has_groups"    => 'count',
-        "push_groups"   => 'push',
-        "get_groups"    => 'get',
-        "set_groups"    => 'set',
-        "all_groups"    => 'elements',
-        "count_groups"  => 'count',
-        "delete_groups" => 'delete',
-        "clear_groups"  => 'clear',
+        has_groups     => 'count',
+        push_groups    => 'push',
+        get_groups     => 'get',
+        set_groups     => 'set',
+        all_groups     => 'elements',
+        count_groups   => 'count',
+        delete_groups  => 'delete',
+        clear_groups   => 'clear',
+        select_groups  => 'grep',
+        map_groups     => 'map',
+        first_groups   => 'first',
+        sort_groups    => 'sort',
+        splice_groups  => 'splice',
+        insert_groups  => 'insert',
+        shuffle_groups => 'shuffle',
     },
 );
 
@@ -38,6 +45,12 @@ sub BUILD {
     my $self = shift;
     foreach my $bond ( $self->all_bonds ) {
         $_->inc_bond_count foreach $bond->all_atoms;
+    }
+    #all the molecule to be build from groups or atoms
+    return if $self->has_atoms;
+
+    if ($self->has_groups){
+      $self->push_atoms($self->map_groups(sub{$_->all_atoms}));
     }
     return;
 }

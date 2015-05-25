@@ -228,10 +228,9 @@ __END__
     use HackaMol;
     use Math::Vector::Real;
     
-    my $hack  = HackaMol->new(name => "hackitup");
-    my @atoms = $hack->read_file_atoms("t/lib/1L2Y.pdb"); 
+    my $mol  = HackaMol->new
+                       ->pdbid_mol('1L2Y');
     
-    my $mol = HackaMol::Molecule->new(name=> 'trp-cage', atoms=>[@atoms]);
     $mol->translate(-$mol->COM);
     $mol->rotate(V(1,0,0), 180, V(10,10,10));
     

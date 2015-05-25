@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * minor fixes to testing filenames
 
 0.023     2015-05-22 23:07:08-04:00 America/Indiana/Indianapolis
   * HackaMol::Molecule atomgroups -> groups

@@ -33,7 +33,7 @@ map can_ok( 'HackaMol::Molecule', $_ ), @methods;
 map does_ok( 'HackaMol::Molecule', $_ ), @roles;
 
 my $hack  = HackaMol->new(name => "hackitup");
-my @atoms = $hack->read_file_atoms("t/lib/2ll5_mod123.pdb"); 
+my @atoms = $hack->read_file_atoms("t/lib/2LL5_mod123.pdb"); 
 
 my $max_t = $atoms[0]->count_coords - 1;
 

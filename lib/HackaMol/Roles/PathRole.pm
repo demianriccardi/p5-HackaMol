@@ -33,7 +33,7 @@ has 'log_fn' => (
     predicate => 'has_log_fn', 
 ); 
 
-has forts => (
+has 'forts' => (
     is       => 'ro',
     isa      => Paths,
     coerce   => 1,

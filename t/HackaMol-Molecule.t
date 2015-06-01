@@ -12,10 +12,14 @@ use Math::Trig;
 use HackaMol;
 
 my @attributes = qw(
-  atomgroups atoms mass name
+  groups bonds angles dihedrals atoms mass name
 );
 my @methods = qw(
   push_groups set_groups get_groups all_groups clear_groups
+  select_groups map_groups
+  first_groups sort_groups
+  splice_groups insert_groups
+  shuffle_groups
   delete_groups count_groups all_bonds_atoms all_angles_atoms
   all_dihedrals_atoms dihedral_rotate_atoms
 );
@@ -29,7 +33,7 @@ map can_ok( 'HackaMol::Molecule', $_ ), @methods;
 map does_ok( 'HackaMol::Molecule', $_ ), @roles;
 
 my $hack  = HackaMol->new(name => "hackitup");
-my @atoms = $hack->read_file_atoms("t/lib/2ll5_mod123.pdb"); 
+my @atoms = $hack->read_file_atoms("t/lib/2LL5_mod123.pdb"); 
 
 my $max_t = $atoms[0]->count_coords - 1;
 

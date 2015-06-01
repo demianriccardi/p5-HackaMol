@@ -29,7 +29,9 @@ has 'atoms' => (
         delete_atoms  => 'delete',
         all_atoms     => 'elements',
         count_atoms   => 'count',
+        natoms        => 'count',
         clear_atoms   => 'clear',
+        has_atoms     => 'count',
     },
     lazy => 1,
 );

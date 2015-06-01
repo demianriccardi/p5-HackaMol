@@ -65,8 +65,7 @@ use HackaMol;
       HackaMol::AtomGroup->new( name => 'biggroup', atoms => [@atoms] );
     my $mol = HackaMol::Molecule->new(
         name       => 'bg_mol',
-        atoms      => [ $group->all_atoms ],
-        atomgroups => [$group]
+        groups     => [$group]
     );
 
     is( $group->count_atoms, $natoms, "group atom count: $natoms" );

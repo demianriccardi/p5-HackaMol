@@ -2,7 +2,7 @@ HackaMol
 ========
 Object-oriented Perl 5, Moose library for molecular hacking on multiple scales. 
 
-VERSION 0.021
+VERSION 0.024
 ============
        
 Please see [HackaMol on MetaCPAN](https://metacpan.org/release/HackaMol) for formatted documentation.  The [HackaMol publication] (http://pubs.acs.org/doi/abs/10.1021/ci500359e) has a more complete description of the library ([pdf available from researchgate](http://www.researchgate.net/profile/Demian_Riccardi/publication/273778191_HackaMol_an_object-oriented_Modern_Perl_library_for_molecular_hacking_on_multiple_scales/links/550ebec60cf27526109e6ade.pdf )). 
@@ -55,6 +55,11 @@ researchers to develop and share new methods that use the core.
        
 INSTALLATION
 ============
+In brief, try this one-liner to install:
+
+         prompt> curl -L cpanmin.us | perl - -n HackaMol
+
+Longer version:
 To install HackaMol, I recommend using cpanminus and local::lib. This approach avoids the need for root privileges and uses the system Perl 
 (available on most systems; see Strawberry Perl for Windows). 
 I use *[Perlbrew](http://perlbrew.pl)* to manage local versions of Perl, but Perlbrew is overkill unless your system Perl is very old (if you do use Perlbrew, you won't need local::lib).

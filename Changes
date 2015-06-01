@@ -1,7 +1,15 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * minor fixes to testing filenames
 
+0.024     2015-05-25 11:56:05-04:00 America/Indiana/Indianapolis
+  * minor fixes to testing filenames
+
+0.023     2015-05-22 23:07:08-04:00 America/Indiana/Indianapolis
+  * HackaMol::Molecule atomgroups -> groups
+  * a molecule can now be built from a list of groups. e.g.  HackaMol::Molecule->new(groups=>[@groups])
+  
 0.022     2015-05-22 15:03:09-04:00 America/Indiana/Indianapolis
   * added a bunch of array traits to the AtomGroupRole
   * fixed Zmatrix Reader bug

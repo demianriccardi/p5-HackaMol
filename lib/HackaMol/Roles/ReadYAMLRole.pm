@@ -21,14 +21,15 @@ with qw(
 #- CCC :    106.42
 #- CCCC :  [-81.90, 89, 09]
 
-sub read_YAML_atoms {
+sub read_yaml_atoms {
     # this is going to be the simplest implementation for now using the code from the zmatrix reader
     # generate a zmatrix (or zmatrices if there are scans) and push on to the atoms
     #xyz file and generate list of Atom object
     #issue 16 on github
     my $self = shift;
     my $yaml = shift;
-
+    #use Data::Dumper;
+    #print Dumper $yaml;
     my %vars    = %{$yaml->{vars}};
     my @atlines = @{$yaml->{atoms}};
     my @atoms;
@@ -38,24 +39,25 @@ sub read_YAML_atoms {
     if (@scan_vars) {
       my $scan_var = pop @scan_vars;
       carp "scanning more than one coordinate not supported; ignoring scans for $scan_vars[0]" if @scan_vars ;
-      my @values = delete $vars{$scan_var};
+      my $values_rh = delete $vars{$scan_var};
 
-      foreach my $value (@values){
+      foreach my $value (@{$values_rh}){
         $vars{$scan_var} = $value;
-        my @atlines = _substitue(\%vars, \@atlines);
-        $self->parse_zmat_atoms(\@atlines, \@atoms, $t);       
+        my @atlines = _yaml_substitute_variables(\%vars, \@atlines);
+        @atoms = $self->parse_zmat_atoms(\@atlines, \@atoms, $t);       
         $t++;
       }
     }
     else {
 
-        my @atlines = _substitue(\%vars, \@atlines);
-        $self->parse_zmat_atoms(\@atlines, \@atoms, $t);       
-
-      
+        my @atlines = _yaml_substitute_variables(\%vars, \@atlines);
+        @atoms = $self->parse_zmat_atoms(\@atlines, \@atoms, $t);       
     }
 
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
+    #use Data::Dumper;
+    #print Dumper \@atoms;
+
     return (@atoms);
 
 } 
@@ -67,6 +69,9 @@ sub parse_zmat_atoms {
     my $t  = shift;
     my @zmat  = @{ $zmat  };
     my @atoms = @{ $atoms };
+
+    #use Data::Dumper;
+    #print Dumper $zmat;
 
     # we have 5 types of extensions
     # A. SYM 0 x y z
@@ -100,30 +105,39 @@ sub parse_zmat_atoms {
       print "Lines in Z-matrix: ", scalar (@zmat), " Number of lines to be processed: ", scalar (@zmat) - $diff, "\n";
       print "Lines missed: ", $diff, "\n";
       print "\n\nHere is your Z-matrix:\n";
-      print $_ foreach @zmat;
+      print $_ . "\n" foreach @zmat;
       print "Indices of lines to be processed: ", join("\n", @iA, @iB, @iC, @iD, @iE);      
       croak "\nThere is something funky with your zmatrix";
     }
 
     foreach my $ia (@iA) {
         my ( $sym, $iat1, @xyz ) = split( ' ', $zmat[$ia] );
-        $atoms[$ia] = HackaMol::Atom->new(
+        if ($t) {
+          #print "$ia  SHITSHIT  $t\n";
+          #print Dumper $atoms[$ia];
+          $atoms[$ia]->set_coords($t, V(@xyz));
+        } else {
+          $atoms[$ia] = HackaMol::Atom->new(
                         name   => $sym.$ia,
                         symbol => $sym,
-        );
-        $atoms[$ia]->set_coords($t, V(@xyz));
+                        coords => [V(@xyz)]
+          );
+        }
     }
    
     foreach my $ib (@iB) {
         my $sym = $zmat[$ib];
         my $a   = $self->init;
         $sym =~ s/^\s+|\s+$//;
-        $atoms[$ib] = HackaMol::Atom->new(
+        if ($t) {
+          $atoms[$ib]->set_coords($t, $a);
+        } else {
+          $atoms[$ib] = HackaMol::Atom->new(
             name   => $sym.$ib,
             symbol => $sym,
             coords => [$a]
-        );
-        $atoms[$ib]->set_coords($t, $a);
+          );
+        }
     }
 
    # print Dump 'B', \@atoms;
@@ -132,25 +146,33 @@ sub parse_zmat_atoms {
         my ( $sym, $iat1, $R ) = split( ' ', $zmat[$ic] );
         my $a = $atoms[ $iat1 - 1 ]->xyz;
         my $b = $self->extend_a( $a, $R );
-        $atoms[$ic] = HackaMol::Atom->new(
+        if ($t) {
+          $atoms[$ic]->set_coords($t, $b);
+        } else {
+          $atoms[$ic] = HackaMol::Atom->new(
             name   => $sym.$ic,
             symbol => $sym,
-        );
-        $atoms[$ic]->set_coords($t, $b);
+            coords => [$b]
+          );
+        }
     }
 
    # print Dump 'C', \@atoms;
 
     foreach my $id (@iD) {
         my ( $sym, $iat1, $R, $iat2, $ang ) = split( ' ', $zmat[$id] );
-        my $a = $atoms[ $iat1 - 1 ]->xyz;
-        my $b = $atoms[ $iat2 - 1 ]->xyz;
+        my $a = $atoms[ $iat1 - 1 ]->get_coords($t);
+        my $b = $atoms[ $iat2 - 1 ]->get_coords($t);
         my $c = $self->extend_ab( $b, $a, $R, $ang );
-        $atoms[$id] = HackaMol::Atom->new(
+        if ($t) {
+          $atoms[$id]->set_coords($t, $c);
+        } else {
+          $atoms[$id] = HackaMol::Atom->new(
             name   => $sym.$id,
             symbol => _trim($sym),
-        );
-        $atoms[$id]->set_coords($t, $c);
+            coords => [$c]
+          );
+        }
     }
 
     # print Dump 'D', \@atoms;
@@ -158,25 +180,24 @@ sub parse_zmat_atoms {
     foreach my $ie (@iE) {
         my ( $sym, $iat1, $R, $iat2, $ang, $iat3, $tor ) =
           split( ' ', $zmat[$ie] );
-        my $a = $atoms[ $iat1 - 1 ]->xyz;
-        my $b = $atoms[ $iat2 - 1 ]->xyz;
-        my $c = $atoms[ $iat3 - 1 ]->xyz;
+        my $a = $atoms[ $iat1 - 1 ]->get_coords($t);
+        my $b = $atoms[ $iat2 - 1 ]->get_coords($t);
+        my $c = $atoms[ $iat3 - 1 ]->get_coords($t);
         my $d = $self->extend_abc( $c, $b, $a, $R, $ang, $tor );
-        $atoms[$ie] = HackaMol::Atom->new(
+        if ($t) {
+          $atoms[$ie]->set_coords($t, $d);
+        } else {
+          $atoms[$ie] = HackaMol::Atom->new(
             name   => $sym.$ie,
             symbol => _trim($sym),
             coords => [$d]
-        );
-        $atoms[$ie]->set_coords($t, $d);
+          );
+        }
     }
-
+    return @atoms;
 }
 
-sub parse_zmatrix {
-
-}
-
-sub _substitute_variables{
+sub _yaml_substitute_variables{
     my ($var,$Zmat) = (shift,shift);
     my %var  = %{ $var };
     my @Zmat = @{ $Zmat };

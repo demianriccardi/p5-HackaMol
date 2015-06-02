@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * allow charge method to set the current charge for molecules
+  * charge method now returns 0 if no charges set for atoms or molecules
+  * see #15 on github
 
 0.025     2015-05-26 20:55:25-04:00 America/Indiana/Indianapolis
   * minor fixes to testing filenames

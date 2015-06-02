@@ -55,6 +55,11 @@ researchers to develop and share new methods that use the core.
        
 INSTALLATION
 ============
+In brief, try this one-liner to install:
+
+         prompt> curl -L cpanmin.us | perl - -n HackaMol
+
+Longer version:
 To install HackaMol, I recommend using cpanminus and local::lib. This approach avoids the need for root privileges and uses the system Perl 
 (available on most systems; see Strawberry Perl for Windows). 
 I use *[Perlbrew](http://perlbrew.pl)* to manage local versions of Perl, but Perlbrew is overkill unless your system Perl is very old (if you do use Perlbrew, you won't need local::lib).

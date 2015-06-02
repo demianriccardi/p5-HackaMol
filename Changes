@@ -4,6 +4,7 @@ Revision history for {{$dist->name}}
 
 0.025     2015-05-26 20:55:25-04:00 America/Indiana/Indianapolis
   * minor fixes to testing filenames
+  * charge defaults to 0
 
 0.024     2015-05-25 11:56:05-04:00 America/Indiana/Indianapolis
   * minor fixes to testing filenames

@@ -55,6 +55,20 @@ sub BUILD {
     return;
 }
 
+sub charge {
+  my $self = shift;
+  my $t = $self->t;
+  my $q = 0;
+  if ($self->has_charges){
+    $q = $self->get_charges($t);
+  }
+  if (@_){
+    my $new_q = shift;
+    $self->set_charges($new_q);
+  }
+  return $q;
+}
+
 # need to increase atom bond_count when push
 after 'push_bonds' => sub {
     my $self = shift;

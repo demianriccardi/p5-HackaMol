@@ -17,6 +17,7 @@ my @methods = qw(
   push_charges get_charges set_charges all_charges clear_charges
   push_coords get_coords set_coords all_coords clear_coords
   push_forces get_forces set_forces all_forces clear_forces
+  has_charges
   distance 
   intra_dcoords intra_dforces intra_dcharges
   inter_dcoords inter_dforces inter_dcharges
@@ -35,6 +36,8 @@ lives_ok {
 }
 'Test creation of an Atom obj1';
 
+
+is($obj1->charge, 0, "an atom with no charges returns 0 charge");
 is($obj1->t, 1, "t set ok");
 $obj1->t(0);
 is($obj1->t, 0, "t change ok");

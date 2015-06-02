@@ -8,7 +8,7 @@ use Math::Trig;
 use Moose::Role;
 use Carp;
 
-requires '_build_mass';
+requires qw(_build_mass charge);
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
 
@@ -33,7 +33,8 @@ has "$_" => (
     traits  => ['Array'],
     is      => 'ro',
     isa     => 'ArrayRef[Num]',
-    default => sub { [0] },
+    default => sub { [] },
+    predicate => 'has_charges',
     handles => {
         "push_$_"   => 'push',
         "get_$_"    => 'get',
@@ -266,12 +267,6 @@ sub inter_dforces {
     carp "comparing objects with different times" unless ( $ts == $t2 );
     my $dvec = $obj2->get_forces($t2) - $self->get_forces($ts);
     return ($dvec);
-}
-
-sub charge {
-    my $self = shift;
-    carp "charge> takes no arguments. returns get_charges(t)" if (@_);
-    return ( $self->get_charges( $self->t ) );
 }
 
 sub xyz {

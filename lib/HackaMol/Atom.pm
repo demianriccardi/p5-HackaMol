@@ -100,6 +100,17 @@ sub change_symbol {
     $self->symbol( _fix_symbol($symbol) );
 }
 
+sub charge {
+    my $self = shift;
+    carp "charge> takes no arguments. returns get_charges(t)" if (@_);
+    if ($self->has_charges){
+      return ( $self->get_charges( $self->t ) );
+    } 
+    else {
+      return 0;
+    }
+}
+
 sub _clean_atom {
     my $self = shift;
     foreach my $clearthis ( map { "clear_$_" } @delta_attrs ) {

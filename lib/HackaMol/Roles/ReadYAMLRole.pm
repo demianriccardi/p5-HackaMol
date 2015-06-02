@@ -1,4 +1,4 @@
-package HackaMol::Roles::ReadZmatRole;
+package HackaMol::Roles::ReadYAMLRole;
 
 # ABSTRACT: Read files with molecular information
 use Moo::Role;
@@ -12,20 +12,61 @@ with qw(
         HackaMol::Roles::NERFRole
 );
 
+#  atoms:
+#- N 0    0.483824   1.697569  -0.701935
+#....
+#- C 2   CC 3 CCC 4 CCCC
+#vars:
+#- CC :       1.54
+#- CCC :    106.42
+#- CCCC :  [-81.90, 89, 09]
+
 sub read_YAML_atoms {
+    # this is going to be the simplest implementation for now using the code from the zmatrix reader
+    # generate a zmatrix (or zmatrices if there are scans) and push on to the atoms
     #xyz file and generate list of Atom object
     #issue 16 on github
     my $self = shift;
     my $yaml = shift;
 
-    my %vars  = $yaml->{vars};
-    my @atlines = $yaml->{atoms};
+    my %vars    = %{$yaml->{vars}};
+    my @atlines = @{$yaml->{atoms}};
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );
 
-    foreach my $atline ()  
-    my @zmat = <$fh>;
-    @zmat = _substitute_variables(@zmat);
+    my @scan_vars = grep {ref($vars{$_}) eq 'ARRAY'} keys (%vars) ;
+    if (@scan_vars) {
+      my $scan_var = pop @scan_vars;
+      carp "scanning more than one coordinate not supported; ignoring scans for $scan_vars[0]" if @scan_vars ;
+      my @values = delete $vars{$scan_var};
+
+      foreach my $value (@values){
+        $vars{$scan_var} = $value;
+        my @atlines = _substitue(\%vars, \@atlines);
+        $self->parse_zmat_atoms(\@atlines, \@atoms, $t);       
+        $t++;
+      }
+    }
+    else {
+
+        my @atlines = _substitue(\%vars, \@atlines);
+        $self->parse_zmat_atoms(\@atlines, \@atoms, $t);       
+
+      
+    }
+
+    $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
+    return (@atoms);
+
+} 
+
+sub parse_zmat_atoms {
+    my $self = shift;
+    my $zmat  = shift;
+    my $atoms = shift;
+    my $t  = shift;
+    my @zmat  = @{ $zmat  };
+    my @atoms = @{ $atoms };
 
     # we have 5 types of extensions
     # A. SYM 0 x y z
@@ -69,8 +110,8 @@ sub read_YAML_atoms {
         $atoms[$ia] = HackaMol::Atom->new(
                         name   => $sym.$ia,
                         symbol => $sym,
-                        coords => [ V(@xyz) ]
         );
+        $atoms[$ia]->set_coords($t, V(@xyz));
     }
    
     foreach my $ib (@iB) {
@@ -82,6 +123,7 @@ sub read_YAML_atoms {
             symbol => $sym,
             coords => [$a]
         );
+        $atoms[$ib]->set_coords($t, $a);
     }
 
    # print Dump 'B', \@atoms;
@@ -93,8 +135,8 @@ sub read_YAML_atoms {
         $atoms[$ic] = HackaMol::Atom->new(
             name   => $sym.$ic,
             symbol => $sym,
-            coords => [$b]
         );
+        $atoms[$ic]->set_coords($t, $b);
     }
 
    # print Dump 'C', \@atoms;
@@ -107,8 +149,8 @@ sub read_YAML_atoms {
         $atoms[$id] = HackaMol::Atom->new(
             name   => $sym.$id,
             symbol => _trim($sym),
-            coords => [$c]
         );
+        $atoms[$id]->set_coords($t, $c);
     }
 
     # print Dump 'D', \@atoms;
@@ -125,31 +167,19 @@ sub read_YAML_atoms {
             symbol => _trim($sym),
             coords => [$d]
         );
+        $atoms[$ie]->set_coords($t, $d);
     }
-    $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    return (@atoms);
+
+}
+
+sub parse_zmatrix {
 
 }
 
 sub _substitute_variables{
-    my @Zmat = @_;
-
-    chomp @Zmat;
-
-    my %bin;
-    my %var  =  map {
-                      my ($key,$val) = map{ s/^\s+|\s+$//; $_ } split(/\s*=\s*/,$_);
-                      $bin{$key}++;
-                      $key => $val,
-                    } grep {/=/} @Zmat;
-
-    # check for double entry of variables
-    my @too_many = grep {$bin{$_}>1} keys(%bin);     
-    if (@too_many) {
-      carp "ReadZMatRole> you have more than one entry for these variables: ". join("\n", @too_many);
-    }
-
-    @Zmat    = grep {!/(^\#)|=|(^\s*$)/} @Zmat;
+    my ($var,$Zmat) = (shift,shift);
+    my %var  = %{ $var };
+    my @Zmat = @{ $Zmat };
 
     foreach my $line (@Zmat){
       my @vals = split (/ /, $line);

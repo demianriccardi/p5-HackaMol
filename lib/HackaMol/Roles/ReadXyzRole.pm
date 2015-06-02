@@ -11,8 +11,9 @@ sub read_xyz_atoms {
 
     #read xyz file and generate list of Atom objects
     my $self = shift;
-    my $file = shift;
-    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
+    my $fh   = shift;
+ #   my $file = shift;
+ #   my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
     my ( $n, $t ) = ( 0, 0 );

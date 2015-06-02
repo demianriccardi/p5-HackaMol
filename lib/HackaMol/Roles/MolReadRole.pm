@@ -6,10 +6,12 @@ use Carp;
 use Math::Vector::Real;
 use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
+use YAML::XS qw(LoadFile);
 use HackaMol::Atom;    #add the code,the Role may better to understand
 use List::MoreUtils qw(singleton);
 
 with qw(
+        HackaMol::Roles::ReadYAMLRole
         HackaMol::Roles::ReadZmatRole
         HackaMol::Roles::ReadPdbRole
         HackaMol::Roles::ReadPdbqtRole
@@ -26,19 +28,27 @@ has 'hush_read' => (
 sub read_file_atoms {
     my $self = shift;
     my $file = shift;
+    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
+
     my @atoms;
 
+
     if ( $file =~ m/\.pdb$/ ) {
-        @atoms = $self->read_pdb_atoms($file);
+        @atoms = $self->read_pdb_atoms($fh);
     }
     elsif ( $file =~ m/\.pdbqt$/ ) {
-        @atoms = $self->read_pdbqt_atoms($file);
+        @atoms = $self->read_pdbqt_atoms($fh);
     }
     elsif ( $file =~ m/\.xyz$/ ) {
-        @atoms = $self->read_xyz_atoms($file);
+        @atoms = $self->read_xyz_atoms($fh);
     }
     elsif ( $file =~ m/\.zmat$/ ) {
-        @atoms = $self->read_zmat_atoms($file);
+        @atoms = $self->read_zmat_atoms($fh);
+    }
+    elsif ( $file =~ m/\.yaml$/) {
+        $fh->close;
+        $fh = LoadFile($file); 
+        @atoms = $self->read_yaml_atoms($fh);
     }
     else {
         croak "$file format not supported";

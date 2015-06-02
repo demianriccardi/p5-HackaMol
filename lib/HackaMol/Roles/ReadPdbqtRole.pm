@@ -11,9 +11,9 @@ sub read_pdbqt_atoms {
 
  # this is too similar to reading pdb for it too exist separately... think about
     my $self = shift;
-    my $file = shift;
-
-    my $fh = FileHandle->new("<$file") or croak "unable to open $file";
+    my $fh   = shift;
+    #my $file = shift;
+    #my $fh = FileHandle->new("<$file") or croak "unable to open $file";
 
 # $RtBrnch{ROOT}{iatoms}    = LIST integers of atoms in root
 # $RtBrnch{BRNCH1}{iatoms}  = LIST integers of atoms in BRNCH1

@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * added is_fixed attribute to AtomGroupRole.  
+  * test coverage has fallen to 85%
 
 0.027     2015-06-02 16:38:50-04:00 America/Indiana/Indianapolis
   * added a new simple YAML molecular format #16 on github. 

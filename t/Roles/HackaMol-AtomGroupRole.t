@@ -16,6 +16,7 @@ use Scalar::Util qw(refaddr);
 
 my @attributes = qw(
 atoms 
+is_constrained
 );
 my @methods = qw(
 bin_atoms dipole COM COZ 
@@ -66,6 +67,11 @@ $group->push_atoms($_) foreach ($atom1, $atom2, $atom3);
 
 $group->do_forall('copy_ref_from_t1_through_t2','coords', 0, 2);
 
+is($group->is_constrained, 0, 'is not constrained by default');
+$group->is_constrained(1);
+is($group->is_constrained, 1, 'is now constrained');
+$group->is_constrained(0);
+is($group->is_constrained, 0, 'is now not constrained');
 is($group->count_atoms, 3, 'atom count');
 
 foreach my $at ($group->all_atoms){

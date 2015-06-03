@@ -36,6 +36,13 @@ has 'atoms' => (
     lazy => 1,
 );
 
+has 'is_constrained' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    lazy    => 1,
+    default => 0,
+);
+
 sub dipole {
     my $self = shift;
     return ( V(0) ) unless ( $self->count_atoms );

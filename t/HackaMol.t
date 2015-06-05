@@ -98,7 +98,7 @@ my $hack = HackaMol->new( name => "hackitup" );
 is( $hack->name, "hackitup", "HackaMol name attr" );
 
 {    #reading pdb/xyz into molecule or atoms
-    my @atoms1 = $hack->read_file_atoms("t/lib/1l2y_mod123.pdb");
+    my @atoms1 = $hack->read_file_atoms("t/lib/1L2Y_mod123.pdb");
     my $mol1 =
       HackaMol::Molecule->new( name => 'trp-cage', atoms => [@atoms1] );
     is( $mol1->count_atoms, 304, "read atoms in from pdb" );
@@ -107,7 +107,7 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
     my $fh = $mol1->print_xyz("t/lib/1L2Y.xyz");
     $fh->close;
 
-    my $mol2 = $hack->read_file_mol("t/lib/1l2y.xyz");
+    my $mol2 = $hack->read_file_mol("t/lib/1L2Y.xyz");
     is( $mol2->count_atoms, 304, "read atoms in from xyz" );
 
     my @Z1 = map { $_->Z } $mol1->all_atoms;

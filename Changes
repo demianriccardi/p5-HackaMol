@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * another another quick fix to get tests to pass
+
+0.029     2015-06-05 10:05:29-04:00 America/Indiana/Indianapolis
   * another quick fix to get tests to pass
 
 0.028     2015-06-03 09:59:15-04:00 America/Indiana/Indianapolis

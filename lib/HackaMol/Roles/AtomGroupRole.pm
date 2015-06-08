@@ -308,13 +308,16 @@ sub print_pdb {
 
     my @atoms = $self->all_atoms;
     printf $fh ( "MODEL       %2i\n", $atoms[0]->t + 1 );
+    my $atform = "%-6s%5i  %-3s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n";        
+
     foreach my $at (@atoms) {
-
+        # front pad one space if name length is < 4
+        my $form = $atform; 
+        if (length $at->name > 3){
+          $form = "%-6s%5i %4s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n" 
+        }
         printf $fh (
-
-            #"%-6s%5i  %-3s%1s%3s%2s%4i%1s%11.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
-            #      12         21
-"%-6s%5i %-4s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n",
+            $form,
             (
                 map { $at->$_ }
                   qw (

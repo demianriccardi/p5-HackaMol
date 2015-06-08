@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * improve the printing of pdbs for atom names of 1-3 characters
+
+0.030     2015-06-05 13:58:12-04:00 America/Indiana/Indianapolis
   * another another quick fix to get tests to pass
 
 0.029     2015-06-05 10:05:29-04:00 America/Indiana/Indianapolis

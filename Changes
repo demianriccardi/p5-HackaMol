@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * fixed bug in molecule->charge
+  * add method group_rot to HackaMol.pm 
 
 0.031     2015-06-08 13:04:53-04:00 America/Indiana/Indianapolis
   * improve the printing of pdbs for atom names of 1-3 characters

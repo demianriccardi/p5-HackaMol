@@ -217,6 +217,65 @@ sub find_bonds_brute {
 
 }
 
+sub group_rot {
+  #no pod yet
+  my $self  = shift;
+  my $mol   = shift;
+  my $bond  = shift;
+  my $iba = $bond->get_atoms(0)->iatom;
+  my $ibb = $bond->get_atoms(1)->iatom;
+
+  my $init = { 
+              $iba => 1, 
+              $ibb => 1, 
+  };
+  my $root  = $ibb; 
+  my $rotation_indices =  _qrotatable($mol->atoms,$ibb, $init);
+  delete( $rotation_indices->{ $iba } );
+  delete( $rotation_indices->{ $ibb } );
+
+  return  (
+            HackaMol::AtomGroup->new( 
+                      atoms => [
+                                map {$mol->get_atoms($_)} 
+                                    keys %{$rotation_indices} 
+                      ] 
+            )
+  );
+
+}
+
+sub _qrotatable {
+    my $atoms   = shift;
+    my $iroot   = shift;
+    my $visited = shift;
+
+    $visited->{$iroot}++;
+    
+    if (scalar (keys %$visited) > 80){
+      carp "search too deep. exiting recursion";
+      return;
+    }
+
+    my @cands;
+    foreach my $at (@$atoms) {
+        push @cands, $at unless ( grep { $at->iatom == $_ } keys %{$visited} );
+    }
+
+    #not calling in object context, hence the dummy 'self' 
+    my @bonds = find_bonds_brute('self',
+        bond_atoms => [ $atoms->[$iroot] ],
+        candidates => [@cands],
+        fudge      => 0.45,
+    );
+
+    foreach my $cand ( map { $_->get_atoms(1) } @bonds ) {
+        next if $visited->{ $cand->iatom };
+        my $visited = _qrotatable( $atoms, $cand->iatom, $visited );
+    }
+    return ($visited);
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

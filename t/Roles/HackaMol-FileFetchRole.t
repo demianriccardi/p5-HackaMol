@@ -31,7 +31,7 @@ lives_ok {
 
 ok{$bldr->DOES('FileFetchRole'), 'Class does FileFetchRole'};
 
-my $pdbid = '1l2y';
+my $pdbid = '1L2Y';
 my $pdb = $pdbid . ".pdb";
 unlink("$pdb") if (-f $pdb);
 

@@ -64,7 +64,7 @@ sub charge {
   }
   if (@_){
     my $new_q = shift;
-    $self->set_charges($new_q);
+    $self->set_charges($t,$new_q);
   }
   return $q;
 }

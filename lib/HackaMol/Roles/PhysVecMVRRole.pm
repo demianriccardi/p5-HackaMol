@@ -7,8 +7,27 @@ use Math::Trig;
 #use Moose::Util::TypeConstraints;
 use Moose::Role;
 use Carp;
+use Data::Structure::Util qw (unbless);
+use MooseX::Storage;
+
+with Storage( 'format' => 'JSON', 'io' => 'File' );
 
 requires qw(_build_mass charge);
+
+MooseX::Storage::Engine->add_custom_type_handler(
+  'Math::Vector::Real' => (
+      expand    => sub {my $v   = shift; Math::Vector::Real->new(@{$v})},
+      collapse  => sub {my $mvr = shift; return (unbless($mvr)) },
+  )
+);
+
+MooseX::Storage::Engine->add_custom_type_handler(
+  '[Math::Vector::Real]' => (
+      expand    => sub {my $v   = shift; Math::Vector::Real->new(@{$v})},
+      collapse  => sub {my $mvr = shift; return (unbless($mvr)) },
+  )
+);
+
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;
 

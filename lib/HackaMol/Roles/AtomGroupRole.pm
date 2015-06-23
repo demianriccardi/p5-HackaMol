@@ -8,6 +8,9 @@ use Math::Vector::Real;
 use FileHandle;
 use Scalar::Util 'reftype';
 
+use MooseX::Storage;
+with Storage( 'format' => 'JSON', 'io' => 'File', traits => ['OnlyWhenBuilt'] );
+
 my $angste_debye = 4.80320;
 
 has 'atoms' => (

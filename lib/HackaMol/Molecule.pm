@@ -8,8 +8,7 @@ use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);
 use MooseX::StrictConstructor;
-#use MooseX::Storage;
-#with Storage( 'io' => 'StorableFile' ), 
+
 with 'HackaMol::Roles::PhysVecMVRRole',
      'HackaMol::Roles::BondsAnglesDihedralsRole', 
      'HackaMol::Roles::QmMolRole';

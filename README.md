@@ -94,6 +94,6 @@ HackaMol can also be installed with this one-liner:
 
          prompt> curl -L cpanmin.us | perl - -n HackaMol
 
-This will install HackaMol and its dependencies in a Perl5 directory in your path.  You'll need to set the PERL5LIB variable in your shell to find the install directory.  Probably something like this (let me know if otherwise):
+This will install HackaMol and its dependencies in a perl5 directory in your path.  You'll need to set the PERL5LIB variable in your shell to find the install directory.  Probably something like this (let me know if otherwise):
 
         prompt> PERL5LIB=/home/path/perl5; export PERL5LIB 

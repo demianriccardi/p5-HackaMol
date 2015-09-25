@@ -15,7 +15,7 @@ SYNOPSIS
 ========
 ```perl
        use HackaMol;
-       my $mol = HackaMol->new->getstore_pdbid('1L2Y.pdb');
+       my $mol = HackaMol->new->pdbid_mol('1L2Y.pdb');
        # 1LY2 is an NMR structure of TRP-cage with multiple models
        
        #recenter all coordinates to center of mass

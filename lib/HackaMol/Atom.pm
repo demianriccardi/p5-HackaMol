@@ -6,6 +6,7 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 use MooseX::StrictConstructor;
+
 #use MooseX::Storage;
 #with Storage( 'io' => 'StorableFile' ),
 with  'HackaMol::Roles::NameRole', 

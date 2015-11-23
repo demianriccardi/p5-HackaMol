@@ -16,7 +16,7 @@ use HackaMol;
     my @methods    = qw(
       build_bonds build_angles build_dihedrals
       group_by_atom_attr read_file_mol read_file_push_coords_mol
-      read_file_atoms read_pdb_atoms read_xyz_atoms
+      read_file_atoms read_pdb_atoms read_xyz_atoms pdbid_mol
     );
 
     my @roles = qw(
@@ -117,6 +117,9 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
 }
 
 {    # croaking and carping
+    dies_ok { $hack->pdbid_mol() }
+    "Croak on passing pdbid, e.g. 2cba";
+
     dies_ok { $hack->read_file_atoms("bah.mol") }
     "Croak on unsupported file type";
 

@@ -22,7 +22,7 @@ with 'HackaMol::Roles::NameRole',
 
 sub pdbid_mol {
   my $self  = shift;
-  my $pdbid = shift || croak "pass pdbid";
+  my $pdbid = shift || croak "Croak on passing pdbid, e.g. 2cba";
   my ($file,$rc) = $self->getstore_pdbid($pdbid);
   return($self->read_file_mol($file));
 }
@@ -218,7 +218,8 @@ sub find_bonds_brute {
 }
 
 sub group_rot {
-  #no pod yet
+  # no pod yet
+  # this method walks out from the two atoms in a bond and returns a group
   my $self  = shift;
   my $mol   = shift;
   my $bond  = shift;

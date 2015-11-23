@@ -15,7 +15,7 @@ SYNOPSIS
 ========
 ```perl
        use HackaMol;
-       my $mol = HackaMol->new->getstore_pdbid('1L2Y.pdb');
+       my $mol = HackaMol->new->pdbid_mol('1L2Y.pdb');
        # 1LY2 is an NMR structure of TRP-cage with multiple models
        
        #recenter all coordinates to center of mass
@@ -55,11 +55,7 @@ researchers to develop and share new methods that use the core.
        
 INSTALLATION
 ============
-In brief, try this one-liner to install:
 
-         prompt> curl -L cpanmin.us | perl - -n HackaMol
-
-Longer version:
 To install HackaMol, I recommend using cpanminus and local::lib. This approach avoids the need for root privileges and uses the system Perl 
 (available on most systems; see Strawberry Perl for Windows). 
 I use *[Perlbrew](http://perlbrew.pl)* to manage local versions of Perl, but Perlbrew is overkill unless your system Perl is very old (if you do use Perlbrew, you won't need local::lib).
@@ -93,3 +89,11 @@ Here is a quick summary of a *[step by step post on installing Perl modules] (ht
 I use Dist::Zilla and a bunch of plugins to manage the CPAN releases. Dist::Zilla is widely used but fairly dependency heavy. You can install Dist::Zilla and build the library from the github clone, but that shouldn't be necessary. 
 
 HackaMol is too fun to not be experimental! Feedback and contributions welcome!
+
+HackaMol can also be installed with this one-liner:
+
+         prompt> curl -L cpanmin.us | perl - -n HackaMol
+
+This will install HackaMol and its dependencies in a perl5 directory in your path.  You'll need to set the PERL5LIB variable in your shell to find the install directory.  Probably something like this (let me know if otherwise):
+
+        prompt> PERL5LIB=/home/path/perl5; export PERL5LIB 

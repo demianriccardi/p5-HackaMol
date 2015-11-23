@@ -8,10 +8,11 @@ use Carp;
 use Math::Trig;
 use Scalar::Util qw(refaddr);
 use MooseX::StrictConstructor;
+use MooseX::Storage;
 
 with 'HackaMol::Roles::PhysVecMVRRole',
      'HackaMol::Roles::BondsAnglesDihedralsRole', 
-     'HackaMol::Roles::QmMolRole';
+     'HackaMol::Roles::QmMolRole', Storage( 'format' => 'JSON', 'io' => 'File' );
 
 extends 'HackaMol::AtomGroup';
 

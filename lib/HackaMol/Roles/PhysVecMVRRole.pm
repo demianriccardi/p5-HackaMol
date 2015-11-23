@@ -10,23 +10,23 @@ use Carp;
 use Data::Structure::Util qw (unbless);
 use MooseX::Storage;
 
-with Storage( 'format' => 'JSON', 'io' => 'File' );
+#with Storage( 'format' => 'JSON', 'io' => 'File' );
 
 requires qw(_build_mass charge);
 
-MooseX::Storage::Engine->add_custom_type_handler(
-  'Math::Vector::Real' => (
-      expand    => sub {my $v   = shift; Math::Vector::Real->new(@{$v})},
-      collapse  => sub {my $mvr = shift; return (unbless($mvr)) },
-  )
-);
-
-MooseX::Storage::Engine->add_custom_type_handler(
-  '[Math::Vector::Real]' => (
-      expand    => sub {my $v   = shift; Math::Vector::Real->new(@{$v})},
-      collapse  => sub {my $mvr = shift; return (unbless($mvr)) },
-  )
-);
+#MooseX::Storage::Engine->add_custom_type_handler(
+#  'Math::Vector::Real' => (
+#      expand    => sub {my $v   = shift; Math::Vector::Real->new(@{$v})},
+#      collapse  => sub {my $mvr = shift; return (unbless($mvr)) },
+#  )
+#);
+#use Data::Dumper;
+#MooseX::Storage::Engine->add_custom_type_handler(
+#  'ArrayRef[Math::Vector::Real]' => (
+#      expand    => sub {print Dumper $_; my @vs = map {Math::Vector::Real->new(@{$_}); print $_} @$_; return [@vs] },
+#      collapse  => sub {my $a_rf = shift; my @vs = map {unbless($_)} @$a_rf; return \@vs },
+#  )
+#);
 
 
 has 't', is => 'rw', isa => 'Int|ScalarRef', default => 0;

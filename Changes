@@ -1,7 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-  * introduce storage at the atom level: Z, coordinates, forces, charges
+  * introduce storage at the group:atom level: Z, coordinates, forces, charges
 
 0.032     2015-06-17 13:51:01-04:00 America/Indiana/Indianapolis
   * fixed bug in molecule->charge

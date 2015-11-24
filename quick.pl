@@ -23,7 +23,7 @@ my $decoder = Sereal::Decoder->new;
 $decoder->decode($shit, $shit2);
 my $t4 = time;
 
-$shit2->print_pdb;
+#$shit2->print_pdb;
 printf ("decode: %10.2f\n", $t4 - $t3);
 
 #my $shit2 = sereal_decode_with_object($shit);

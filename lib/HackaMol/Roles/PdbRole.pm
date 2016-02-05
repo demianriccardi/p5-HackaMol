@@ -36,7 +36,8 @@ has 'serial',      is => 'rw', isa => 'Int', lazy => 1, default => 1;
 
 #lifted from Bio::PDB::Structure::Atom. Thank you, Raul Alcantara Aragon!
 
-my %print_atom_name = (
+
+my %pdb_atom_names = (
     'C'    => ' C  ',
     'C1'   => ' C1 ',
     'C1A'  => ' C1A',
@@ -166,6 +167,15 @@ my %print_atom_name = (
     'SG'   => ' SG '
 );
 
+sub pdb_rename{
+  my $self = shift;
+  my $name = $self->name;
+  if(exists($pdb_atom_names{$self->name}){
+    $self->name($pdb_atom_names{$self->name});
+  }
+  return $name;
+}
+
 no Moose::Role;
 1;
 
@@ -252,6 +262,10 @@ PdbRole provides atom attributes for PDB parsing.  All attributes are 'rw' and
 lazy, so they will not contaminate the namespace unless called upon. The
 functionality of the PdbRole may be extended in the future.  An extension 
 (HackaMolX::PDB or HackaMol::X::PDB) will be released soon.
+
+=method pdb_rename
+
+no arguments.  Returns the current name. Renames the atom based on names used by the PDB (if exists).  This is useful for programs that render the secondary structure of molecules.
 
 =method aa321
 

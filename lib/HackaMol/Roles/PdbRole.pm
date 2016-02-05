@@ -170,7 +170,7 @@ my %pdb_atom_names = (
 sub pdb_rename{
   my $self = shift;
   my $name = $self->name;
-  if(exists($pdb_atom_names{$self->name}){
+  if(exists($pdb_atom_names{$self->name})){
     $self->name($pdb_atom_names{$self->name});
   }
   return $name;

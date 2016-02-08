@@ -8,7 +8,7 @@ use Math::Trig;
 use Moose::Role;
 use Carp;
 use Data::Structure::Util qw (unbless);
-use MooseX::Storage;
+#use MooseX::Storage;
 
 #with Storage( 'format' => 'JSON', 'io' => 'File' );
 

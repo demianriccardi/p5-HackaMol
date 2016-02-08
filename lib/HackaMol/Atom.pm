@@ -6,9 +6,8 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 use MooseX::StrictConstructor;
-
-use MooseX::Storage;
-with Storage('format' => 'JSON', 'io' => 'File');
+#use MooseX::Storage;
+#with Storage('format' => 'JSON', 'io' => 'File');
 
 with  'HackaMol::Roles::NameRole', 
       'HackaMol::Roles::PhysVecMVRRole',

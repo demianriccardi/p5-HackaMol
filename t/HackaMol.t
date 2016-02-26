@@ -116,6 +116,27 @@ is( $hack->name, "hackitup", "HackaMol name attr" );
     is_deeply( \@Z1, \@Z2, "xyz and pdb give same atoms" );
 }
 
+{    # read from strings!
+my $benzene =
+'  C        0.00000        1.40272        0.00000
+  H        0.00000        2.49029        0.00000
+  C       -1.21479        0.70136        0.00000
+  H       -2.15666        1.24515        0.00000
+  C       -1.21479       -0.70136        0.00000
+  H       -2.15666       -1.24515        0.00000
+  C        0.00000       -1.40272        0.00000
+  H        0.00000       -2.49029        0.00000
+  C        1.21479       -0.70136        0.00000
+  H        2.15666       -1.24515        0.00000
+  C        1.21479        0.70136        0.00000
+  H        2.15666        1.24515        0.00000
+'; 
+
+my $benz = $hack->read_string_mol($benzene,'xyz');
+is($benz->count_atoms, 12, '12 atoms read in using a string!' );
+
+}
+
 {    # croaking and carping
     dies_ok { $hack->pdbid_mol() }
     "Croak on passing pdbid, e.g. 2cba";

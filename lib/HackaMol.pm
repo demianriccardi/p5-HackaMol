@@ -55,6 +55,16 @@ sub read_file_mol{
     return (HackaMol::Molecule->new(name=>$name, atoms=>[@atoms]));
 }
 
+sub read_string_mol{
+    my $self = shift;
+    my $string = shift;
+    my $format = shift or croak "must pass format: xyz, pdb, pdbqt, zmat, yaml";
+
+    my @atoms = $self->read_string_atoms($string,$format);
+    my $name = $format. ".mol";
+    return (HackaMol::Molecule->new(name=>$name, atoms=>[@atoms]));
+}
+
 sub build_bonds {
 
     #take a list of n, atoms; walk down list and generate bonds

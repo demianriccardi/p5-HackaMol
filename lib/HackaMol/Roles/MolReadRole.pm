@@ -25,9 +25,42 @@ has 'hush_read' => (
     default => 0,
 );
 
+sub read_string_atoms {
+    my $self   = shift;
+    my $string = shift;  
+    my $type   = shift or croak "must pass format: xyz, pdb, pdbqt, zmat, yaml";
+
+    open (my $fh, '<', \$string) or croak "unable to open string";
+
+    my @atoms;
+
+    if ( $type eq 'pdb' ) {
+        @atoms = $self->read_pdb_atoms($fh);
+    }
+    elsif ( $type eq 'pdbqt') {
+        @atoms = $self->read_pdbqt_atoms($fh);
+    }
+    elsif ( $type eq 'xyz') {
+        @atoms = $self->read_xyz_atoms($fh);
+    }
+    elsif ( $type eq 'zmat') {
+        @atoms = $self->read_zmat_atoms($fh);
+    }
+    elsif ( $type eq 'yaml') {
+        $fh->close;
+        $fh = Loadtype($type); 
+        @atoms = $self->read_yaml_atoms($fh);
+    }
+    else {
+        croak "$type format not supported";
+    }
+    return (@atoms);
+}
+
 sub read_file_atoms {
     my $self = shift;
     my $file = shift;
+ 
     my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
@@ -102,6 +135,12 @@ isa Bool that is lazy. $hack->hush_read(1) will quiet some warnings that may be 
 =method read_file_atoms
 
 one argument: the name of a file (.xyz, .pdb, .pdbqt, .zmat)
+
+returns a list of HackaMol::Atom objects
+
+=method read_string_atoms
+
+two arguments: 1. a string with coordinates properly formatted; 2. format (xyz, pdb, pdbqt, zmat, yaml)
 
 returns a list of HackaMol::Atom objects
 

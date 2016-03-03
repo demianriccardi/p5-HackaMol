@@ -5,6 +5,7 @@
 * add one with an extended class meta bizness
 
 # enhancements 
+* begin to eliminate methods/attrs that aren't or shouldn't be used
 * storage: store and load methods for saving work or improving speed of loading molecules 
 * persistance
 * MongoDB or DBI

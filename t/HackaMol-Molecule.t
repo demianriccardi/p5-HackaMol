@@ -17,9 +17,8 @@ my @attributes = qw(
 my @methods = qw(
   push_groups set_groups get_groups all_groups clear_groups
   select_groups map_groups
-  first_groups sort_groups
-  splice_groups insert_groups
-  shuffle_groups
+  sort_groups
+  insert_groups
   delete_groups count_groups all_bonds_atoms all_angles_atoms
   all_dihedrals_atoms dihedral_rotate_atoms
 );

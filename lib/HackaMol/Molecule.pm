@@ -29,16 +29,13 @@ has 'groups' => (
         get_groups     => 'get',
         set_groups     => 'set',
         all_groups     => 'elements',
+        sort_groups    => 'sort',
+        insert_groups  => 'insert',
         count_groups   => 'count',
         delete_groups  => 'delete',
         clear_groups   => 'clear',
         select_groups  => 'grep',
         map_groups     => 'map',
-        first_groups   => 'first',
-        sort_groups    => 'sort',
-        splice_groups  => 'splice',
-        insert_groups  => 'insert',
-        shuffle_groups => 'shuffle',
     },
 );
 

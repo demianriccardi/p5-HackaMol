@@ -375,8 +375,39 @@ my $dihef = $new_dihe->dihe_deg;
 cmp_ok(abs($dihef-$dihei), '<', 1E-6, "dihedral rotate 360 group");
 
 
+# using groups to create and adjust molecules
+{
+
+my $c6h6_xyz =
+'  C        0.00000        1.40272        0.00000
+  C       -1.21479        0.70136        0.00000
+  C       -1.21479       -0.70136        0.00000
+  C        0.00000       -1.40272        0.00000
+  C        1.21479       -0.70136        0.00000
+  C        1.21479        0.70136        0.00000
+  H        0.00000        2.49029        0.00000
+  H       -2.15666        1.24515        0.00000
+  H       -2.15666       -1.24515        0.00000
+  H        0.00000       -2.49029        0.00000
+  H        2.15666       -1.24515        0.00000
+  H        2.15666        1.24515        0.00000
+'; 
+
+my $mol = $hack->read_string_mol($c6h6_xyz,'xyz');
+my $newmol  = HackaMol::Molecule->new(groups => [$mol]); 
+my $newmol2 = HackaMol::Molecule->new;
+$newmol2->push_groups($mol);
 
 
+is($newmol->count_atoms, $mol->count_atoms, 'creating a molecule by passing a molecule in through groups has_atoms');
+is($newmol2->count_atoms, $mol->count_atoms, 'creating a molecule, and then pushing a molecule through groups has_atoms');
+
+my $atomgroup = HackaMol::AtomGroup->new(atoms=>[$mol->get_atoms(0), $mol->get_atoms(3)]);
+$newmol->push_groups($atomgroup);
+
+is($newmol->count_atoms, $mol->count_atoms, 'pushing a group of atoms already within the molecule does not push more atoms into the molecule');
+
+}
 
 done_testing();
 

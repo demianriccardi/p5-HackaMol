@@ -53,6 +53,24 @@ sub BUILD {
     return;
 }
 
+after 'push_groups' => sub {
+# if you push a group onto a molecule, the atoms should be added unless they 
+# exist!
+  my $self = shift;
+  my @groups = @_;
+  foreach my $group (@groups){
+    foreach my $atom ($group->all_atoms){
+      unless (grep {$atom == $_} $self->all_atoms){
+        $self->push_atoms($atom);
+      }  
+ # debug
+ #     else {
+ #       print "found it\n $atom \n" if grep {$atom == $_} $self->all_atoms;   
+ #     }
+    }
+  }
+};
+
 sub charge {
   my $self = shift;
   my $t = $self->t;

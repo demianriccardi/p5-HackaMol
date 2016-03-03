@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * removed some array traits from API for AtomGroupRole and Groups trait in molecule (splice, shuffle)
+  * the HackaMol::Molecule push_groups() method now adds atoms that are not in the molecule already. 
 
 0.036     2016-02-25 21:26:20-05:00 America/Indiana/Indianapolis
   * added read_string_atoms and read_string_mol... for reading molecules from in memory strings!!!

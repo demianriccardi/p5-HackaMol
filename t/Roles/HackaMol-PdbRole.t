@@ -21,6 +21,7 @@ my @attributes = qw(
   icode
   pdbid
   segid
+  sasa
 );
 my @methods = qw(
   pdb_rename
@@ -47,6 +48,7 @@ is( $obj->serial,      1,        'serial      default' );
 is( $obj->icode,       ' ',      'icode       default' );
 is( $obj->pdbid,       ' ',      'pdbid       default' );
 is( $obj->segid,       ' ',      'segid       default' );
+is( $obj->sasa ,       0,        'sasa        default' );
 
 # aa321 tests
 {

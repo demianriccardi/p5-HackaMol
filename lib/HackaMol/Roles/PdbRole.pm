@@ -33,6 +33,7 @@ has 'segid',       is => 'rw', isa => 'Str', lazy => 1, default => ' ';
 has 'iatom',       is => 'rw', isa => 'Int', lazy => 1, default => 0;
 has 'resid',       is => 'rw', isa => 'Int', lazy => 1, default => 1;
 has 'serial',      is => 'rw', isa => 'Int', lazy => 1, default => 1;
+has 'sasa',        is => 'rw', isa => 'Num', lazy => 1, default => 0.0;
 
 #lifted from Bio::PDB::Structure::Atom. Thank you, Raul Alcantara Aragon!
 
@@ -321,6 +322,10 @@ a CHARMMish parameter that may not belong here. default = 'TIP3'
                               
 this is a place for the actual index.  Segid does not have to start from 0 (cut
 and paste as above, etc). 
+
+=attr  sasa        
+
+Solvent accessible surface area; isa 'Num'. A place for storing results from such calculations.  
                               
 =head1 SEE ALSO
 

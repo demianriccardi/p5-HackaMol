@@ -3,7 +3,7 @@ package HackaMol::Roles::ReadPdbqtRole;
 # ABSTRACT: Read files with molecular information
 use Moo::Role;
 use strictures 2;
-use HackaMol::PeriodicTable qw(%KNOWN_NAMES _element_name _trim _qstring_num);
+use HackaMol::PeriodicTable qw(_element_name _trim _qstring_num);
 use Math::Vector::Real;
 use Carp;
 
@@ -62,7 +62,6 @@ sub read_pdbqt_atoms {
             $ADTtype = _trim($ADTtype);
 
             my ( $element, $qdirt ) = _element_name($ADTtype);
-            $element = 'C' if ( $element eq 'A' );    #aromatic, is this dirty?
             $something_dirty++ if ($qdirt);
             my $xyz = V( $x, $y, $z );
 

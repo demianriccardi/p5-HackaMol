@@ -562,6 +562,7 @@ sub _element_name {
 #carp "$name doesn not exist in HackaMol::PeriodicTable, if common please add to KNOWN_NAMES";
         $dirt = 1;
         my $symbol = substr $name, 0, 1; #doesn't work if two letters for symbol
+        $symbol = 'C' if ($symbol eq 'A');
         return ( $symbol, $dirt );
     }
     return ( $KNOWN_NAMES{$name}, $dirt );

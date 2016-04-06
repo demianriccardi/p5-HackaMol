@@ -3,7 +3,7 @@ package HackaMol::Roles::ReadPdbRole;
 # ABSTRACT: Read files with molecular information
 use Moo::Role;
 use strictures 2;
-use HackaMol::PeriodicTable qw(%KNOWN_NAMES _element_name _trim _qstring_num);
+use HackaMol::PeriodicTable qw(_element_name _trim _qstring_num);
 use Math::Vector::Real;
 use Carp;
 
@@ -106,7 +106,7 @@ sub read_pdb_atoms {
     if ($something_dirty) {
         unless ( $self->hush_read ) {
             my $message = "MolReadRole> found $something_dirty dirty atoms. ";
-            $message .= "Check symbols and lookup names";
+            $message .= "Check symbols and lookup names PeriodicTable.pm";
             carp $message;
         }
     }
@@ -137,9 +137,10 @@ According to the PDB specification, the element symbol should be present in colu
 77-78.  The element is often ommitted by programs, such as charmm, that can write 
 pdbs because it makes the file larger, and the information is accessible somewhere 
 else (protein structure file). Unfortunately, other programs require the information.  
-HackaMol::MolReadRole, loads a hash (KNOWN_NAMES) from HackaMol::PeriodicTable 
-that maps common names to the element (e.g. POT => 'K'). read_pdb_atoms will carp if 
-the name is not in the hash, and then set the element to the first letter of the name. 
+HackaMol::MolReadRole, uses HackaMol::PeriodicTable to map common names to the element 
+(e.g. POT => 'K'). read_pdb_atoms will carp if the name is not in the hash, and then 
+set the element to the first letter of the name. If you see one of these messages for 
+a common atom, please submit an issue or pull request so the atom can be added!
 
 =head1 SEE ALSO
 

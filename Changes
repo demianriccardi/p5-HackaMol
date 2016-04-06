@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * added a little padding to the PdbReadRole.
   * added sasa attribute to PdbRole.
 
 0.037     2016-03-03 15:50:27-05:00 America/Indiana/Indianapolis

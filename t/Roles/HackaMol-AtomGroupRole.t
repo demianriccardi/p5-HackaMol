@@ -17,6 +17,7 @@ use Scalar::Util qw(refaddr);
 my @attributes = qw(
 atoms 
 is_constrained
+qcat_print
 );
 my @methods = qw(
 bin_atoms dipole COM COZ 
@@ -220,6 +221,13 @@ HETATM    1  H   UNK     1       1.084   0.022  -0.123  1.00 20.00           H
 HETATM    1  H   UNK     1       2.331   0.061  -1.003  1.00 20.00           H
 ENDMDL
 ';
+
+my $pdb2 =
+'HETATM    1  O   UNK     1       2.053   0.020  -0.077  1.00 20.00           O
+HETATM    1  H   UNK     1       1.084   0.022  -0.123  1.00 20.00           H
+HETATM    1  H   UNK     1       2.331   0.061  -1.003  1.00 20.00           H
+';
+
 # previously ALA as default, but no longer
 #HETATM    0  O   ALA     0       2.053   0.020  -0.077  1.00 20.00           O
 #HETATM    0  H   ALA     0       1.084   0.022  -0.123  1.00 20.00           H
@@ -227,6 +235,10 @@ ENDMDL
 
 #print_pdb tests
 stdout_is(sub{$group->print_pdb},$pdb,"print_pdb no arg");
+$group->qcat_print(1);
+stdout_is(sub{$group->print_pdb},$pdb2,"print_pdb with qcat_print no arg");
+$group->qcat_print(0);
+
 #print_xyz tests
 stdout_is(sub{$group->print_xyz},$xyz1,"print_xyz no arg");
 my $dir = getcwd;

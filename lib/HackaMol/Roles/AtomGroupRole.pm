@@ -43,6 +43,13 @@ has 'is_constrained' => (
     default => 0,
 );
 
+has 'qcat_print' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    lazy    => 1,
+    default => 0,
+);
+
 sub dipole {
     my $self = shift;
     return ( V(0) ) unless ( $self->count_atoms );
@@ -290,7 +297,7 @@ sub print_xyz {
     my $fh   = _open_file_unless_fh(shift);
 
     my @atoms = $self->all_atoms;
-    print $fh $self->count_atoms . "\n\n";
+    print $fh $self->count_atoms . "\n\n" unless $self->qcat_print;
     foreach my $at (@atoms) {
         printf $fh (
             "%3s %10.6f %10.6f %10.6f\n",
@@ -307,7 +314,7 @@ sub print_pdb {
     my $fh   = _open_file_unless_fh(shift);
 
     my @atoms = $self->all_atoms;
-    printf $fh ( "MODEL       %2i\n", $atoms[0]->t + 1 );
+    printf $fh ( "MODEL       %2i\n", $atoms[0]->t + 1 ) unless $self->qcat_print;
     my $atform = "%-6s%5i  %-3s%1s%3s %1s%4i%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n";        
 
     foreach my $at (@atoms) {
@@ -339,7 +346,7 @@ sub print_pdb {
         );
 
     }
-    print $fh "ENDMDL\n";
+    print $fh "ENDMDL\n" unless $self->qcat_print;
 
     return ($fh);           # returns filehandle for future writing
 }
@@ -535,6 +542,10 @@ no arguments. returns a string summary of the atoms in the group sorted by decre
 =attr atoms
 
 isa ArrayRef[Atom] that is lazy with public ARRAY traits described in ARRAY_METHODS
+
+=attr qcat_print
+
+isa Bool that has a lazy default value of 0.  if qcat_print, print all atoms coordinates in one go (no model breaks)
 
 =method tmax
 

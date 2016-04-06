@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * added a print for dirty atoms if hush_read < 0
+  * added qcat_print to AtomGroupRole for concatenated printing of all coordinates
   * added a little padding to the PdbReadRole.
   * added sasa attribute to PdbRole.
 

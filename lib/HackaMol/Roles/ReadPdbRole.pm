@@ -104,9 +104,14 @@ sub read_pdb_atoms {
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
     if ($something_dirty) {
-        unless ( $self->hush_read ) {
+        if ( $self->hush_read <= 0 ) {
             my $message = "MolReadRole> found $something_dirty dirty atoms. ";
-            $message .= "Check symbols and lookup names PeriodicTable.pm";
+            $message .= "Check symbols and lookup names PeriodicTable.pm:";
+            my @sprintf;
+            foreach my $atom (grep {$_->is_dirty} @atoms){
+              push @sprintf, sprintf(" DIRTY: index %s name %s element %s %10.3f %10.3f %10.3f;", $atom->iatom, $atom->name, $atom->symbol, @{$atom->xyz});
+            }
+            $message .= $_ foreach @sprintf;
             carp $message;
         }
     }

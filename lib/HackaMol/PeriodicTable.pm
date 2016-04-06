@@ -527,7 +527,7 @@ $KNOWN_NAMES{$_} = 'H' foreach qw(H H1 H2 H3 H4 HA HA1 HA2 HB HB1 HB2 HB3 HD1 HD
                                  HH21 HH22 HN HT1 HT2 HT3 HZ HZ1 HZ2 HZ3
                                  DUM); 
 $KNOWN_NAMES{$_} = 'N' foreach qw(N ND1 ND2 NE NE1 NE2 NH1 NH2 NZ);
-$KNOWN_NAMES{$_} = 'O' foreach qw(O OD1 OD2 OE1 OE2 OG OG1 OH OT1 OT2 OH2);
+$KNOWN_NAMES{$_} = 'O' foreach qw(O OD1 OD2 OE1 OE2 OG OG1 OH OT1 OT2 OH2 OXT);
 $KNOWN_NAMES{$_} = 'S' foreach qw(S SD SG);
 $KNOWN_NAMES{$_} = 'Cl' foreach qw(CLA);
 $KNOWN_NAMES{$_} = 'Na' foreach qw(SOD);

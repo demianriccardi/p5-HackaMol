@@ -20,7 +20,7 @@ with qw(
 
 has 'hush_read' => (
     is      => 'rw',
-    isa     => 'Bool',
+    isa     => 'Int',
     lazy    => 1,
     default => 0,
 );
@@ -130,7 +130,8 @@ additional formats is straightforward:
 
 =attr hush_read
 
-isa Bool that is lazy. $hack->hush_read(1) will quiet some warnings that may be ignored under some instances.
+isa Int that is lazy (default 0). $hack->hush_read(1) will quiet some warnings that may be ignored under some instances. 
+$hack->hush_read(-1) will increase info printed out for some warnings.
 
 =method read_file_atoms
 

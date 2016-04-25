@@ -19,6 +19,7 @@ has 'atoms' => (
     isa     => 'ArrayRef[HackaMol::Atom]',
     default => sub { [] },
     handles => {
+        unshift_atoms => 'unshift',
         push_atoms    => 'push',
         select_atoms  => 'grep',
         map_atoms     => 'map',
@@ -453,11 +454,14 @@ values for atoms using their own t attributes.
 
 ARRAY traits for the atoms attribute, respectively: push, get, set, elements, count, clear
 
-=array_method push_atoms
+=array_method push_atoms, unshift_atoms
 
-push atom on to atoms array
+push atom on to the end of the atoms array 
+  or 
+unshift_atoms on to the front of the array
 
   $group->push_atoms($atom1, $atom2, @otheratoms);
+  $group->unshift_atoms($atom1, $atom2, @otheratoms); # maybe in reverse
 
 =array_method all_atoms
 

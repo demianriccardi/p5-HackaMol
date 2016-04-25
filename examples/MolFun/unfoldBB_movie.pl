@@ -15,7 +15,7 @@ $angle = 180 unless ( defined($angle) );
 my $hack = HackaMol->new( name => "hackitup" );
 
 #my @all_atoms = $hack->read_file_atoms("t/lib/2cba.pdb");
-my @all_atoms = $hack->read_file_atoms("1L2Y.pdb");
+my @all_atoms = $hack->pdbid_mol("1L2Y")->all_atoms; #read_file_atoms("1L2Y.pdb");
 
 #to keep example simple, keep only the backbone
 my @atoms =
@@ -40,6 +40,7 @@ $mol->t($t);
 my @iatoms = map { $_->iatom } @atoms;
 
 foreach my $dihe ( $mol->all_dihedrals ) {
+   
     my $ratom1 = $dihe->get_atoms(1);
     my $ratom2 = $dihe->get_atoms(2);
 

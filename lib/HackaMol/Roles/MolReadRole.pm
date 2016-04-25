@@ -8,7 +8,6 @@ use HackaMol::PeriodicTable qw(%KNOWN_NAMES);
 use FileHandle;
 use YAML::XS qw(LoadFile);
 use HackaMol::Atom;    #add the code,the Role may better to understand
-use List::MoreUtils qw(singleton);
 
 with qw(
         HackaMol::Roles::ReadYAMLRole

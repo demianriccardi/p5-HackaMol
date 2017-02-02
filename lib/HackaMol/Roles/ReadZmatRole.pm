@@ -1,8 +1,7 @@
 package HackaMol::Roles::ReadZmatRole;
 
 # ABSTRACT: Read files with molecular information
-use Moo::Role;
-use strictures 2;
+use Moose::Role;
 use HackaMol::PeriodicTable qw(%KNOWN_NAMES _trim);
 use Math::Vector::Real;
 use Carp;
@@ -157,6 +156,8 @@ sub _substitute_variables{
     }
     return (@Zmat);
 }
+
+no Moose::Role;
 
 1;
 

@@ -1,8 +1,7 @@
 package HackaMol::Roles::ReadXyzRole;
 
 # ABSTRACT: Read files with molecular information
-use Moo::Role;
-use strictures 2; 
+use Moose::Role;
 use Carp;
 use Math::Vector::Real;
 use FileHandle;
@@ -70,6 +69,8 @@ sub read_xyz_atoms {
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
     return (@atoms);
 }
+
+no Moose::Role;
 
 1;
 

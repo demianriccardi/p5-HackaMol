@@ -1,8 +1,7 @@
 package HackaMol::Roles::ReadPdbRole;
 
 # ABSTRACT: Read files with molecular information
-use Moo::Role;
-use strictures 2;
+use Moose::Role;
 use HackaMol::PeriodicTable qw(_element_name _trim _qstring_num);
 use Math::Vector::Real;
 use Carp;
@@ -117,6 +116,8 @@ sub read_pdb_atoms {
     }
     return (@atoms);
 }
+
+no Moose::Role;
 
 1;
 

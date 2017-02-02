@@ -2,8 +2,7 @@ package HackaMol::Roles::NERFRole;
  # ABSTRACT: Role providing Natural extension reference frame implementation for molecular building 
 
 use 5.008;
-use Moo::Role;
-use strictures 2;
+use Moose::Role;
 use Math::Vector::Real;
 use Math::Trig; 
 
@@ -52,6 +51,8 @@ sub extend_abc {
   return $D;
 }
 
+no Moose::Role;
+
 1;
 
 __END__
@@ -75,8 +76,7 @@ __END__
 
 The HackaMol::X::NERF library is a quick implementation of the Natural 
 Extension Reference Frame method for building cartesian coordinates from 
-internal coordinates.  This library currently uses Moo and Math::Vector::Real 
-objects, and is thus reasonably fast.  It is experimental. In fact, there are
+internal coordinates.  It is experimental. In fact, there are
 no substantial tests yet! They will be added soon. 
 The API will change and expand.  Currently, the class provides four methods four initializing and extending a vector space. Lend me a hand if you are interested!
 

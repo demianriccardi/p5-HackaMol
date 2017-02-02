@@ -3,7 +3,6 @@
 use warnings;
 use strict;
 use Test::More;
-use File::Slurp;
 use Cwd;
 use Test::Warn;
 use Test::Output;
@@ -13,6 +12,7 @@ use Math::Vector::Real;
 use HackaMol::Atom;
 use HackaMol::AtomGroup;                # v0.001;#To test for version availability
 use Scalar::Util qw(refaddr);
+use Path::Tiny;
 
 my @attributes = qw(
 atoms 
@@ -249,7 +249,7 @@ my $fh  = $group->print_xyz($tfl);
 is(-e $tfl, 1, 'xyz_file written');
 $group->print_xyz($fh);
 $fh->close;
-my $tmp = read_file($tfl);
+my $tmp = path($tfl)->slurp;
 is($tmp,$xyz1.$xyz1,"printed twice");
 
 warning_is { $group->print_xyz($tfl) }

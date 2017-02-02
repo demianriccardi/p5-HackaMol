@@ -6,7 +6,7 @@ use Test::Moose;
 use Test::More;
 use Test::Warn;
 use Test::Fatal qw(lives_ok);
-use File::Slurp;
+use Path::Tiny;
 use HackaMol;
 
 my @attributes = qw(
@@ -29,16 +29,16 @@ lives_ok {
 }
 'Test creation of bldr with role';
 
-ok{$bldr->DOES('FileFetchRole'), 'Class does FileFetchRole'};
+ok($bldr->DOES('HackaMol::Roles::FileFetchRole'), 'Class does FileFetchRole');
 
-my $pdbid = '1L2Y';
-my $pdb = $pdbid . ".pdb";
+my $pdbid = '1l2y';
+my $pdb = path($pdbid . ".pdb");
 unlink("$pdb") if (-f $pdb);
 
 my $file = $bldr->get_pdbid($pdbid);
 $bldr->getstore_pdbid($pdbid);
 
-my $tmp = read_file($pdb);
+my $tmp = $pdb->slurp;
 is($file,$tmp, 'download file and text same');
 
 warning_is { $bldr->getstore_pdbid($pdbid) }
@@ -49,8 +49,8 @@ $bldr->overwrite(1);
 $bldr->getstore_pdbid($pdbid);
 $bldr->getstore_pdbid($pdbid,'quick.pdb');
 
-ok{-f 'quick.pdb', 'write to another filehandle'};
-$tmp = read_file('quick.pdb');
+ok(-f 'quick.pdb', 'write to another filehandle');
+$tmp = path('quick.pdb')->slurp;
 is($file,$tmp, 'download file and text again same');
 
 unlink("$pdb") if (-f $pdb);

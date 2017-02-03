@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * cleaning up tests and reducing dependencies 
+  * todo: shrink api by moving some heafty Roles into pluggable roles, streamline tests
+
+0.038     2016-04-06 13:38:48-04:00 America/Indiana/Indianapolis
   * added a print for dirty atoms if hush_read < 0
   * added qcat_print to AtomGroupRole for concatenated printing of all coordinates
   * added a little padding to the PdbReadRole.

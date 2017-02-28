@@ -20,7 +20,7 @@ foreach my $line ( grep {m/BIOMT|SMTRY/} @symops ) {
     push @{$sym_op{$entries[3]}}, V(@entries[4,5,6,7]);
 }
 
-my $hg      = HackaMol::Atom->new(symbol => 'Hg', coords =>[ $mol->COM ] );
+# let's create a another molecule containing Hg atoms to map out a coarser represention of the capsid
 my $hg_ball = HackaMol::Molecule->new(name => 'Hg Ball') ;
 
 foreach my $symop (keys %sym_op){
@@ -40,6 +40,12 @@ foreach my $symop (keys %sym_op){
         $atom->push_coords($xyz_new);
     }    
 }
+
+# add a hg to the middle of the capsid using the Hg representation
+my $hg      = HackaMol::Atom->new(symbol => 'Hg', coords =>[ $hg_ball->COM ] );
+$hg_ball->push_atoms($hg);  # push on the center of mass Hg
+
+$hg_ball->print_xyz;
 
 foreach my $t (1 .. $mol->tmax) {
     $mol->t($t);

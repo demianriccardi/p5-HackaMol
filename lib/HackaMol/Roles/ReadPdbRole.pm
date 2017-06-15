@@ -73,6 +73,7 @@ sub read_pdb_atoms {
                     bfact       => $B * 1,
                     resname     => $resName,
                     resid       => $resSeq,
+                    icode       => $icod,
                     segid       => $segID,
                     altloc      => $altloc,
                 );

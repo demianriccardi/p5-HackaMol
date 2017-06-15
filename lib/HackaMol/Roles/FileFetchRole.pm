@@ -5,7 +5,7 @@ use Moose::Role;
 use Carp;
 use LWP::Simple;
 
-has 'pdbserver',   is => 'rw', isa => 'Str', lazy => 1, default => 'http://pdb.org/pdb/files/';
+has 'pdbserver',   is => 'rw', isa => 'Str', lazy => 1, default => 'https://files.rcsb.org/download/';
 has 'overwrite',   is => 'rw', isa => 'Bool', lazy => 1, default => 0;
 
 sub _fix_pdbid{

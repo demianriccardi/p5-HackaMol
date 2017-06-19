@@ -162,6 +162,31 @@ sub group_by_atom_attr {
 
 }
 
+sub group_by_atom_attrs {
+
+    # group atoms by attributes
+    # Z, name, bond_count, etc.
+    # keep splitting the groups until there are no more attributes
+    my $self  = shift ;
+    my @attrs = @{+ shift } ;
+    my @atoms = @_;
+
+    return () unless @attrs;
+
+    my @groups = ( HackaMol::AtomGroup->new( atoms => [ @atoms ] ) );
+
+    foreach my $attr (@attrs){
+      my @local_groups;
+      foreach my $group (@groups){
+          push @local_groups, $self->group_by_atom_attr( $attr, $group->all_atoms );
+      }
+      @groups = @local_groups;
+    }
+
+    return (@groups);
+
+}
+
 sub find_disulfide_bonds {
     my $self  = shift;
     my @sulf  = grep {$_->Z == 16} @_;

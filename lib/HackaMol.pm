@@ -23,8 +23,8 @@ with 'HackaMol::Roles::NameRole',
 sub pdbid_mol {
   my $self  = shift;
   my $pdbid = shift || croak "Croak on passing pdbid, e.g. 2cba";
-  my ($file,$rc) = $self->getstore_pdbid($pdbid);
-  return($self->read_file_mol($file));
+  my ($file) = $self->getstore_pdbid($pdbid);
+  return($self->read_file_mol($file)) if $file;
 }
 
 sub read_file_push_coords_mol{

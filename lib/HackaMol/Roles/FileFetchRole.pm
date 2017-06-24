@@ -22,8 +22,15 @@ sub get_pdbid{
   #return pdb contents downloaded from pdb.org
   my $self = shift;
   my $pdbid = _fix_pdbid(shift);  
-  my $pdb = HTTP::Tiny->new->get($self->pdbserver.$pdbid);
-  return ( $pdb->{content} );
+  my ($ok, $why) = HTTP::Tiny->can_ssl;
+  if ($ok){
+    my $pdb = HTTP::Tiny->new->get($self->pdbserver.$pdbid);
+    return ( $pdb->{content} );
+  }
+  else {
+    warn "$why";
+    return 0;
+  }
 }
 
 sub getstore_pdbid{
@@ -36,11 +43,18 @@ sub getstore_pdbid{
 
   if ($fpdbid->exists and not $self->overwrite){
     carp "$fpdbid exists, set self->overwrite(1) to overwrite";
-    return $fpdbid->slurp;
+    return $fpdbid->stringify;
   }
   my $pdb = $self->get_pdbid( $pdbid );
-  $fpdbid->spew($pdb);
-  return ( $pdb );
+  
+  if ($pdb){
+    $fpdbid->spew($pdb);
+    return ( $fpdbid->stringify );
+  }
+  else{
+    warn "could not connect, $fpdbid not written\n";
+    return 0;
+  }
 }
 
 no Moose::Role;

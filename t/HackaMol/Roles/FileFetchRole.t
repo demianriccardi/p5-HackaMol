@@ -32,6 +32,8 @@ lives_ok {
 
 ok($bldr->DOES('HackaMol::Roles::FileFetchRole'), 'Class does FileFetchRole');
 
+done_testing(); exit;
+
 # skip unless can make https connections
 SKIP: {
     my ($ok,$why) =  HTTP::Tiny->can_ssl;

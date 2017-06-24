@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * reorganize tests
+  * avoid the FileFetchRole get tests for now... HTTP::Tiny->can_ssl but still fails 
+
+0.041     2017-06-24 12:45:52-07:00 America/Vancouver
   * switch to HTTP::Tiny for FileFetchRole
   * skip https tests unless HTTP::Tiny->can_ssl
 

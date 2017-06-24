@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * switch to HTTP::Tiny for FileFetchRole
+  * skip https tests unless HTTP::Tiny->can_ssl
+
+0.040     2017-06-18 21:38:23-06:00 America/Denver
   * added the group_by_atom_attrs method to HackaMol.pm
   * added SelectionRole to core, consumed by HackaMol::Molecule
 

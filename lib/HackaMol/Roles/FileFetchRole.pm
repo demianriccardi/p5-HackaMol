@@ -3,7 +3,10 @@ package HackaMol::Roles::FileFetchRole;
 #ABSTRACT: Role for using LWP::Simple to fetch files from www 
 use Moose::Role;
 use Carp;
-use LWP::Simple;
+use Path::Tiny;
+use HTTP::Tiny;
+#use LWP::Simple;
+use Data::Dumper;
 
 has 'pdbserver',   is => 'rw', isa => 'Str', lazy => 1, default => 'https://files.rcsb.org/download/';
 has 'overwrite',   is => 'rw', isa => 'Bool', lazy => 1, default => 0;
@@ -19,21 +22,25 @@ sub get_pdbid{
   #return pdb contents downloaded from pdb.org
   my $self = shift;
   my $pdbid = _fix_pdbid(shift);  
-  my $pdb = get($self->pdbserver.$pdbid);
-  return ( $pdb );
+  my $pdb = HTTP::Tiny->new->get($self->pdbserver.$pdbid);
+  return ( $pdb->{content} );
 }
 
 sub getstore_pdbid{
   #return array of lines from pdb downloaded from pdb.org
   my $self = shift;
-  my $pdbid = _fix_pdbid(shift);
+  my $pdbid =  _fix_pdbid(shift); 
   my $fpdbid = shift ;
   $fpdbid = $pdbid unless defined($fpdbid);
-  if (-f $fpdbid and not $self->overwrite){
+  $fpdbid = path($fpdbid);
+
+  if ($fpdbid->exists and not $self->overwrite){
     carp "$fpdbid exists, set self->overwrite(1) to overwrite";
+    return $fpdbid->slurp;
   }
-  my $rc = getstore($self->pdbserver.$pdbid,$fpdbid);
-  return ( $fpdbid, $rc );
+  my $pdb = $self->get_pdbid( $pdbid );
+  $fpdbid->spew($pdb);
+  return ( $pdb );
 }
 
 no Moose::Role;

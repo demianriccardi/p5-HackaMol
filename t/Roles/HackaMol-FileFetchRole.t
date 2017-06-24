@@ -7,6 +7,7 @@ use Test::More;
 use Test::Warn;
 use Test::Fatal qw(lives_ok);
 use Path::Tiny;
+use HTTP::Tiny;
 use HackaMol;
 
 my @attributes = qw(
@@ -30,6 +31,12 @@ lives_ok {
 'Test creation of bldr with role';
 
 ok($bldr->DOES('HackaMol::Roles::FileFetchRole'), 'Class does FileFetchRole');
+
+# skip unless can make https connections
+SKIP: {
+    my ($ok,$why) =  HTTP::Tiny->can_ssl;
+    plan skip_all => $why unless ( $ok );
+}
 
 my $pdbid = '1l2y';
 my $pdb = path($pdbid . ".pdb");

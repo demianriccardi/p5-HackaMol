@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.043     2017-06-24 14:05:20-07:00 America/Vancouver
   * minor fix on FileFetchRole return
 
 0.042     2017-06-24 13:18:49-07:00 America/Vancouver

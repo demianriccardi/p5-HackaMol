@@ -25,22 +25,24 @@ ok(
     $backbone->isa('HackaMol::AtomGroup'),
     'select_group returns HackaMol::AtomGroup'
 );
-is( $backbone->natoms,                   1146, 'select_group("backbone")' );
-is( $mol->select_group('water')->natoms, 258,  'select_group("water")' );
+is( $backbone->natoms,                   114, 'select_group("backbone")' );
+is( $mol->select_group('water')->natoms, 2,   'select_group("water")' );
 is( $mol->select_group("sidechains")->natoms,
-    1556, 'select_group("sidechains")' );
+    180, 'select_group("sidechains")' );
 is(
     $mol->select_group('resname TYR .and. occ 1')->natoms,
     $mol->select_group('resname TYR')->natoms,
-'select_group("resname TYR .and. occ 1") returns same as select_group("resname TYR") because all TYR have 1.0 occ'
-);    #  .and. resname TYR');
+    'tyr occ 1 natms == tyr'
+);
+
 is(
     $mol->select_group('metals')->natoms,
     $mol->select_group('ligands')->natoms,
     'select_group("metals") yields same as select_group("ligands") for 2sic'
 );
 
-is( $mol->select_group('chain I .and. .not. water')->natoms, 764,  'select_group("chain I .and. .not. water")' );
+is( $mol->select_group('chain I .and. .not. water')->natoms,
+    11, 'select_group("chain I .and. .not. water")' );
 
 # testcase from the docs for selections attr
 $mol->set_selection_cr(
@@ -56,7 +58,7 @@ $mol->set_selection_cr(
 
 is(
     $mol->select_group('sidechains2')->natoms,
-    $mol->select_group('sidechains')->natoms, 
+    $mol->select_group('sidechains')->natoms,
     "setting selection through selection attr",
 );
 

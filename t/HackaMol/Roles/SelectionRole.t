@@ -5,7 +5,6 @@ use Test::More;
 use Test::Warn;
 use Test::Moose;
 use HackaMol;
-use Moose::Util qw( ensure_all_roles );
 
 my @attributes = qw(
   selections_cr
@@ -15,7 +14,6 @@ my @methods = qw(
 );
 
 my $mol = HackaMol->new->read_file_mol("t/lib/2sic.pdb");
-ensure_all_roles( $mol, 'HackaMol::Roles::SelectionRole' );
 
 map has_attribute_ok( $mol, $_ ), @attributes;
 map can_ok( $mol, $_ ), @methods;
@@ -31,10 +29,28 @@ is( $mol->select_group("sidechains")->natoms,
     180, 'select_group("sidechains")' );
 is(
     $mol->select_group('resname TYR .and. occ 1')->natoms,
-    $mol->select_group('resname TYR')->natoms,
-    'tyr occ 1 natms == tyr'
+    $mol->select_group('resname TYR')->natoms - 7,
+    'tyr occ 1 natms == tyr - 7'
 );
 
+is(
+    $mol->select_group('resname TYR .and. resname CYS')->natoms,
+    0,
+    'none found: TYR and CYS'
+);
+
+is(
+    $mol->select_group('(resname TYR .or. resname CYS) .and. occ 1')->natoms,
+    $mol->select_group('resname TYR .or. resname CYS')->natoms - 7,
+    'none found: (TYR or CYS) and occ 1'
+);
+
+
+is(
+    $mol->select_group('resname TYR .and. occ 0.25')->natoms,
+    3,
+    'tyr occ 0.25 natms == 3'
+);
 is(
     $mol->select_group('metals')->natoms,
     $mol->select_group('ligands')->natoms,

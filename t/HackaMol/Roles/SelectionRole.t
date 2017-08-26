@@ -78,4 +78,7 @@ is(
     "setting selection through selection attr",
 );
 
+is( $mol->select_group('resname CA1')->natoms, 2, 'resname with digits');
+is( $mol->select_group('resname 1A2')->natoms, 2, 'resname with digits');
+
 done_testing();

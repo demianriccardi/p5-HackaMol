@@ -77,6 +77,16 @@ sub COM {
     return ( $com / $self->total_mass );
 }
 
+sub center {
+    my $self = shift;
+    return ( V(0) ) unless ( $self->count_atoms );
+    my @atoms     = $self->all_atoms;
+    my @vectors = map { $_->get_coords( $_->t ) } @atoms;
+    my $center       = V( 0, 0, 0 );
+    $center += $_ foreach @vectors;
+    return ( $center / $self->count_atoms);
+}
+
 sub COZ {
     my $self = shift;
     return ( V(0) ) unless ( $self->count_atoms );

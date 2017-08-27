@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * added support for resnames with 
+  * added superpose method to HackaMol class, grabbed from Bio::PDB::Structure
+  * added center to AtomGroupRole, method for geometric center
 
 0.043     2017-06-24 14:05:20-07:00 America/Vancouver
   * minor fix on FileFetchRole return

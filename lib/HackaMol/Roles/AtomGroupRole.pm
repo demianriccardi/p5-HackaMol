@@ -216,6 +216,35 @@ sub rotate {
     $atoms[$_]->set_coords( $tf, $rcor[$_] + $orig ) foreach 0 .. $#rcor;
 }
 
+sub rotate_translate{
+  # args: 
+  #      1. rotation matrix (3x3): ar, each column (cx,cy,cz, below) is a Math::Vector::Real
+  #      2. translate vector, MVR 
+  #               r' = x*cx + y*cy + z*cz + v_trans
+  #      3. t final, the final t location for transformed coordinates [defaults to current t]
+  my $self = shift;
+  my $rmat = shift;
+  my $trns = shift;
+  my $tf   = shift;
+  my @atoms = $self->all_atoms;
+  my ($cx,$cy,$cz) = @{$rmat};
+
+  my $t     = $atoms[0]->t;
+  $tf = $t unless ( defined($tf) );
+
+  foreach my $atom (@atoms){
+     my $xyz = $atom->xyz;
+     #my ($x,$y,$z) = @{$xyz};
+     my $xr = $cx*$xyz; 
+     my $yr = $cy*$xyz; 
+     my $zr = $cz*$xyz; 
+     #my $xyz_new = $x*$cx + $y*$cy + $z*$cz + $trns;  
+     my $xyz_new = V($xr,$yr,$zr) + $trns; 
+     $atom->set_coords($tf,$xyz_new);
+  }  
+
+}
+
 sub fix_serial {
     my @atoms  = shift->all_atoms;
     my $offset = shift;

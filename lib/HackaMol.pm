@@ -286,20 +286,33 @@ sub group_rot {
 
 }
 
-sub superpose {
+sub superpose_rt {
 
 # args: two HackaMol::AtomGroup or HackaMol::Molecule with the same number of atoms
 # the atoms are assumed to be in the same order, that's it!
+#
+# uses all vectors (mvr) in group to calculate the rotation matrix, and translation vector
+# needed to superpose the second group on to the first group.
+#
+# a typical workflow will run this to get the rotation and translation and then the AtomGroupRole
+# rotate_translate method to actually do the coordinate transformation.
+#
 # the algorithm is lifted from Bio::PDB::Structure, which in turn implements
 # method from S. Kearsley, Acta Cryst. A45, 208-210 1989
 # may not be very fast.  better suited to PDL
+#
+# returns:
+#        1. rotation matrix [3 rows, each is a MVR , e.g. x' = row_1 * xyz]
+#        2. translation vector (MVR)
+#        3. rmsd
+#
     my $self = shift;
+    my $g2   = shift;    # switch order, function here vs method in Bio::PDB
     my $g1   = shift;
-    my $g2   = shift;
 
     my $nrd1 = $g1->count_atoms;
     my $nrd2 = $g2->count_atoms;
-    die "superpose error: lists must have same number of atoms\n"
+    die "superpose error: groups must have same number of atoms\n"
       unless ( $nrd1 == $nrd2 && $nrd1 > 0 );
 
     my ( $x1,    $y1,    $z1 );
@@ -311,8 +324,9 @@ sub superpose {
     my ( $Sxmzm, $Sxmzp, $Sxpzm, $Sxpzp );
     my ( $Symzm, $Symzp, $Sypzm, $Sypzp );
 
-    my $gc1  = $g1->center;
-    my $gc2  = $g2->center;                             # these are MVRs
+    my $gc1 = $g1->center;
+    my $gc2 = $g2->center;    # these are MVRs
+
     my @mvr1 = map { $_->xyz - $gc1 } $g1->all_atoms;
     my @mvr2 = map { $_->xyz - $gc2 } $g2->all_atoms;
 
@@ -403,7 +417,40 @@ sub superpose {
     $vt[2] =
       $gc2->[2] - $mt[6] * $gc1->[0] - $mt[7] * $gc1->[1] - $mt[8] * $gc1->[2];
 
-    return ( $rmsd, [V(@mt[0..2]), V(@mt[3..5]),V(@mt[6..8])], V(@vt) );
+    return ( [ V( @mt[ 0, 1, 2 ] ), V( @mt[ 3, 4, 5 ] ), V( @mt[ 6, 7, 8 ] ) ],
+        V(@vt), $rmsd );
+}
+
+sub rmsd {
+    my $self = shift;
+    my $g1   = shift;    # switch order, function here vs method in Bio::PDB
+    my $g2   = shift;
+    my $w    = shift;
+
+    my $nrd1 = $g1->count_atoms;
+    my $nrd2 = $g2->count_atoms;
+    die "rmsd error: groups must have same number of atoms\n"
+      unless ( $nrd1 == $nrd2 && $nrd1 > 0 );
+
+    my @w;
+    if( defined($w) ){
+      @w = @{$w};
+    }
+    else{
+      @w = map{1} 0 .. $nrd1-1;
+    }
+
+    die "rmsd error: atom array weight must have same dimension as groups\n" unless ($nrd1 == scalar(@w));
+    my $sum_weights = 0; # will be same as number of atoms if no weights are defined
+
+    $sum_weights += $_ foreach @w;
+
+    my @xyz_1 = map{$_->xyz} $g1->all_atoms; 
+    my @xyz_2 = map{$_->xyz} $g2->all_atoms; 
+    
+    my $sqr_dev = 0;
+    $sqr_dev += $w[$_]*$xyz_1[$_]->dist2($xyz_2[$_]) foreach 0 .. $#xyz_1;
+    return sqrt($sqr_dev/$sum_weights);
 }
 
 sub _qrotatable {
@@ -584,7 +631,9 @@ classes provided by the core so including them is not necessary, e.g.:
        use HackaMol::Molecule;
 
 The methods, described below, facilitate the creation of objects from files and
-other objects.
+other objects.  It is a builder class that evolves more rapidly than the classes for the molecular objects. 
+For example, the superpose_rt and rmsd methods will likely be moved to a more suitable class or
+functional module.
 
 =attr name 
 
@@ -604,7 +653,8 @@ HackaMol::Molecule object. For example,
 one argument: filename.
 
 This method parses the file (e.g. file.xyz, file.pdb) and returns an 
-array of HackaMol::Atom objects.
+array of HackaMol::Atom objects. It uses the filename postfix to decide which parser to use. e.g. file.pdb will
+trigger the pdb parser.
 
 =method read_file_mol
 
@@ -654,15 +704,15 @@ will return two dihedrals: D1356 and D3569
 
 =method group_by_atom_attr
 
-arguments are an atom attribute and then a list of atoms. 
+args: atom attribute (e.g. 'name') ; list of atoms (e.g. $mol->all_atoms)
 
-This method builds AtomGroup objects that are grouped by attribute.
+returns array of AtomGroup objects
 
 =method group_by_atom_attrs
 
-arguments: array reference of atom attributes, ['resname', 'chain' ]; list of atoms, @atoms. 
+args: array reference of multiple atom attributes (e.g. ['resname', 'chain' ]); list of atoms. 
 
-returns builds AtomGroup object
+returns array of AtomGroup objects
 
 =method find_bonds_brute 
 
@@ -693,6 +743,46 @@ a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
 the argument is a list of atoms, e.g. '($mol->all_atoms)'. 
 
 this method returns disulfide bonds as bond objects.
+
+=method rmsd ($group1,$group2,$weights)
+
+args: two hackmol objects (HackaMol::AtomGroup or HackaMol::Molecule) with same number of atoms;
+      optional array_reference of weights that can be used to adjust the contribution from each atom.
+
+Returns the root mean square deviation of the two sets of coordinates
+
+=method superpose_rt ($group1, $group2)
+
+WARNING: 1. needs more testing (feel free to contribute tests!).  2. may shift to another class.
+
+args: two hackmol objects (HackaMol::AtomGroup or HackaMol::Molecule) with same number of atoms.
+This method is intended to be very flexible.  It does not check meta data of the atoms, it just pulls
+the vectors in each group to calculate the rotation matrix and translation vector needed to superpose 
+the second set on to the first set.
+
+The vectors assumed to be in the same order, that's it!  
+
+A typical workflow:
+
+  my $bb1 = $mol1->select_group('backbone');
+  my $bb2 = $mol2->select_group('backbone');
+  my ($rmat,$trans,$rmsd) = HackaMol->new()->superpose_rt($bb1,$bb2);
+  # $rmsd is the RMSD between backbones
+
+  # to calculate rmsd between other atoms after the backbone alignment
+  $mol2->rotate_translate($rmat,$trans);
+  my $total_rmsd = HackaMol->new()->rmsd($mol1,$mol2);
+  # $total_rmsd is from all atoms in each mol
+
+the algorithm is lifted from Bio::PDB::Structure, which in turn implements
+method from S. Kearsley, Acta Cryst. A45, 208-210 1989
+may not be very fast.  better suited to PDL
+
+returns:
+       1. rotation matrix [3 rows, each is a MVR , e.g. x' = row_1 * xyz]
+       2. translation vector (MVR)
+       3. rmsd
+
 
 =head1 SEE ALSO
 

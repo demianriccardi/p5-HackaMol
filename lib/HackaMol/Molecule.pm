@@ -12,8 +12,8 @@ use MooseX::StrictConstructor;
 
 with 'HackaMol::Roles::PhysVecMVRRole',
      'HackaMol::Roles::BondsAnglesDihedralsRole', 
-     'HackaMol::Roles::QmMolRole',
-     'HackaMol::Roles::SelectionRole';
+     'HackaMol::Roles::QmMolRole'; #,
+ #    'HackaMol::Roles::SelectionRole';
 #, Storage( 'format' => 'JSON', 'io' => 'File' );
 
 extends 'HackaMol::AtomGroup';

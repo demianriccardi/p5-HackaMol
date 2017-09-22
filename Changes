@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * move selection role from Molecule to AtomGroup for chaining selections
+
+0.044     2017-08-27 13:41:30-06:00 America/Denver
   * added support for resnames with 
   * added superpose_rt method to HackaMol class, grabbed from Bio::PDB::Structure
   * added rmsd method to HackaMol class 

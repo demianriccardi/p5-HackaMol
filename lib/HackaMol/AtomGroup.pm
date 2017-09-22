@@ -8,7 +8,9 @@ use Carp;
 use MooseX::StrictConstructor;
 #use MooseX::Storage;
 #with Storage( 'io' => 'StorableFile' ), 
-with 'HackaMol::Roles::NameRole', 'HackaMol::Roles::AtomGroupRole';
+with  'HackaMol::Roles::NameRole', 
+      'HackaMol::Roles::AtomGroupRole',
+      'HackaMol::Roles::SelectionRole';
 
 sub Rg {
 

@@ -31,8 +31,9 @@ is( $mol->select_group("sidechains")->natoms,
 foreach my $and (qw(and .and.)){
   is(
     $mol->select_group("resname TYR $and occ 1")->natoms,
-    $mol->select_group('resname TYR')->natoms - 7,
-    'tyr occ 1 natms == tyr - 7'
+    $mol->select_group('resname TYR')
+        ->select_group('occ 1')->natoms,
+    'tyr occ 1 natms == tyr chained to occ 1'
   );
 
   is(

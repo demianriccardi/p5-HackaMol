@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * move selection role from Molecule to AtomGroup for chaining selections
+  * add pymol ranges to selections, e.g. resid 1-5+7 and chain E-I
 
 0.044     2017-08-27 13:41:30-06:00 America/Denver
   * added support for resnames with 

@@ -5,7 +5,7 @@ use Moose::Role;
 use HackaMol::AtomGroup;
 use Carp;
 
-my %common_selections = (
+my %common_selection = (
     'backbone'   => '$_->record_name eq "ATOM" and ( $_->name eq "N" or $_->name eq "CA" or $_->name eq "C" )',
     'water'      => '$_->resname =~ m/HOH|TIP|H2O/ and $_->record_name eq "HETATM"',
     'protein'    => '$_->record_name eq "ATOM"',
@@ -14,6 +14,22 @@ my %common_selections = (
                      and not( $_->name eq "N" or $_->name eq "CA" or $_->name eq "C" )',
     'metals'     => '$_->symbol =~ m/Li|Be|Na|Mg|K|Ca|Sc|Ti|V|Cr|Mn|Fe|Co|Ni|Cu|Zn|Rb|Sr|Y|Zr|Nb|Mo|Tc|Ru|Rh|Pd|Ag|Cd|Cs|Ba|La|Ce|Pr|Nd|Pm|Sm|Eu|Gd|Tb|Dy|Ho|Er|Tm|Yb|Lu|Hf|Ta|W|Re|Os|Ir|Pt|Au|Hg/', 
 );
+
+has 'selection' => (
+    traits  => ['Hash'],
+    is      => 'ro',
+    isa     => 'HashRef[Str]',
+    default => sub { {} },
+    handles => {
+        get_selection    => 'get',
+        set_selection    => 'set',
+        has_selection   => 'count',
+        keys_selection   => 'keys',
+        delete_selection => 'delete',
+        has_selection    => 'exists',
+    },
+);
+
 
 has 'selections_cr' => (
     traits  => ['Hash'],
@@ -39,8 +55,8 @@ sub select_group {
     if ($self->has_selection_cr($selection)){ #attr takes priority so user can change
         $method = $self->get_selection_cr($selection);
     }
-    elsif ( exists( $common_selections{$selection} ) ) {
-        $method = eval("sub{ grep{ $common_selections{$selection} } \@_ }");
+    elsif ( exists( $common_selection{$selection} ) ) {
+        $method = eval("sub{ grep{ $common_selection{$selection} } \@_ }");
     }
     else {
         $method = _regex_method($selection);
@@ -83,7 +99,7 @@ sub _regex_method {
     $str =~ s/(\w+)\s+(-?\d+)/\$\_->$1 == $2/g;
     $str =~ s/(\w+)\s+\.within\.\s+(\d+)/\$\_->$1 <= $2/g;
     $str =~ s/(\w+)\s+\.beyond\.\s+(\d+)/\$\_->$1 >= $2/g;
-    $str =~ s/$_/\($common_selections{$_}\)/g foreach keys %common_selections;
+    $str =~ s/$_/\($common_selection{$_}\)/g foreach keys %common_selection;
     $str =~ s/\.and\./and/g;
     $str =~ s/\.or\./or/g;
     $str =~ s/\.not\./not/g;

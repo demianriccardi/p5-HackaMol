@@ -8,6 +8,7 @@ use HackaMol;
 
 my @attributes = qw(
   selections_cr
+  selection
 );
 my @methods = qw(
   select_group
@@ -17,6 +18,11 @@ my $mol = HackaMol->new->read_file_mol("t/lib/2sic.pdb");
 
 map has_attribute_ok( $mol, $_ ), @attributes;
 map can_ok( $mol, $_ ), @methods;
+
+SELECTION:{
+  $mol->set_selection('bb' => 'backbone');
+  is ($mol->get_selection('bb'), 'backbone', 'selection attribute');
+}
 
 my $backbone = $mol->select_group('backbone');
 ok(

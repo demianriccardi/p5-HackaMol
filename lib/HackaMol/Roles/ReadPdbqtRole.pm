@@ -84,7 +84,7 @@ sub read_pdbqt_atoms {
             }
             else {
                 #croak condition if atom changes between models
-                if (   $name ne $atoms[$n]->name
+                if ( $n > $#atoms or   $name ne $atoms[$n]->name
                     or $element ne $atoms[$n]->symbol )
                 {
                     my $carp_message =

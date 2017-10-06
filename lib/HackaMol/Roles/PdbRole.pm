@@ -15,12 +15,12 @@ my %aa321 = (
 sub aa321 {
   my $self   = shift;
   my $x_flag = shift;
-  $x_flag = 1 unless defined($x_flag);
+  $x_flag       = 1 unless defined($x_flag);
 
   my $resname = uc($self->resname);
   
   unless ( exists($aa321{$resname}) ){
-    carp "PDBRole> residue $resname name has no 1 letter code; return X";
+    carp "PDBRole> residue $resname name has no 1 letter code";
     return ('X') if $x_flag;
     return ("($resname)");
   }

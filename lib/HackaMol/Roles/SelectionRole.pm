@@ -5,13 +5,13 @@ use Moose::Role;
 use HackaMol::AtomGroup;
 use Carp;
 
+
 my %common_selection = (
-    'backbone'   => '$_->record_name eq "ATOM" and ( $_->name =~ /^(N|CA|C|O)$/ )',
+    'sidechain'  => '$_->record_name eq "ATOM" and not $_->name =~ /^(N|CA|C|O)$/',
+    'backbone'   => '$_->record_name eq "ATOM" and     $_->name =~ /^(N|CA|C|O)$/',
     'water'      => '$_->resname =~ m/HOH|TIP|H2O/ and $_->record_name eq "HETATM"',
     'protein'    => '$_->record_name eq "ATOM"',
     'ligands'    => '($_->resname !~ m/HOH|TIP|H2O/ ) and $_->record_name eq "HETATM"',
-    'sidechains' => '$_->record_name eq "ATOM"
-                     and not( $_->name eq "N" or $_->name eq "CA" or $_->name eq "C" )',
     'metals'     => '$_->symbol =~ m/^(Li|Be|Na|Mg|K|Ca|Sc|Ti|V|Cr|Mn|Fe|Co|Ni|Cu|Zn|Rb|Sr|Y|Zr|Nb|Mo|Tc|Ru|Rh|Pd|Ag|Cd|Cs|Ba|La|Ce|Pr|Nd|Pm|Sm|Eu|Gd|Tb|Dy|Ho|Er|Tm|Yb|Lu|Hf|Ta|W|Re|Os|Ir|Pt|Au|Hg)$/', 
 );
 

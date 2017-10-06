@@ -31,8 +31,8 @@ ok(
 );
 is( $backbone->natoms,                   152, 'select_group("backbone")' );
 is( $mol->select_group('water')->natoms, 2,   'select_group("water")' );
-is( $mol->select_group("sidechains")->natoms,
-    180, 'select_group("sidechains")' );
+is( $mol->select_group("sidechain")->natoms,
+    142, 'select_group("sidechain")' );
 
 foreach my $and (qw(and .and.)){
   is(
@@ -77,19 +77,21 @@ is(
 
 # testcase from the docs for selections attr
 $mol->set_selection_cr(
-    "sidechains2" => sub {
+    "sidechain2" => sub {
         grep {
             $_->record_name eq 'ATOM'
               and not( $_->name eq 'N'
                 or $_->name eq 'CA'
-                or $_->name eq 'C' )
+                or $_->name eq 'C' 
+                or $_->name eq 'O' 
+            )
         } @_;
     }
 );
 
 is(
-    $mol->select_group('sidechains2')->natoms,
-    $mol->select_group('sidechains')->natoms,
+    $mol->select_group('sidechain2')->natoms,
+    $mol->select_group('sidechain')->natoms,
     "setting selection through selection attr",
 );
 

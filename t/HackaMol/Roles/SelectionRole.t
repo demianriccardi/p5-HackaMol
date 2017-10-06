@@ -29,7 +29,7 @@ ok(
     $backbone->isa('HackaMol::AtomGroup'),
     'select_group returns HackaMol::AtomGroup'
 );
-is( $backbone->natoms,                   114, 'select_group("backbone")' );
+is( $backbone->natoms,                   152, 'select_group("backbone")' );
 is( $mol->select_group('water')->natoms, 2,   'select_group("water")' );
 is( $mol->select_group("sidechains")->natoms,
     180, 'select_group("sidechains")' );

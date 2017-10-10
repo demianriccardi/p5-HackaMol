@@ -193,13 +193,12 @@ sub group_by_atom_attrs {
 
 sub find_disulfide_bonds {
     my $self = shift;
-    my $fudge = shift || 0.45;
 
     my @sulf = grep { $_->Z == 16 } @_;
     my @ss   = $self->find_bonds_brute(
         bond_atoms => [@sulf],
         candidates => [@sulf],
-        fudge      => 0.45,
+        fudge      => 0.15, # 0.45 is too large
         max_bonds  => 1,
     );
     return @ss;

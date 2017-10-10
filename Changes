@@ -6,7 +6,7 @@ Revision history for {{$dist->name}}
   * add x_flag to aa321 default 1, replaces unknown 3-letter code with X
   * protein backbone/sidechain selection fix for the bb carbonyl oxygen
   * sidechains selection -> sidechain
-     
+  * find_disulfide_bonds now accepts fudge factor as argument [default 0.45]   
  
 0.045     2017-09-23 19:40:06-06:00 America/Denver
   * move selection role from Molecule to AtomGroup for chaining selections

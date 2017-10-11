@@ -15,11 +15,13 @@ use MooseX::StrictConstructor;
 use Scalar::Util qw(refaddr);
 use Carp;
 
-with 'HackaMol::Roles::NameRole',
-  'HackaMol::Roles::MolReadRole',
-  'HackaMol::Roles::PathRole',
-  'HackaMol::Roles::ExeRole',
-  'HackaMol::Roles::FileFetchRole';
+with 
+  'HackaMol::Roles::NameRole'     ,
+  'HackaMol::Roles::MolReadRole'  ,
+  'HackaMol::Roles::PathRole'     ,
+  'HackaMol::Roles::ExeRole'      ,
+  'HackaMol::Roles::FileFetchRole',
+  'HackaMol::Roles::NERFRole';
 
 sub pdbid_mol {
     my $self   = shift;

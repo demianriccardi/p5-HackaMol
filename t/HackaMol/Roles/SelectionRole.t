@@ -34,6 +34,8 @@ is( $mol->select_group('water')->natoms, 2,   'select_group("water")' );
 is( $mol->select_group("sidechain")->natoms,
     142, 'select_group("sidechain")' );
 
+is($mol->select_group("chain 1")->natoms,2, "integer chain no warnings");
+
 foreach my $and (qw(and .and.)){
   is(
     $mol->select_group("resname TYR $and occ 1")->natoms,
@@ -57,6 +59,13 @@ foreach my $and (qw(and .and.)){
       11, "select_group(\"chain I $and $not water\")" );
   }
 }
+
+is_deeply($mol->select_group("resname ARG+TYR"), 
+          $mol->select_group("(resname ARG) .or. (resname TYR)"), "ARG+TYR ~~ (resname ARG) .or. (resname TYR)");
+
+is_deeply($mol->select_group("resname ARG+TYR .and. (name CA .and. occ 1.0)"), 
+          $mol->select_group("((resname ARG) .or. (resname TYR)) .and. (name CA .and. occ 1.0)"), "more parenthesis");
+
 
 is ($mol->select_group('resname ARG+TYR')->natoms, '58', 'resname ARG+TYR');
 is ($mol->select_group('resid 7+1-5+245-246+252')->natoms, '69', 'resid 7+1-5+245-246+252');

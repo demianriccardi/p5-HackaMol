@@ -96,7 +96,7 @@ sub _regex_method {
     }
 
     $str =~ s/(\w+)\s+(\d*[A-Za-z]+\d*)/\$\_->$1 eq \'$2\'/g;  # resnames must have at least 1 letter
-    $str =~ s/(\w+)\s+(-?\d+)/\$\_->$1 == $2/g;
+    $str =~ s/(\w+)\s+(-?\d+)/\$\_->$1 eq $2/g;
     $str =~ s/(\w+)\s+\.within\.\s+(\d+)/\$\_->$1 <= $2/g;
     $str =~ s/(\w+)\s+\.beyond\.\s+(\d+)/\$\_->$1 >= $2/g;
     $str =~ s/$_/\($common_selection{$_}\)/g foreach keys %common_selection;

@@ -5,7 +5,7 @@ Revision history for {{$dist->name}}
   * fix model read bug where number of atoms grows between models (see the unusual 2d6b)
   * add x_flag to aa321 default 1, replaces unknown 3-letter code with X
   * protein backbone/sidechain selection fix for the bb carbonyl oxygen
-  * sidechains selection -> sidechain
+  * sidechains selection -> sidechain (watch out for OXT)
   * changed fudge from 0.45 to 0.15 for find_disulfide_bonds   
   * HackaMol.pm consumes NERFRole
      

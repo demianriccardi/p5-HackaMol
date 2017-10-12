@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * added mol_disulfide_bonds($mol,$fudge) to HackaMol.pm
 
 0.046     2017-10-10 20:36:46-06:00 America/Denver
   * add selection hash attribute to manage selections (todo, use it or lose it!).

@@ -775,18 +775,25 @@ separation against the sum of the covalent radii + fudge. It will not test
 for bond between atoms if either atom has >= max_bonds. It does not return 
 a self bond for an atom (C< next if refaddr($ati) == refaddr($atj) >).
 
+=method mol_disulfide_bonds
+
+    my @ss = $bldr->mol_disulfide_bonds($mol, [$fudge]); # default $fudge = 0.15
+
+Returns all disulfide bonds with lengths leq 2 x S->covalent_radius + $fudge. $mol can be an AtomGroup 
+or Molecule. 
+
 =method find_disulfide_bonds
 
-the argument is a list of atoms, e.g. '($mol->all_atoms)'. 
+    my @ss = $bldr->find_disulfide_bonds(@atoms); 
 
-this method returns disulfide bonds as bond objects.
+DEPRECATED. Uses find_bonds_brute with fudge of 0.15 and max_bonds 1. mol_disulfides was developed
+after finding funky cysteine clusters (e.g. 1f3h)
 
 =method rmsd ($group1,$group2,$weights)
 
-args: two hackmol objects (HackaMol::AtomGroup or HackaMol::Molecule) with same number of atoms;
-      optional array_reference of weights that can be used to adjust the contribution from each atom.
+    my $rmsd = $bldr->rmsd($group1, $group2, [$weights]); #optional weights need to be tested
 
-Returns the root mean square deviation of the two sets of coordinates
+Computes the root mean square deviation between atomic vectors of the two AtomGroup/Molecule objects.
 
 =method superpose_rt ($group1, $group2)
 

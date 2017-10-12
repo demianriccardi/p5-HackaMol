@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.046     2017-10-10 20:36:46-06:00 America/Denver
   * add selection hash attribute to manage selections (todo, use it or lose it!).
   * fix model read bug where number of atoms grows between models (see the unusual 2d6b)
   * add x_flag to aa321 default 1, replaces unknown 3-letter code with X

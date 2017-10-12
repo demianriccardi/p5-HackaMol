@@ -15,11 +15,11 @@ use MooseX::StrictConstructor;
 use Scalar::Util qw(refaddr);
 use Carp;
 
-with 
-  'HackaMol::Roles::NameRole'     ,
-  'HackaMol::Roles::MolReadRole'  ,
-  'HackaMol::Roles::PathRole'     ,
-  'HackaMol::Roles::ExeRole'      ,
+with
+  'HackaMol::Roles::NameRole',
+  'HackaMol::Roles::MolReadRole',
+  'HackaMol::Roles::PathRole',
+  'HackaMol::Roles::ExeRole',
   'HackaMol::Roles::FileFetchRole',
   'HackaMol::Roles::NERFRole';
 
@@ -27,7 +27,7 @@ sub pdbid_mol {
     my $self   = shift;
     my $pdbid  = shift || croak "Croak on passing pdbid, e.g. 2cba";
     my ($file) = $self->getstore_pdbid($pdbid);
-    return ( $self->read_file_mol($file) ) if $file;
+    return $self->read_file_mol($file);
 }
 
 sub read_file_push_coords_mol {
@@ -54,7 +54,7 @@ sub read_file_mol {
     my $file = shift;
 
     my @atoms = $self->read_file_atoms($file);
-    my $name  = $file . ".mol";
+    my $name  = $file;
     return ( HackaMol::Molecule->new( name => $name, atoms => [@atoms] ) );
 }
 
@@ -197,10 +197,10 @@ sub find_disulfide_bonds {
     my $self = shift;
 
     my @sulf = grep { $_->Z == 16 } @_;
-    my @ss   = $self->find_bonds_brute(
+    my @ss = $self->find_bonds_brute(
         bond_atoms => [@sulf],
         candidates => [@sulf],
-        fudge      => 0.15, # 0.45 is too large
+        fudge      => 0.15,      # 0.45 is too large
         max_bonds  => 1,
     );
     return @ss;
@@ -436,24 +436,26 @@ sub rmsd {
       unless ( $nrd1 == $nrd2 && $nrd1 > 0 );
 
     my @w;
-    if( defined($w) ){
-      @w = @{$w};
+    if ( defined($w) ) {
+        @w = @{$w};
     }
-    else{
-      @w = map{1} 0 .. $nrd1-1;
+    else {
+        @w = map { 1 } 0 .. $nrd1 - 1;
     }
 
-    die "rmsd error: atom array weight must have same dimension as groups\n" unless ($nrd1 == scalar(@w));
-    my $sum_weights = 0; # will be same as number of atoms if no weights are defined
+    die "rmsd error: atom array weight must have same dimension as groups\n"
+      unless ( $nrd1 == scalar(@w) );
+    my $sum_weights =
+      0;    # will be same as number of atoms if no weights are defined
 
     $sum_weights += $_ foreach @w;
 
-    my @xyz_1 = map{$_->xyz} $g1->all_atoms; 
-    my @xyz_2 = map{$_->xyz} $g2->all_atoms; 
-    
+    my @xyz_1 = map { $_->xyz } $g1->all_atoms;
+    my @xyz_2 = map { $_->xyz } $g2->all_atoms;
+
     my $sqr_dev = 0;
-    $sqr_dev += $w[$_]*$xyz_1[$_]->dist2($xyz_2[$_]) foreach 0 .. $#xyz_1;
-    return sqrt($sqr_dev/$sum_weights);
+    $sqr_dev += $w[$_] * $xyz_1[$_]->dist2( $xyz_2[$_] ) foreach 0 .. $#xyz_1;
+    return sqrt( $sqr_dev / $sum_weights );
 }
 
 sub _qrotatable {
@@ -777,9 +779,8 @@ A typical workflow:
   my $total_rmsd = HackaMol->new()->rmsd($mol1,$mol2);
   # $total_rmsd is from all atoms in each mol
 
-the algorithm is lifted from Bio::PDB::Structure, which in turn implements
-method from S. Kearsley, Acta Cryst. A45, 208-210 1989
-may not be very fast.  better suited to PDL
+the algorithm is lifted from Bio::PDB::Structure, which implements
+algorithm from S. Kearsley, Acta Cryst. A45, 208-210 1989
 
 returns:
        1. rotation matrix [3 rows, each is a MVR , e.g. x' = row_1 * xyz]

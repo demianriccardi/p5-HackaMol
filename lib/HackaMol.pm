@@ -193,7 +193,40 @@ sub group_by_atom_attrs {
 
 }
 
+sub mol_disulfide_bonds {
+    # take atom group
+    my $self = shift;
+	my $mol  = shift;
+    my $fudge = shift;
+	$fudge = 0.15 unless defined($fudge);
+
+	my @sulfs = $mol->select_group("Z 16")->all_atoms;
+    return unless @sulfs;
+    my $dcut = 2*$sulfs[0]->covalent_radius + $fudge;
+    my $nm = "S-S";
+    my $count = 1;
+    my @bonds = ();
+    foreach my $is (0 .. $#sulfs){
+		my $at_i  = $sulfs[$is];
+		foreach my $js ($is+1 .. $#sulfs){
+            my $at_j  = $sulfs[$js];
+            my $dist  = $at_j->distance($at_i);
+            if ( $dist <= $dcut ) {
+                push @bonds,
+                  HackaMol::Bond->new(
+                    name  => $nm. "_" . $count++,
+                    atoms => [ $at_i, $at_j ],
+                  );
+            }
+		}
+	}
+    return @bonds;
+}
+
 sub find_disulfide_bonds {
+	# to be deprecated
+	# works fine for single disulfide bonds 
+	# but does not
     my $self = shift;
 
     my @sulf = grep { $_->Z == 16 } @_;
@@ -226,7 +259,6 @@ sub find_bonds_brute {
     foreach my $at_i (@bond_atoms) {
         next if ( $at_i->bond_count >= $max_bonds );
         my $cov_i = $at_i->covalent_radius;
-        my $xyz_i = $at_i->xyz;
 
         foreach my $at_j (@atoms) {
             next if ( refaddr($at_i) == refaddr($at_j) );

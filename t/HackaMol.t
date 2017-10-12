@@ -291,6 +291,10 @@ dies_ok { $hack->build_angles( @bb[ 0, 1 ] ) } "build_angles croak";
     $bc += $_->bond_count foreach @ss_atoms;
     is( $bc, 18, "18 bonds for 9  disulfides (1/atom) in molecule" );
 
+
+    my @ss_2 = $hack->mol_disulfide_bonds($mol,0.15);
+    is_deeply([@ss],[@ss_2],'mol_disulfide gives same as find_disulfide');
+
     # checks out by viz xyz and pdb overlay
     # $mol2->print_xyz;
 }

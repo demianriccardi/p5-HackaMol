@@ -75,15 +75,11 @@ after 'push_groups' => sub {
 sub charge {
   my $self = shift;
   my $t = $self->t;
-  my $q = 0;
-  if ($self->has_charges){
-    $q = $self->get_charges($t);
-  }
   if (@_){
     my $new_q = shift;
     $self->set_charges($t,$new_q);
   }
-  return $q;
+  return $self->get_charges($t) || 0 ; # default to 0
 }
 
 # need to increase atom bond_count when push

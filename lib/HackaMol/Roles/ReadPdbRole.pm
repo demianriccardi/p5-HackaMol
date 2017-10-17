@@ -18,6 +18,8 @@ sub read_pdb_atoms {
     my ( $n, $t ) = ( 0, 0 );
     my $q_tbad          = 0;
     my $something_dirty = 0;
+    my $t0_atom_count = 0;
+    my $t_atom_count = 0;
 
     while (<$fh>) {
 
@@ -26,8 +28,19 @@ sub read_pdb_atoms {
             #$t = $1 - 1; # I don't like this!!  set increment t instead.. below
             $n      = 0;
             $q_tbad = 0;    # flag a bad model and never read again!
+            $t_atom_count = 0 ;
         }
         elsif (/^(?:ENDMDL)/) {
+            # delete coords if the number of atoms has shrunk after the first, 1hc0
+            #if ($t){
+            #    if ($t_atom_count != $t0_atom_count){
+            #        my $carp_message =
+            #            "BAD t->$t PDB atom list length changed from $t0_atom_count to $t_atom_count";
+            #        carp $carp_message;
+            #        $_->delete_coords($t) foreach @atoms[0 .. $t_atom_count - 1];
+            #        $t--;
+            #    }
+            #}
             $t++;
         }
         elsif (/^(?:HETATM|ATOM)/) {
@@ -78,9 +91,11 @@ sub read_pdb_atoms {
                     altloc      => $altloc,
                 );
                 $atoms[$n]->is_dirty($qdirt) unless $atoms[$n]->is_dirty;
+                $t0_atom_count++;
             }
             else {
-                #croak condition if atom changes between models
+                # croak condition if atom changes between models
+                # does not catch case were number of atoms shrinks!
                 if ( $n > $#atoms or  $name ne $atoms[$n]->name
                     or $element ne $atoms[$n]->symbol )
                 {
@@ -96,6 +111,7 @@ sub read_pdb_atoms {
                     next;
                 }
                 $atoms[$n]->set_coords( $t, $xyz );
+                $t_atom_count++;
             }
             $n++;
         }

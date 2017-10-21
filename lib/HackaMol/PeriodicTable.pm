@@ -2,6 +2,8 @@ package HackaMol::PeriodicTable;
 
 #ABSTRACT: package for period table data... needs to change
 use 5.008;
+use warnings;
+use strict;
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(%KNOWN_NAMES %ATOM_MULTIPLICITY @EXHEAT @ELEMENTS

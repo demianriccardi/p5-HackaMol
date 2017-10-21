@@ -10,7 +10,24 @@ use MooseX::StrictConstructor;
 #with Storage( 'io' => 'StorableFile' ), 
 with  'HackaMol::Roles::NameRole', 
       'HackaMol::Roles::AtomGroupRole',
+      'HackaMol::Roles::JSONRole',
       'HackaMol::Roles::SelectionRole';
+
+# a dumping ground for attributes
+has 'misc' => (
+    traits    => ['Hash'],
+    is        => 'ro',
+    isa       => 'HashRef[Str]',
+    default   => sub { {} },
+    handles   => {
+        set_misc     => 'set',
+        get_misc     => 'get',
+        has_no_misc => 'is_empty',
+        num_misc    => 'count',
+        delete_misc  => 'delete',
+        misc_pairs   => 'kv',
+    },
+);
 
 sub Rg {
 

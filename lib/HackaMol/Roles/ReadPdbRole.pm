@@ -6,6 +6,34 @@ use HackaMol::PeriodicTable qw(_element_name _trim _qstring_num);
 use Math::Vector::Real;
 use Carp;
 
+sub read_pdb_parts{
+    my $self = shift;
+    my $fh   = shift;
+
+    my $header             = $self->read_pdb_header( $fh );
+    my ($atoms,$model_ids) = $self->read_pdb_atoms( $fh );
+
+    return ($header,$atoms,$model_ids);
+
+}
+
+sub read_pdb_header{
+    my $self = shift;
+    my $fh   = shift;
+    my $header;
+    my $line;
+    while($line = <$fh>){
+        if ($line =~ m/^(?:MODEL|ATOM|HETATM)\s/){
+            seek($fh, -length($line),1); # rewind back and end
+            last;
+        }
+        else{
+            $header .= $line;
+        }
+    }
+    return ($header);
+}
+
 sub read_pdb_atoms {
 
     #read pdb file and generate list of Atom objects
@@ -15,20 +43,23 @@ sub read_pdb_atoms {
     #my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
 
     my @atoms;
+    my @model_ids;
     my ( $n, $t ) = ( 0, 0 );
     my $q_tbad          = 0;
     my $something_dirty = 0;
     my $t0_atom_count = 0;
     my $t_atom_count = 0;
+    my $pdb_model_id;
 
     while (<$fh>) {
 
         if (/^(?:MODEL\s+(\d+))/) {
 
-            #$t = $1 - 1; # I don't like this!!  set increment t instead.. below
             $n      = 0;
             $q_tbad = 0;    # flag a bad model and never read again!
             $t_atom_count = 0 ;
+            $pdb_model_id = $1;
+            $model_ids[$t] = $pdb_model_id;
         }
         elsif (/^(?:ENDMDL)/) {
             # delete coords if the number of atoms has shrunk after the first, 1hc0
@@ -131,7 +162,7 @@ sub read_pdb_atoms {
             carp $message;
         }
     }
-    return (@atoms);
+    return (\@atoms,\@model_ids);
 }
 
 no Moose::Role;

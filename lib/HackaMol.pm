@@ -49,6 +49,22 @@ sub read_file_push_coords_mol {
     }
 }
 
+sub read_pdbfile_mol {
+
+    # keeps the header, and a map of model_ids
+    my $self = shift;
+    my $file = shift;
+    my ( $header, $atoms, $model_ids ) = $self->read_file_pdb_parts($file);
+    return (
+        HackaMol::Molecule->new(
+            name      => $file,
+            atoms     => $atoms,
+            info      => $header,
+            model_ids => $model_ids
+        )
+    );
+}
+
 sub read_file_mol {
     my $self = shift;
     my $file = shift;
@@ -194,39 +210,41 @@ sub group_by_atom_attrs {
 }
 
 sub mol_disulfide_bonds {
-    # take atom group
-    my $self = shift;
-	my $mol  = shift;
-    my $fudge = shift;
-	$fudge = 0.15 unless defined($fudge);
 
-	my @sulfs = $mol->select_group("Z 16")->all_atoms;
+    # take atom group
+    my $self  = shift;
+    my $mol   = shift;
+    my $fudge = shift;
+    $fudge = 0.15 unless defined($fudge);
+
+    my @sulfs = $mol->select_group("Z 16")->all_atoms;
     return unless @sulfs;
-    my $dcut = 2*$sulfs[0]->covalent_radius + $fudge;
-    my $nm = "S-S";
+    my $dcut  = 2 * $sulfs[0]->covalent_radius + $fudge;
+    my $nm    = "S-S";
     my $count = 1;
     my @bonds = ();
-    foreach my $is (0 .. $#sulfs){
-		my $at_i  = $sulfs[$is];
-		foreach my $js ($is+1 .. $#sulfs){
-            my $at_j  = $sulfs[$js];
-            my $dist  = $at_j->distance($at_i);
+    foreach my $is ( 0 .. $#sulfs ) {
+        my $at_i = $sulfs[$is];
+        foreach my $js ( $is + 1 .. $#sulfs ) {
+            my $at_j = $sulfs[$js];
+            my $dist = $at_j->distance($at_i);
             if ( $dist <= $dcut ) {
                 push @bonds,
                   HackaMol::Bond->new(
-                    name  => $nm. "_" . $count++,
+                    name  => $nm . "_" . $count++,
                     atoms => [ $at_i, $at_j ],
                   );
             }
-		}
-	}
+        }
+    }
     return @bonds;
 }
 
 sub find_disulfide_bonds {
-	# to be deprecated
-	# works fine for single disulfide bonds 
-	# but does not
+
+    # to be deprecated
+    # works fine for single disulfide bonds
+    # but does not
     my $self = shift;
 
     my @sulf = grep { $_->Z == 16 } @_;

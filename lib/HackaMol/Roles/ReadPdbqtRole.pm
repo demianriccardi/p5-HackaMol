@@ -113,7 +113,7 @@ sub read_pdbqt_atoms {
             carp $message;
         }
     }
-    return (@atoms);
+    return (\@atoms);
 }
 
 no Moose::Role;

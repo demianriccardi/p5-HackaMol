@@ -179,6 +179,14 @@ is( $mol1->tmax, 2, "index of last coords for each atom" );
 #  exit;
 #}
 
+# t/lib/head_model_atom.pdb 
+{
+    my $mol = $hack->read_pdbfile_mol("t/lib/head_model_atom.pdb");
+    is($mol->info ,"SOME HEADER information\nSOME MORE HEADER information\n", "header extracted");
+    is($mol->get_model_id(0),2, 'first model id is 2');
+    is($mol->get_model_id(1),4, 'second model id is 2');
+}
+
 #read_file push_coords tests
 {
   

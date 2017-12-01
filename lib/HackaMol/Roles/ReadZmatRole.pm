@@ -125,7 +125,7 @@ sub read_zmat_atoms {
         );
     }
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    return (@atoms);
+    return (\@atoms);
 
 }
 

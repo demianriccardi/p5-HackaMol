@@ -67,7 +67,7 @@ sub read_xyz_atoms {
 
     # set iatom to track the array.  diff from serial which refers to pdb
     $atoms[$_]->iatom($_) foreach ( 0 .. $#atoms );
-    return (@atoms);
+    return (\@atoms);
 }
 
 no Moose::Role;

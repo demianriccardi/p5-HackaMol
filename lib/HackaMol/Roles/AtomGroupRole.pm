@@ -51,6 +51,13 @@ has 'qcat_print' => (
     default => 0,
 );
 
+has 'info' => (
+	is  => 'rw',
+	isa => 'Str',
+	lazy => 1,
+    default   => "",
+);
+
 sub dipole {
     my $self = shift;
     return ( V(0) ) unless ( $self->count_atoms );

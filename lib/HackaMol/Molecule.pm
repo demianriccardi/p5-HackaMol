@@ -40,6 +40,23 @@ has 'groups' => (
     },
 );
 
+# an array to map t to some other label (e.g. model number from pdb)
+has 'model_ids' => (
+    traits  => ['Array'],
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
+    predicate => 'has_models',
+    handles => {
+        "push_model_ids"   => 'push',
+        "get_model_id"    => 'get',
+        "set_model_id"    => 'set',
+        "all_model_ids"    => 'elements',
+        "count_model_ids"  => 'count',
+    },
+    lazy => 1,
+);
+
 sub BUILD {
     my $self = shift;
     foreach my $bond ( $self->all_bonds ) {

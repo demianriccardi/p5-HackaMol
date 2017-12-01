@@ -57,7 +57,7 @@ sub read_yaml_atoms {
     #use Data::Dumper;
     #print Dumper \@atoms;
 
-    return (@atoms);
+    return (\@atoms);
 
 } 
 

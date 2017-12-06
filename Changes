@@ -5,6 +5,7 @@ Revision history for {{$dist->name}}
   * added methods for reading pdb header and model ids from pdbs, via read_pdbfile_mol
   * added attr 'info' to HM::Role::AtomGroupRole 
   * added attr 'model_ids' to HM::Molecule 
+  * pdb models are again ignored if the number of atoms changes 
 
 0.046     2017-10-10 20:36:46-06:00 America/Denver
   * add selection hash attribute to manage selections (todo, use it or lose it!).

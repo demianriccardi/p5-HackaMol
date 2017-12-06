@@ -63,15 +63,15 @@ sub read_pdb_atoms {
         }
         elsif (/^(?:ENDMDL)/) {
             # delete coords if the number of atoms has shrunk after the first, 1hc0
-            #if ($t){
-            #    if ($t_atom_count != $t0_atom_count){
-            #        my $carp_message =
-            #            "BAD t->$t PDB atom list length changed from $t0_atom_count to $t_atom_count";
-            #        carp $carp_message;
-            #        $_->delete_coords($t) foreach @atoms[0 .. $t_atom_count - 1];
-            #        $t--;
-            #    }
-            #}
+            if ($t){
+                if ($t_atom_count != $t0_atom_count){
+                    my $carp_message =
+                        "BAD t->$t PDB atom list length changed from $t0_atom_count to $t_atom_count: ignoring model $t";
+                    carp $carp_message;
+                    $_->delete_coords($t) foreach @atoms[0 .. $t_atom_count - 1];
+                    $t--;
+                }
+            }
             $t++;
         }
         elsif (/^(?:HETATM|ATOM)/) {

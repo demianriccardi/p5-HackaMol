@@ -6,6 +6,8 @@ use HackaMol::PeriodicTable qw(_element_name _trim _qstring_num);
 use Math::Vector::Real;
 use Carp;
 
+requires 'readline_func';
+
 sub read_pdb_parts{
     my $self = shift;
     my $fh   = shift;
@@ -38,6 +40,7 @@ sub read_pdb_atoms {
 
     #read pdb file and generate list of Atom objects
     my $self = shift;
+
     my $fh   = shift;
     #my $file = shift;
     #my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
@@ -52,7 +55,9 @@ sub read_pdb_atoms {
     my $pdb_model_id;
 
     while (<$fh>) {
-
+        if($self->has_readline_func){
+            next if $self->readline_func->($_) eq 'PDB_SKIP';
+        }
         if (/^(?:MODEL\s+(\d+))/) {
 
             $n      = 0;

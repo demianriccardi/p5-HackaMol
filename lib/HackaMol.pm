@@ -15,6 +15,13 @@ use MooseX::StrictConstructor;
 use Scalar::Util qw(refaddr);
 use Carp;
 
+has 'readline_func' => (
+    is      => 'rw',
+    isa     => 'CodeRef',
+	predicate => 'has_readline_func',
+	clearer   => 'clear_readline_func',
+);
+
 with
   'HackaMol::Roles::NameRole',
   'HackaMol::Roles::MolReadRole',
@@ -22,6 +29,8 @@ with
   'HackaMol::Roles::ExeRole',
   'HackaMol::Roles::FileFetchRole',
   'HackaMol::Roles::NERFRole';
+
+
 
 sub pdbid_mol {
     my $self   = shift;
@@ -693,6 +702,17 @@ functional module.
 =attr name 
 
 name is a rw str provided by HackaMol::NameRole.
+
+=attr readline_func
+
+hook to add control to parsing files
+
+    HackaMol->new(
+                    readline_func => sub {return "PDB_SKIP" unless /LYS/ }
+    )
+    ->pdbid_mol("2cba")
+    ->print_pdb; # will parse lysines because the PDB reader looks for the PDB_SKIP return value
+
 
 =method pdbid_mol
 

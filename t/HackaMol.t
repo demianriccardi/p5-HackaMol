@@ -173,6 +173,10 @@ is($benz->count_atoms, 12, '12 atoms read in using a string!' );
 my $mol1 = $hack->read_file_mol("t/lib/1L2Y_mod123.pdb");
 is( $mol1->tmax, 2, "index of last coords for each atom" );
 
+my $mol_lys = HackaMol->new(readline_func => sub{ return "PDB_SKIP" unless /LYS/})->read_file_mol("t/lib/1L2Y_mod123.pdb");
+ok ($mol_lys->count_atoms, "readline_func for LYS read still has atoms");
+is ($mol_lys->select_group("resname LYS")->count_atoms, $mol_lys->count_atoms, "only lysines are parsed");
+
 #{
 #  my $mol = $hack->read_file_mol("t/lib/shit.zmat");
 #  $mol->print_xyz;

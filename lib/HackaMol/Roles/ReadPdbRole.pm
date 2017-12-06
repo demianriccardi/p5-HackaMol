@@ -67,13 +67,13 @@ sub read_pdb_atoms {
             $model_ids[$t] = $pdb_model_id;
         }
         elsif (/^(?:ENDMDL)/) {
-            # delete coords if the number of atoms has shrunk after the first, 1hc0
+            # delete coords if the number of atoms on t is != to that at start
             if ($t){
                 if ($t_atom_count != $t0_atom_count){
                     my $carp_message =
                         "BAD t->$t PDB atom list length changed from $t0_atom_count to $t_atom_count: ignoring model $t";
                     carp $carp_message;
-                    $_->delete_coords($t) foreach @atoms[0 .. $t_atom_count - 1];
+                    $_->delete_coords($t) foreach @atoms;
                     $t--;
                 }
             }
@@ -141,7 +141,7 @@ sub read_pdb_atoms {
                       . "has changed";
                     carp $carp_message;
                     $q_tbad = $t;    # this is a bad model!
-                                     #wipe out all the coords prior
+                                     # wipe out all the coords prior
                     $atoms[$_]->delete_coords($t) foreach 0 .. $n - 1;
                     $t--;
                     next;

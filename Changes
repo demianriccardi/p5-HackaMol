@@ -2,7 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   * added mol_disulfide_bonds($mol,$fudge) to HackaMol.pm
-  * added methods for reading pdb header and model ids from pdbs, via read_pdbfile_mol
+  * added read_pdbfile_mol to HackaMol.pm for reading pdb header and model ids
   * added attr 'info' to HM::Role::AtomGroupRole 
   * added attr 'model_ids' to HM::Molecule 
   * pdb models are again ignored if the number of atoms changes

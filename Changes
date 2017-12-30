@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * update dependency versions to their latest
+
+0.047     2017-12-28 19:50:18-07:00 America/Denver
   * added mol_disulfide_bonds($mol,$fudge) to HackaMol.pm
   * added read_pdbfile_mol to HackaMol.pm for reading pdb header and model ids
   * added attr 'info' to HM::Role::AtomGroupRole 

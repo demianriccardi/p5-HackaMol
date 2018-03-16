@@ -93,10 +93,12 @@ foreach my $symop (grep {$_ ne 1} keys %sym_op){
     $i_chain++;
     recenter($cart_to_fract,$lmol,$av,$bv,$cv);
     foreach my $atom ($lmol->all_atoms){
-        if ( grep {$atom->distance( $_ ) <= 15} $cg_mol->all_atoms){
-          say "pushing atom!";
-          $atom->chain('Z');
-          $xtal_mol->push_atoms($atom);
+        if ( grep {$atom->distance( $_ ) <= 20} $cg_mol->all_atoms){
+            if (grep {$atom->distance($_) <= 7.0} $mol->select_group('protein')->all_atoms){
+                say "pushing atom!";
+                $atom->chain('Z');
+                $xtal_mol->push_atoms($atom);
+            }
         }
     }
     my $cent = $cart_to_fract->( $lmol->COM );
@@ -117,10 +119,12 @@ foreach my $na (-1,0,1){
         #$atom->push_coords($xyz_new);
         $atom->set_coords(0,$xyz_new);
         #$atom->serial( ++$serial );
-        if ( grep {$atom->distance( $_ ) <= 15} $cg_mol->all_atoms){
-          say "pushing atom!";
-          $atom->chain('Z');
-          $xtal_mol->push_atoms($atom);
+        if ( grep {$atom->distance( $_ ) <= 20} $cg_mol->all_atoms){
+            if (grep {$atom->distance($_) <= 7.0} $mol->select_group('protein')->all_atoms){
+                say "pushing atom!";
+                $atom->chain('Z');
+                $xtal_mol->push_atoms($atom);
+            }
         }
       }
     }
@@ -339,7 +343,9 @@ sub fract_cart {
                 ]
              );
 
+             print Dumper $cort ; 
    my $cort_inv = $cort->inverse;
+             print Dumper $cort_inv ; exit;
    my $cart_fract_mvr =  [
       V($cort_inv->row(1)->as_list),
       V($cort_inv->row(2)->as_list),

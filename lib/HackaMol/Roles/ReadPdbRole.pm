@@ -91,7 +91,7 @@ sub read_pdb_atoms {
             if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
             else                      { $charge = 0 }
 
-            if   ( $chainID =~ m/\w/ ) { $chainID = uc( _trim($chainID) ) }
+            if   ( $chainID =~ m/\w/ ) { $chainID =  _trim($chainID) }
             else                       { $chainID = ' ' }
 
             $name    = _trim($name);

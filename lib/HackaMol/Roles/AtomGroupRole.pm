@@ -63,17 +63,25 @@ sub calc_bfps {
     # this should be rerun for each selection
     #10.1016/j.jmb.2015.09.024
     my $self = shift;
+    unless ($self->count_atoms > 1){
+      warn "calc_bfps> group not large enough\n";
+      return;
+    }
     my @atoms = $self->all_atoms;
     my @bfacts = map {$_->bfact} @atoms;
     my $bfact_mean = sum(@bfacts)/@bfacts;
     my $sd = 0;
-    $sd += ($_ - $mean_bfact)**2 foreach @bfacts;
-    my $bfact_std = $sqd / (@bfacts - 1);
+    $sd += ($_ - $bfact_mean)**2 foreach @bfacts;
+    unless ($sd > 0){
+      warn "calc_bfps> no variance in the group bfactors\n";
+      return;
+    }
+    my $bfact_std = sqrt($sd / (@bfacts - 1));
     foreach my $atom (@atoms){
         my $bfp = ($atom->bfact - $bfact_mean)/$bfact_std;
         $atom->bfp( $bfp );
     }
-    
+    return map{$_->bfp} @atoms;
 }
 
 

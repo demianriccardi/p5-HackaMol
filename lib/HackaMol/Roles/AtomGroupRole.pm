@@ -7,6 +7,7 @@ use Math::Trig;
 use Math::Vector::Real;
 use FileHandle;
 use Scalar::Util 'reftype';
+use List::Util qw(sum);
 
 #use MooseX::Storage;
 #with Storage( 'format' => 'JSON', 'io' => 'File', traits => ['OnlyWhenBuilt'] );
@@ -57,6 +58,24 @@ has 'info' => (
 	lazy => 1,
     default   => "",
 );
+
+sub calc_bfps {
+    # this should be rerun for each selection
+    #10.1016/j.jmb.2015.09.024
+    my $self = shift;
+    my @atoms = $self->all_atoms;
+    my @bfacts = map {$_->bfact} @atoms;
+    my $bfact_mean = sum(@bfacts)/@bfacts;
+    my $sd = 0;
+    $sd += ($_ - $mean_bfact)**2 foreach @bfacts;
+    my $bfact_std = $sqd / (@bfacts - 1);
+    foreach my $atom (@atoms){
+        my $bfp = ($atom->bfact - $bfact_mean)/$bfact_std;
+        $atom->bfp( $bfp );
+    }
+    
+}
+
 
 sub dipole {
     my $self = shift;

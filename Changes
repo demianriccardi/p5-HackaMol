@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.048     2018-08-27 20:22:45-06:00 America/Denver
   
   * remove uc( chain ) issue #50
   * add string_pdb method e.g. print $mol->string_pdb

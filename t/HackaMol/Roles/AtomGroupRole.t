@@ -132,6 +132,14 @@ is($group->count_atoms, 2, 'atom atom count 2');
 
 is_deeply($group->COM, V (0.5,0,0), 'Center of mass');
 is_deeply($group->COZ, V (0.5,0,0), 'Center of Z');
+my $com1 = $group->COM;
+my $com2 = $group->COM;
+ok( \$com1 != \$com2, 'Center of mass unique memory location');
+my $atom_com = HackaMol::Atom->new(Z=>1,coords=>[$group->COM]);
+my $com3 = $group->COM;
+my $xyz = $atom_com->xyz;
+ok( \$xyz  != \$com3, 'Center of mass unique memory location via atom->new');
+
 
 $group->push_atoms($atom6);
 

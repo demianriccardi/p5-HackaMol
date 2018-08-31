@@ -13,6 +13,7 @@ with qw(
         HackaMol::Roles::ReadYAMLRole
         HackaMol::Roles::ReadZmatRole
         HackaMol::Roles::ReadPdbRole
+        HackaMol::Roles::ReadPdbxRole
         HackaMol::Roles::ReadPdbqtRole
         HackaMol::Roles::ReadXyzRole
 );
@@ -45,6 +46,9 @@ sub read_string_atoms {
     }
     elsif ( $type eq 'zmat') {
         $atoms = $self->read_zmat_atoms($fh);
+    }
+    elsif ( $type eq 'cif') {
+        ($atoms) = $self->read_cif_atoms($fh);
     }
     elsif ( $type eq 'yaml') {
         $fh->close;
@@ -79,6 +83,9 @@ sub read_file_atoms {
     }
     elsif ( $file =~ m/\.pdbqt$/ ) {
         $atoms = $self->read_pdbqt_atoms($fh);
+    }
+    elsif ( $file =~ m/\.cif$/ ) {
+        ($atoms) = $self->read_cif_atoms($fh);
     }
     elsif ( $file =~ m/\.xyz$/ ) {
         $atoms = $self->read_xyz_atoms($fh);

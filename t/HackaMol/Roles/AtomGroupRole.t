@@ -198,9 +198,9 @@ cmp_ok (abs(34.01468-$group->total_mass), '<', 1E-7, 'total mass'  );
 cmp_ok ($group->total_Z, '==', 18, 'total Z'  );
 
 #we have two copies of atom1 in the molecule
-my $xyz = $atom1->xyz;
+my $xyza = $atom1->xyz;
 $group->translate(V(1,0,0));
-is_deeply($atom1->xyz-$xyz, V(2,0,0), "two copies of an atom gets double the intended translations:beware ");
+is_deeply($atom1->xyz-$xyza, V(2,0,0), "two copies of an atom gets double the intended translations:beware ");
 
 $group->delete_atoms(3); #delete the copy of atom 1 
 

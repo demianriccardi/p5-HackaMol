@@ -1,6 +1,6 @@
 package HackaMol::Roles::ReadPdbxRole;
 
-# ABSTRACT: parse PDBx/mmCIF files 
+# ABSTRACT: parse PDBx/mmCIF files
 use Moose::Role;
 use HackaMol::PeriodicTable qw(_element_name _trim _qstring_num);
 use Math::Vector::Real;
@@ -8,13 +8,84 @@ use Carp;
 
 requires 'readline_func';
 
-sub read_cif_atoms {
-    # merge atoms here??? 
+sub read_cif_info {
     my $self = shift;
-    my  ($atoms, $models, $count_check) = $self->_read_cif_atoms(@_);
+    my $fh   = shift;
+    my $info = shift;
+    my $in_loop = 0;
+
+    while (<$fh>){
+
+       # set loop flag if loop is open
+       if (/loop_/){
+           $in_loop = 1;
+       }
+       if (/\#/ && $in_loop){
+           $in_loop = 0;
+       }
+
+       if (/_pdbx_database_status.recvd_initial_deposition_date\s+(\S+)/){
+            $info->{deposition_date} = $1
+       }
+       if (/_entity_poly.entity_id\s+(\d+)/){
+           # suck up the entity sequences, do it until # if in a loop
+           my $entity_id = $1;
+           
+           if ($entity_id){
+               die "should not be in loop..." if $in_loop ;
+               my $pdbx_seq_one_letter_code;
+               my $seq;
+               while (my $line = <$fh>){
+                   chomp($line);
+                   if ($line =~ /_entity_poly.pdbx_seq_one_letter_code\s*$/){
+                      $pdbx_seq_one_letter_code = 1;
+                      next;
+                   }
+
+                   if ($line =~ /_entity_poly.pdbx_seq_one_letter_code_can/){
+                      $pdbx_seq_one_letter_code = 0;
+                      last;
+                   }
+
+                   if ($pdbx_seq_one_letter_code){
+                      $seq .= $line;
+                  }
+               }
+               $seq =~ s/(\;|\s+)//g;
+               $info->{entity}{$entity_id} = $seq;
+           }
+           my $line = <$fh>;
+       }
+       if (/_struct_keywords.text\s+\'(.+)\'/){
+            $info->{keywords} = $1
+        }
+        if (/_exptl\.method\s+\'(.+)\'/) {
+           $info->{exp_method} = $1
+        }
+       if (/_refine_hist\.d_res_high\s+(\d+\.\d+)/){
+           $info->{resolution} = $1
+       }
+       if (/_em_3d_reconstruction.resolution\s+(\d+\.\d+)/){
+           $info->{resolution} = $1
+       }
+       if (/_citation.pdbx_database_id_DOI\s+(\S+)/){
+           $info->{doi} = $1
+       }
+       last if (/_atom_site.group_PDB/);
+    }
+    use Data::Dumper;
+    print Dumper $info;
+    return $info;
+}
+
+sub read_cif_atoms {
+
+    # merge atoms here???
+    my $self = shift;
+    my ( $atoms, $models, $count_check ) = $self->_read_cif_atoms(@_);
     my @sets;
-    foreach my $model_num (@{$models}){
-        push @sets, [grep {$_->model_num == $model_num} @$atoms]
+    foreach my $model_num ( @{$models} ) {
+        push @sets, [ grep { $_->model_num == $model_num } @$atoms ];
     }
     return @sets;
 }
@@ -27,11 +98,13 @@ sub _read_cif_atoms {
     my $fh   = shift;
     my @atoms;
     my %track_models;
+    my $atom_line_flag = 0; #this is needed to parse after atom coord loop
 
     while (<$fh>) {
-        if($self->has_readline_func){
+        if ( $self->has_readline_func ) {
             next if $self->readline_func->($_) eq 'PDB_SKIP';
         }
+
 # assuming order of columns, e.g.
 #loop_
 #_atom_site.group_PDB            (record_name)
@@ -56,19 +129,21 @@ sub _read_cif_atoms {
 #_atom_site.auth_atom_id         (auth_atom_id)
 #_atom_site.pdbx_PDB_model_num   (model_num)
 #ATOM 1       N N   . PRO A   1 1   ? 393.230 1016.300 385.017 1.0 0.00 ? 1   PRO g8 N   1
-        if (/^(?:HETATM|ATOM)/) { 
+        if (/^(?:HETATM|ATOM)/) {
+            $atom_line_flag = 1;
 
             my (
-                $record_name, $serial,  $element, $name,  $altloc,
-                $res_name,     $chain_id, $entity_id, $res_id,  $icod,
-                $x,           $y,       $z,       $occ,
-                $B,           $charge, $auth_seq_id,   $auth_comp_id, 
-                $auth_asym_id, $auth_atom_id, $model_num
-            ) = split ; 
+                $record_name, $serial,       $element,      $name,
+                $altloc,      $res_name,     $chain_id,     $entity_id,
+                $res_id,      $icod,         $x,            $y,
+                $z,           $occ,          $B,            $charge,
+                $auth_seq_id, $auth_comp_id, $auth_asym_id, $auth_atom_id,
+                $model_num
+            ) = split;
 
             # ignore charge for now...
 
-            $element = ucfirst( lc( $element ) );
+            $element = ucfirst( lc($element) );
             my $xyz = V( $x, $y, $z );
 
             my $atom = HackaMol::Atom->new(
@@ -89,20 +164,26 @@ sub _read_cif_atoms {
                 entity_id    => $entity_id,
                 model_num    => $model_num,
             );
-            $atom->altloc($altloc) if ($altloc ne '.');
-            $atom->icode($icod) if ($icod ne '?');
+            $atom->altloc($altloc) if ( $altloc ne '.' );
+            $atom->icode($icod)    if ( $icod ne '?' );
             $track_models{$model_num}++;
             push @atoms, $atom;
+        }
+        elsif ($atom_line_flag) {
+            # stops reading cif after leaving the atom coordinate loop
+            # leaves $. at that point; not done to save time
+          last;
         }
     }
 
     my %model_atom_count = reverse %track_models;
 
-    if (keys (%model_atom_count) > 1){
+    if ( keys(%model_atom_count) > 1 ) {
         warn "atom number inconsistencies in models. use third return value\n";
     }
 
-    return (\@atoms, [ sort {$a <=> $b} keys %track_models ], \%model_atom_count);
+    return ( \@atoms, [ sort { $a <=> $b } keys %track_models ],
+        \%model_atom_count );
 }
 
 no Moose::Role;

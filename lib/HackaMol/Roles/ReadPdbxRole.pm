@@ -27,14 +27,15 @@ sub read_cif_info {
        if (/_pdbx_database_status.recvd_initial_deposition_date\s+(\S+)/){
             $info->{deposition_date} = $1
        }
-       if (/_entity_poly.entity_id\s+(\d+)/){
+       if (/_entity_poly.entity_id\s*(\d+)?/){
            # suck up the entity sequences, do it until # if in a loop
            my $entity_id = $1;
            
+           my $pdbx_seq_one_letter_code;
+           my $seq;
+            
            if ($entity_id){
                die "should not be in loop..." if $in_loop ;
-               my $pdbx_seq_one_letter_code;
-               my $seq;
                while (my $line = <$fh>){
                    chomp($line);
                    if ($line =~ /_entity_poly.pdbx_seq_one_letter_code\s*$/){
@@ -53,6 +54,29 @@ sub read_cif_info {
                }
                $seq =~ s/(\;|\s+)//g;
                $info->{entity}{$entity_id} = $seq;
+           }
+           else {
+               # we are in a loop
+               $pdbx_seq_one_letter_code = 0;
+               while (my $line = <$fh>){
+                  print $line;
+                  chomp($line);
+                if ($line =~ /^(\d+)\s/){
+                  $pdbx_seq_one_letter_code = 1;
+                  $entity_id = $1;
+                  next;
+                }
+                if ($pdbx_seq_one_letter_code){
+                   if ($line =~ /^;$/){ # taking the first sequence that ends with ^;\n
+                       $pdbx_seq_one_letter_code = 0;
+                       next;
+                   }
+                   $seq = $line;
+                   $seq =~ s/(\s|;)//g;
+                   $info->{entity}{$entity_id} .= $seq;
+                }
+                last if $line =~ /^\#/;
+              }
            }
            my $line = <$fh>;
        }

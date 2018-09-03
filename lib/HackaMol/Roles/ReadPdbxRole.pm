@@ -27,9 +27,26 @@ sub read_cif_info {
        if (/_pdbx_database_status.recvd_initial_deposition_date\s+(\S+)/){
             $info->{deposition_date} = $1
        }
+       if (/_pdbx_audit_revision_history.revision_date\s*(\S+)?/){
+            my $revision_date = $1;
+            if ($in_loop){
+               while (my $line = <$fh>){
+                   chomp($line);
+                   
+                   if ($line =~ /^\#/){
+                      $in_loop = 0;
+                      last;
+                   }
+                   
+                   ($revision_date) = $line =~ /.+(\d{4}\-\d{2}\-\d{2})/;
+               }
+           }
+           $info->{last_revision_date} = $revision_date;
+       }
        if (/_entity_poly.entity_id\s*(\d+)?/){
            # suck up the entity sequences, do it until # if in a loop
            my $entity_id = $1;
+           #my $line = <$fh>;
            
            my $pdbx_seq_one_letter_code;
            my $seq;
@@ -75,10 +92,12 @@ sub read_cif_info {
                    $seq =~ s/(\s|;)//g;
                    $info->{entity}{$entity_id} .= $seq;
                 }
-                last if $line =~ /^\#/;
+                if ($line =~ /^\#/){
+                    $in_loop = 0;
+                    last;
+                }
               }
            }
-           my $line = <$fh>;
        }
        if (/_struct_keywords.text\s+\'(.+)\'/){
             $info->{keywords} = $1

@@ -31,18 +31,74 @@ sub read_cif_info {
             my $revision_date = $1;
             if ($in_loop){
                while (my $line = <$fh>){
-                   chomp($line);
                    
                    if ($line =~ /^\#/){
                       $in_loop = 0;
                       last;
                    }
+
+                   chomp($line);
                    
                    ($revision_date) = $line =~ /.+(\d{4}\-\d{2}\-\d{2})/;
                }
            }
            $info->{last_revision_date} = $revision_date;
        }
+      if (/^_struct_conn.id\s*$/){
+          # disulfides are all I need for now... contact if you need more..
+          # there must be a better way
+          die "assumed loop exception" unless $in_loop;
+          my @labels = ("_struct_conn.id");
+
+          STRUCT_LINE:  while (my $line = <$fh>){
+             if ($line =~ /(_struct\S+)/){
+                 push @labels,$1;
+                 next;
+             }
+             if ($line =~ /^\#/){
+                $in_loop = 0;
+                last;
+             }
+             
+             next unless $line =~ /disulf/;
+
+             my @target_labels = map {
+                 (
+              "$_\_label_asym_id",
+              "$_\_label_comp_id",
+              "$_\_label_seq_id",
+              "$_\_label_atom_id",
+              "pdbx_$_\_label_alt_id",
+              "pdbx_$_\_PDB_ins_code",
+              #"pdbx_$_\_standard_comp_id"
+              )
+             } qw(ptnr1 ptnr2);
+             push @target_labels, 'pdbx_dist_value';
+             chomp($line);
+             my @tokens = split /\s+/, $line;
+             while (scalar(@tokens) < scalar(@labels)){
+                 my $next_line = <$fh>;
+             if ($next_line =~ /^\#/){
+                $in_loop = 0;
+                die "dead1";
+                last STRUCT_LINE ;
+             }
+                 chomp($next_line);
+                 push @tokens, split /\s+/, $next_line;
+             }
+             die "too many tokens!" if scalar(@tokens) != scalar(@labels);
+
+             my $disulf;
+             foreach my $target (@target_labels){
+                 my ($i) = grep {
+                     $labels[$_] =~ m/$target/
+                 } 0 .. $#labels;
+                 $disulf->{$target} = $tokens[$i];
+             }
+             $info->{disulf}{$tokens[0]} = $disulf;
+                 
+          }
+      }
        if (/_entity_poly.entity_id\s*(\d+)?/){
            # suck up the entity sequences, do it until # if in a loop
            my $entity_id = $1;
@@ -76,7 +132,6 @@ sub read_cif_info {
                # we are in a loop
                $pdbx_seq_one_letter_code = 0;
                while (my $line = <$fh>){
-                  print $line;
                   chomp($line);
                 if ($line =~ /^(\d+)\s/){
                   $pdbx_seq_one_letter_code = 1;
@@ -116,8 +171,8 @@ sub read_cif_info {
        }
        last if (/_atom_site.group_PDB/);
     }
-    use Data::Dumper;
-    print Dumper $info;
+    #use Data::Dumper;
+    #print Dumper $info;
     return $info;
 }
 

@@ -29,7 +29,7 @@ has 'hush_read' => (
 sub read_string_atoms {
     my $self   = shift;
     my $string = shift;  
-    my $type   = shift or croak "must pass format: xyz, pdb, pdbqt, zmat, yaml";
+    my $type   = shift or croak "must pass format: xyz, pdb, cif, pdbqt, zmat, yaml";
 
     open (my $fh, '<', \$string) or croak "unable to open string";
 
@@ -48,7 +48,7 @@ sub read_string_atoms {
         $atoms = $self->read_zmat_atoms($fh);
     }
     elsif ( $type eq 'cif') {
-        ($atoms) = $self->read_cif_atoms($fh);
+        $atoms = $self->read_cif_atoms($fh);
     }
     elsif ( $type eq 'yaml') {
         $fh->close;
@@ -69,6 +69,22 @@ sub read_file_pdb_parts{
     return $self->read_pdb_parts($fh);    
 }
 
+sub read_file_cif_parts {
+    # temporary, this is getting out of hand!
+    my $self = shift;
+    my $file = shift;
+
+    my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
+    my $info = $self->read_cif_info($fh);
+    my @models = $self->read_cif_atoms($fh);
+    $info = $self->read_cif_info($fh,$info);
+    my @mols = map {
+        HackaMol::Molecule->new(
+          name => "model." . $_->[0]->model_num,
+          atoms => $_
+        ) } @models;
+    return ($info, \@mols);
+}
 
 sub read_file_atoms {
     my $self = shift;
@@ -85,7 +101,7 @@ sub read_file_atoms {
         $atoms = $self->read_pdbqt_atoms($fh);
     }
     elsif ( $file =~ m/\.cif$/ ) {
-        ($atoms) = $self->read_cif_atoms($fh);
+        $atoms = $self->read_cif_atoms($fh);
     }
     elsif ( $file =~ m/\.xyz$/ ) {
         $atoms = $self->read_xyz_atoms($fh);

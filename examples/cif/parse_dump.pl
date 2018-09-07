@@ -22,3 +22,7 @@ HackaMol::Molecule->new(
 
 print Dumper $info;
 
+my ($info, $mols) = $bldr->read_file_cif_parts($file);
+
+print Dumper $info;
+

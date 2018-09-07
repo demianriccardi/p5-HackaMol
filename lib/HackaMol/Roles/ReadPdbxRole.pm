@@ -170,7 +170,7 @@ sub read_cif_atoms {
     foreach my $model_num ( @{$models} ) {
         push @sets, [ grep { $_->model_num == $model_num } @$atoms ];
     }
-    return @sets;
+    wantarray ? return @sets : return $sets[0];
 }
 
 sub _read_cif_atoms {

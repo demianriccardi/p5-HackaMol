@@ -9,6 +9,7 @@ use Carp;
 requires 'readline_func';
 
 sub read_cif_info {
+    # EXPERIMENTAL
     my $self    = shift;
     my $fh      = shift;
     my $info    = shift;
@@ -44,40 +45,63 @@ sub read_cif_info {
             }
             $info->{last_revision_date} = $revision_date;
         }
-        if (/^_struct_conn.id\s*$/) {
-            die "assumed loop exception" unless $in_loop;
-            my @labels = ("_struct_conn.id");
-
-            while ( my $line = <$fh> ) {
-                if ( $line =~ /(_struct\S+)/ ) {
-                    push @labels, $1;
-                    next;
-                }
-                if ( $line =~ /^\#/ ) {
-                    $in_loop = 0;
-                    last;
-                }
-
-                chomp($line);
-                my @tokens = split /\s+/, $line;
-
-                # suck up lines until @tokens == @lables
-                while ( scalar(@tokens) < scalar(@labels) ) {
-                    my $next_line = <$fh>;
-                    chomp($next_line);
-                    push @tokens, split /\s+/, $next_line;
-                }
-                die "too many tokens!" if scalar(@tokens) != scalar(@labels);
-
-                my $connect;
-                foreach my $i ( 1 .. $#labels ) {
-                    next if ( $tokens[$i] eq '.' || $tokens[$i] eq '?' );
-                    $connect->{ $labels[$i] } = $tokens[$i];
-                }
-                $info->{connect}{ $tokens[0] } = $connect;
+        if (/_pdbx_struct_assembly_gen.asym_id_list\s*(\S+)?/){
+			my @asym_list;
+            if ($1){
+                @asym_list = split /\s*,\s*/, $1;
+            }
+            else {
+            	while (my $line = <$fh>){
+					chomp($line);
+                    last if $line =~ /^(;\s*$|#)/;
+					if( $line =~ /^;/ ){
+						@asym_list = split /\s*,\s*/, $line;
+					}
+					@asym_list = split /\s*,\s*/, $line;
+				}
 
             }
-        }
+            $info->{auth_asym_id_list}{$_} = 0 foreach @asym_list; # use hash to connect with entities?
+        } 
+    # this works for 3j7p and others but not using for now because not needed by me   
+    #   if (/^_struct_conn.id\s*$/) {
+    #       die "assumed loop exception" unless $in_loop;
+    #       my @labels = ("_struct_conn.id");
+
+    #       while ( my $line = <$fh> ) {
+    #           if ( $line =~ /(_struct\S+)/ ) {
+    #               push @labels, $1;
+    #               next;
+    #           }
+    #           if ( $line =~ /^\#/ ) {
+    #               $in_loop = 0;
+    #               last;
+    #           }
+
+    #           chomp($line);
+
+    #           # watch out for things like 'C-U MISPAIR' in 3j7p
+	#   		$line = _quote_hack($line);
+    #           my @tokens = split /\s+/, $line;
+
+    #           # suck up lines until @tokens == @lables
+    #           while ( scalar(@tokens) < scalar(@labels) ) {
+    #               my $next_line = <$fh>;
+    #               chomp($next_line);
+	#   			$next_line = _quote_hack($next_line);
+    #               push @tokens, split /\s+/, $next_line;
+    #           }
+    #           die "too many tokens! [@labels] [@tokens] " if scalar(@tokens) != scalar(@labels);
+	#   	    next unless ($tokens[0] =~ /disulf/);	
+    #           my $connect;
+    #           foreach my $i ( 1 .. $#labels ) {
+    #               next if ( $tokens[$i] eq '.' || $tokens[$i] eq '?' );
+    #               $connect->{ $labels[$i] } = _unhack_quote($tokens[$i]);
+    #           }
+    #           $info->{connect}{ $tokens[0] } = $connect;
+
+    #       }
+    #   }
         if (/_entity_poly.entity_id\s*(\d+)?/) {
 
             # suck up the entity sequences, do it until # if in a loop
@@ -85,16 +109,17 @@ sub read_cif_info {
 
             #my $line = <$fh>;
 
-            my $pdbx_seq_one_letter_code;
-            my $seq;
 
             if ($entity_id) {
                 die "should not be in loop..." if $in_loop;
+                my $pdbx_seq_one_letter_code;
+                my $seq;
                 while ( my $line = <$fh> ) {
                     chomp($line);
-                    if ( $line =~ /_entity_poly.pdbx_seq_one_letter_code\s*$/ )
+                    if ( $line =~ /_entity_poly\.pdbx_seq_one_letter_code\s*(\S+)?\s*$/ )
                     {
                         $pdbx_seq_one_letter_code = 1;
+                        $seq = $1 if $1;
                         next;
                     }
 
@@ -109,37 +134,92 @@ sub read_cif_info {
                     }
                 }
                 $seq =~ s/(\;|\s+)//g;
-                $info->{entity}{$entity_id} = $seq;
+                $info->{entity}{$entity_id}{'_entity_poly.pdbx_seq_one_letter_code'} = $seq;
             }
             else {
                 # we are in a loop
-                $pdbx_seq_one_letter_code = 0;
-                while ( my $line = <$fh> ) {
-                    chomp($line);
-                    if ( $line =~ /^(\d+)\s/ ) {
-                        $pdbx_seq_one_letter_code = 1;
-                        $entity_id                = $1;
-                        next;
-                    }
-                    if ($pdbx_seq_one_letter_code) {
-                        if ( $line =~ /^;$/ )
-                        {    # taking the first sequence that ends with ^;\n
-                            $pdbx_seq_one_letter_code = 0;
-                            next;
+                my @labels = ("_entity_poly.entity_id");
+				# TODO FACTOR OUT DRY
+            	while ( my $line = <$fh> ) {
+                	if ( $line =~ /(_entity_poly.\S+)/ ) {
+                    	push @labels, $1;
+                    	next;
+                	}
+                	if ( $line =~ /^\#/ ) {
+                    	$in_loop = 0;
+                    	last;
+               	 	}
+
+                	chomp($line);
+                	my @tokens = split /\s+/, $line;
+
+                	# suck up lines until @tokens == @lables
+                	while ( scalar(@tokens) < scalar(@labels) ) {
+                        my $next_line = <$fh>;
+						chomp $next_line;
+                        my $seq;
+                        if( $next_line =~ /^;/ ){
+                            $seq .= $next_line; 
+                            while (my $seq_line = <$fh>){
+								chomp($seq_line);
+                                last if $seq_line =~ /;\s*$/;
+                                $seq .= $seq_line;
+                            }
+                            $seq =~ s/;//g;
+                            $tokens[$#tokens+1] = $seq;
                         }
-                        $seq = $line;
-                        $seq =~ s/(\s|;)//g;
-                        $info->{entity}{$entity_id} .= $seq;
-                    }
-                    if ( $line =~ /^\#/ ) {
-                        $in_loop = 0;
-                        last;
-                    }
-                }
+                        else {
+                    	        chomp($next_line);
+                    	        push @tokens, split /\s+/, $next_line;
+                        }
+                	}
+                	die "too many tokens! [@labels] [@tokens]" if scalar(@tokens) != scalar(@labels);
+
+                	my $entity;
+                	foreach my $i ( 1 .. $#labels ) {
+                    	next if ( $tokens[$i] eq '.' || $tokens[$i] eq '?' );
+                    	$entity->{ $labels[$i] } = $tokens[$i];
+                	}
+                	$info->{entity}{ $tokens[0] } = $entity;
+				}
+
+        #       $pdbx_seq_one_letter_code = 0;
+        #       while ( my $line = <$fh> ) {
+        #           chomp($line);
+        #           if ( $line =~ /^(\d+)\s/ ) {
+        #               $pdbx_seq_one_letter_code = 1;
+        #               $entity_id                = $1;
+        #               next;
+        #           }
+        #           if ($pdbx_seq_one_letter_code) {
+        #               if ( $line =~ /^;$/ )
+        #               {    # taking the first sequence that ends with ^;\n
+        #                   $pdbx_seq_one_letter_code = 0;
+        #                   next;
+        #               }
+        #               $seq = $line;
+        #               $seq =~ s/(\s|;)//g;
+        #               $info->{entity}{$entity_id} .= $seq;
+        #           }
+        #           if ( $line =~ /^\#/ ) {
+        #               $in_loop = 0;
+        #               last;
+        #           }
+        #       }
             }
         }
-        if (/_struct_keywords.text\s+\'(.+)\'/) {
-            $info->{keywords} = $1;
+        if (/_struct_keywords.text\s*(?:\'(.+)\')?\s*/) {
+            if ($1){
+                $info->{keywords} = $1;
+            }
+            else {
+                while (my $line = <$fh>){
+                    chomp($line);
+                    last if $line =~ /#/;
+                    $info->{keywords} .= $line
+                }
+                $info->{keywords} =~ s/(^;|;$)//g;
+            }
         }
         if (/_exptl\.method\s+\'(.+)\'/) {
             $info->{exp_method} = $1;
@@ -159,6 +239,24 @@ sub read_cif_info {
     #use Data::Dumper;
     #print Dumper $info;
     return $info;
+}
+
+sub _quote_hack {
+    # watch out for things like 'C-U MISPAIR' in 3j7p
+    my $line = shift;
+    my @q_strs = $line =~ /(['"].*['"])/ ;
+    foreach my $q_str (@q_strs){
+        (my $hack_str = $q_str) =~ s/\s+/__HACK__/;
+        $line =~ s/$q_str/$hack_str/;
+    }
+    return $line;
+}
+
+sub _unhack_quote {
+    # watch out for things like 'C-U MISPAIR' in 3j7p
+    my $line = shift;
+    $line =~ s/__HACK__/ /g ;
+    return $line;
 }
 
 sub read_cif_atoms {

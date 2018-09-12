@@ -55,6 +55,26 @@ has 'ftp_password' => (
     lazy => 1,
 );
 
+sub pdbid_local_path {
+    my $self  = shift;
+    my $pdbid = lc( shift );
+
+    die "Invocation: ->pdb_id_local_path(pdbid,[cif|pdb]?)" 
+        unless length($pdbid) == 4;
+    
+    my $type = shift || 'cif';
+
+    my $path_method = "local_${type}_path";
+
+    # may or may not exist
+    my $path = $self->$path_method->child(
+                                substr( $pdbid, 1, 2 ) . "/$pdbid.$type" );
+
+    return $path;    
+
+}
+
+
 sub local_pdbs { shift->_local_cifs_pdbs('pdb') }
 sub local_cifs { shift->_local_cifs_pdbs('cif') }
 

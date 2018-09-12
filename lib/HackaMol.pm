@@ -28,7 +28,8 @@ with
   'HackaMol::Roles::PathRole',
   'HackaMol::Roles::ExeRole',
   'HackaMol::Roles::FileFetchRole',
-  'HackaMol::Roles::NERFRole';
+  'HackaMol::Roles::NERFRole',
+  'HackaMol::Roles::RcsbRole';
 
 
 

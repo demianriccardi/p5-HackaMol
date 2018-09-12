@@ -3,6 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   * add pdbx/mmcif parsing, parses info like connections
   * add example cif/parse_dump.pl
+  * added HackaMol::Roles::RcsbRole for ftping files (testing needed)
 
 0.048     2018-08-27 20:22:45-06:00 America/Denver
   

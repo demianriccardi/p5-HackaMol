@@ -87,7 +87,7 @@ sub rcsb_sync_local {
         }
     }  
 
-    return unless @pdbids;
+    return ([],[]) unless @pdbids;
     print "syncing @{[scalar @pdbids]} $type files\n";
     my ($synced_pdbids,$missed_pdbids) = $self->rcsb_ftp_fetch($type, \@pdbids );
     return ($synced_pdbids,$missed_pdbids);

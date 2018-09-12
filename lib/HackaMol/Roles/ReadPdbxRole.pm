@@ -123,15 +123,17 @@ sub read_cif_info {
                         next;
                     }
 
-                    if ( $line =~ /_entity_poly.pdbx_seq_one_letter_code_can/ )
+                    if ( $line =~ /(_entity_poly.pdbx_seq_one_letter_code_can|^;\s*$)/ )
                     {
                         $pdbx_seq_one_letter_code = 0;
                         last;
                     }
-
+                    
                     if ($pdbx_seq_one_letter_code) {
                         $seq .= $line;
                     }
+
+                    
                 }
                 $seq =~ s/(\;|\s+)//g;
                 $info->{entity}{$entity_id}{'_entity_poly.pdbx_seq_one_letter_code'} = $seq;

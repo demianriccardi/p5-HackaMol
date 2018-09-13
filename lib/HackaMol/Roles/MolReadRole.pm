@@ -77,7 +77,7 @@ sub read_file_cif_parts {
     my $fh   = FileHandle->new("<$file") or croak "unable to open $file";
     my $info = $self->read_cif_info($fh);
     my @models = $self->read_cif_atoms($fh);
-    $info = $self->read_cif_info($fh,$info);
+    #$info = $self->read_cif_info($fh,$info);
     my @mols = map {
         HackaMol::Molecule->new(
           name => "model." . $_->[0]->model_num,

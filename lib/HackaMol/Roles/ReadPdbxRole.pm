@@ -9,11 +9,12 @@ use Carp;
 requires 'readline_func';
 
 sub read_cif_info {
-    # EXPERIMENTAL
+    # EXPERIMENTAL: use with caution
     my $self    = shift;
     my $fh      = shift;
     my $info    = shift;
     my $in_loop = 0;
+    my $atom_site_position = 0;
 
     while (<$fh>) {
 
@@ -151,19 +152,20 @@ sub read_cif_info {
                     	$in_loop = 0;
                     	last;
                	 	}
-
                 	chomp($line);
+                    $line =  _quote_hack($line);
                 	my @tokens = split /\s+/, $line;
-
                 	# suck up lines until @tokens == @lables
                 	while ( scalar(@tokens) < scalar(@labels) ) {
                         my $next_line = <$fh>;
+                        $next_line = _quote_hack ($next_line);
 						chomp $next_line;
                         my $seq;
                         if( $next_line =~ /^;/ ){
                             $seq .= $next_line; 
                             while (my $seq_line = <$fh>){
 								chomp($seq_line);
+                                $seq_line = _quote_hack($seq_line);
                                 last if $seq_line =~ /;\s*$/;
                                 $seq .= $seq_line;
                             }
@@ -171,10 +173,11 @@ sub read_cif_info {
                             $tokens[$#tokens+1] = $seq;
                         }
                         else {
-                    	        chomp($next_line);
+
                     	        push @tokens, split /\s+/, $next_line;
                         }
                 	}
+                    
                 	die "too many tokens! [@labels] [@tokens]" if scalar(@tokens) != scalar(@labels);
 
                 	my $entity;
@@ -210,14 +213,14 @@ sub read_cif_info {
         #       }
             }
         }
-        if (/_struct_keywords.text\s*(?:\'(.+)\')?\s*/) {
+        if (/_struct_keywords.text\s*(?:\'?(.+)\'?)?\s*$/) {
             if ($1){
                 $info->{keywords} = $1;
             }
             else {
                 while (my $line = <$fh>){
                     chomp($line);
-                    last if $line =~ /#/;
+                    last if $line =~ /^#/;
                     $info->{keywords} .= $line
                 }
                 $info->{keywords} =~ s/(^;|;$)//g;
@@ -235,18 +238,25 @@ sub read_cif_info {
         if (/_citation.pdbx_database_id_DOI\s+(\S+)/) {
             $info->{doi} = $1;
         }
-        last if (/_atom_site.group_PDB/);
+        if (/_atom_site.group_PDB/){
+            $atom_site_position = $.;
+            $info->{fh_position_atom_site} = $atom_site_position;
+        }
     }
+   
+    # move $fh to atom_site_position
+    seek ($fh, 0, 0 );
+    $. = 0;
+    my $LINE;
+    do { $LINE = <$fh> } until $. == $atom_site_position || eof;
 
-    #use Data::Dumper;
-    #print Dumper $info;
     return $info;
 }
 
 sub _quote_hack {
     # watch out for things like 'C-U MISPAIR' in 3j7p
     my $line = shift;
-    my @q_strs = $line =~ /(['"].*['"])/ ;
+    my @q_strs = $line =~ /(['"].*\s+\.*['"])/g ;
     foreach my $q_str (@q_strs){
         (my $hack_str = $q_str) =~ s/\s+/__HACK__/;
         $line =~ s/$q_str/$hack_str/;
@@ -281,7 +291,6 @@ sub _read_cif_atoms {
     my $fh   = shift;
     my @atoms;
     my %track_models;
-    my $atom_line_flag = 0;    #this is needed to parse after atom coord loop
 
     while (<$fh>) {
         if ( $self->has_readline_func ) {
@@ -313,8 +322,6 @@ sub _read_cif_atoms {
 #_atom_site.pdbx_PDB_model_num   (model_num)
 #ATOM 1       N N   . PRO A   1 1   ? 393.230 1016.300 385.017 1.0 0.00 ? 1   PRO g8 N   1
         if (/^(?:HETATM|ATOM)/) {
-            $atom_line_flag = 1;
-
             my (
                 $record_name, $serial,       $element,      $name,
                 $altloc,      $res_name,     $chain_id,     $entity_id,
@@ -351,12 +358,6 @@ sub _read_cif_atoms {
             $atom->icode($icod)    if ( $icod ne '?' );
             $track_models{$model_num}++;
             push @atoms, $atom;
-        }
-        elsif ($atom_line_flag) {
-
-            # stops reading cif after leaving the atom coordinate loop
-            # leaves $. at that point; not done to save time
-            last;
         }
     }
 

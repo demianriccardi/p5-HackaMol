@@ -121,6 +121,7 @@ sub read_cif_info {
                         }
                         else {
                             while (my $next_line = <$fh>){
+                                chomp $next_line;
                                 last if $next_line =~ /^;\s*$/;
                                 $seq .= $next_line;
                             }
@@ -134,6 +135,7 @@ sub read_cif_info {
                         }
                         else {
                             while (my $next_line = <$fh>){
+                                chomp $next_line;
                                 last if $next_line =~ /^;\s*$/;
                                 $seq_can .= $next_line;
                             }
@@ -233,8 +235,8 @@ sub read_cif_info {
                     last if $line =~ /^#/;
                     $info->{keywords} .= $line
                 }
-                $info->{keywords} =~ s/(^;|(;|\s+)$|['"])//g;
             }
+            $info->{keywords} =~ s/^;|;$|['"]|\s+$//g;
         }
         if (/^_exptl\.(\S+)\s*(?:\'(.+)\')?/){ # 2ah8 changes order
             if ($1 eq 'method'){
@@ -280,7 +282,7 @@ sub read_cif_info {
             }
         }
         if (/_refine_hist\.d_res_high\s+(\d+\.\d+)/) {
-            $info->{resolution} = $1;
+            $info->{resolution} = sprintf("%s",$1);
         }
         if (/_em_3d_reconstruction.resolution\s+(\d+\.\d+)/) {
             $info->{resolution} = $1;

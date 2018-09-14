@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  * improve cif info parsing (TODO: convert regression test in examples to proper tests)
+
+0.049     2018-09-11 21:13:39-06:00 America/Denver
   * add pdbx/mmcif parsing, parses info like connections
   * add example cif/parse_dump.pl
   * added HackaMol::Roles::RcsbRole for ftping files (testing needed)

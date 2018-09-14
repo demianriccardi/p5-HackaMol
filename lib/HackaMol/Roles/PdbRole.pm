@@ -4,28 +4,6 @@ package HackaMol::Roles::PdbRole;
 use Moose::Role;
 use Carp;
 
-my %aa321 = (
-  ALA=>'A', ARG=>'R', ASN=>'N', ASP=>'D', CYS=>'C',
-  GLU=>'E', GLN=>'Q', GLY=>'G', HIS=>'H', ILE=>'I',
-  LEU=>'L', LYS=>'K', MET=>'M', PHE=>'F', PRO=>'P',
-  SER=>'S', THR=>'T', TRP=>'W', TYR=>'Y', VAL=>'V',
-  SEC=>'U',
-);
-
-sub aa321 {
-  my $self   = shift;
-  my $x_flag = shift;
-  $x_flag       = 1 unless defined($x_flag);
-
-  my $resname = uc($self->resname);
-  
-  unless ( exists($aa321{$resname}) ){
-    carp "PDBRole> residue $resname name has no 1 letter code";
-    return ('X') if $x_flag;
-    return ("($resname)");
-  }
-  return ($aa321{$resname});
-}
 
 has 'record_name', is => 'rw', isa => 'Str', lazy => 1, default => 'HETATM';
 has 'occ',         is => 'rw', isa => 'Num', lazy => 1, default => 1.0;
@@ -55,6 +33,28 @@ has 'auth_atom_id', is => 'rw', isa => 'Str'; # cif  -> author fudged name
 has 'entity_id',    is => 'rw', isa => 'Int'; # cif, e.g. virus, main chains of 1 entity
 has 'pdb_formal_charge',    is => 'rw', isa => 'Num'; # cif, e.g. virus, main chains of 1 entity
 
+my %aa321 = (
+  ALA=>'A', ARG=>'R', ASN=>'N', ASP=>'D', CYS=>'C',
+  GLU=>'E', GLN=>'Q', GLY=>'G', HIS=>'H', ILE=>'I',
+  LEU=>'L', LYS=>'K', MET=>'M', PHE=>'F', PRO=>'P',
+  SER=>'S', THR=>'T', TRP=>'W', TYR=>'Y', VAL=>'V',
+  SEC=>'U',
+);
+
+sub aa321 {
+  my $self   = shift;
+  my $x_flag = shift;
+  $x_flag       = 1 unless defined($x_flag);
+
+  my $resname = uc($self->resname);
+  
+  unless ( exists($aa321{$resname}) ){
+    carp "PDBRole> residue $resname name has no 1 letter code";
+    return ('X') if $x_flag;
+    return ("($resname)");
+  }
+  return ($aa321{$resname});
+}
 #following map lifted from Bio::PDB::Structure::Atom
 
 my %pdb_atom_names = (

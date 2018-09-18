@@ -451,17 +451,17 @@ sub _read_cif_atoms {
     # look for the labels to determine order of attrs
     my $site_type = 'def'; # 'esd' 
     LABEL: while (<$fh>){
-        if (/_atom_site.Cartn_x_esd/){
+        if (/^_atom_site.Cartn_x_esd/){
             $site_type = 'esd';
             last;
         }
-        last if (/_atom_site.pdbx_PDB_model_num/);
+        last if (/^_atom_site.pdbx_PDB_model_num/);
 
-        if (/_atom_site.group_PDB/){
+        if (/^_atom_site.group_PDB/){
             my $i = 1;
             while (my $line = <$fh>){
-                die "labels out of order $line $expected_labels[$i]" unless $line =~ /$expected_labels[$i]\s?/;
-                last if ($line =~ /_atom_site.B_iso_or_equiv/);
+                die "labels out of order $. $line $expected_labels[$i]" unless $line =~ /$expected_labels[$i]\s?/;
+                last if ($line =~ /^_atom_site.B_iso_or_equiv/);
                 $i++;
             }
         }

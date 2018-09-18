@@ -272,7 +272,7 @@ sub read_cif_info {
             else {
                 while (my $line = <$fh>){
                     last if $line =~ /^#/;
-                    if ($line =~ /_exptl\.method\s+(?:\'(.+)\')?/) {
+                    if ($line =~ /^_exptl\.method\s+(?:\'(.+)\')?/) {
                         die "unable to parse exp_method" unless($1);
                         $info->{exp_method} = $1;
                         last;
@@ -281,16 +281,16 @@ sub read_cif_info {
                 }
             }
         }
-        if (/_refine_hist\.d_res_high\s+(\d+\.\d+)/) {
+        if (/^_refine_hist\.d_res_high\s+(\d+\.\d+)/) {
             $info->{resolution} = sprintf("%s",$1);
         }
-        if (/_em_3d_reconstruction.resolution\s+(\d+\.\d+)/) {
+        if (/^_em_3d_reconstruction.resolution\s+(\d+\.\d+)/) {
             $info->{resolution} = $1;
         }
-        if (/_citation.pdbx_database_id_DOI\s+(\S+)/) {
+        if (/^_citation.pdbx_database_id_DOI\s+(\S+)/) {
             $info->{doi} = $1;
         }
-        if (/_atom_site.group_PDB/){
+        if (/^_atom_site.group_PDB/){
             $atom_site_position = $. - 2 ;
             $info->{fh_position_atom_site} = $atom_site_position ;
         }

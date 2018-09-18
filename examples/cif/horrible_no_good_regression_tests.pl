@@ -7,7 +7,7 @@ use Data::Dumper;
 my $bldr = HackaMol->new();
 
 my @pdbids =     qw/
-    1a2c 3gtk 2ahn 2ah8 3oe0 4gpg 2A0Z 207l 3gtk 2a2x 
+    6ayn 1a2c 3gtk 2ahn 2ah8 3oe0 4gpg 2A0Z 207l 3gtk 2a2x 
     5a71 3j7p 1aq5 5aiy 3A34 2l9h 139L 6FB4
     /
     ;

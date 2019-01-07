@@ -76,6 +76,7 @@ sub _lsq_slope {
 
 sub centered_vector {
     my $self = shift;
+    my $centered_flag = shift;
     my @mvrs = map {$_->xyz} $self->all_atoms;
     die "2 atoms needed for a centered_vector" unless @mvrs > 1;
     my @x = map { $_->[0] } @mvrs;
@@ -778,6 +779,16 @@ argument, optional: Int, offset for resetting the serial number of atoms.
 Returns the offset. 
 
   $group->fix_serial(0); # serial starts from zero
+
+=method centered_vector 
+
+calculates least squares fitted vector for the AtomGroup. Returns normalized Math::Vector::Real 
+object with origin V(0,0,0). 
+
+  $mvr = $group->centered_vector; # unit vector origin 0,0,0 
+  # place two mercury atoms along the vector to visualize the fit 
+  my $hg_1 = HackaMol::Atom->new(Z => 80, coords => [$group->center]);
+  my $hg_2 = HackaMol::Atom->new(Z => 80, coords => [$group->center + $mvr]);
 
 =head1 SEE ALSO
 

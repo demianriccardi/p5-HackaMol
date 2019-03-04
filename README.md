@@ -14,27 +14,27 @@ Citation: J. Chem. Inf. Model., 2015, 55 (4), pp 721–726
 SYNOPSIS
 ========
 ```perl
-       use HackaMol;
-       my $mol = HackaMol->new->pdbid_mol('1L2Y.pdb');
-       # 1LY2 is an NMR structure of TRP-cage with multiple models
-       
-       #recenter all coordinates to center of mass
-       foreach my $t ( 0 .. $mol->tmax) {
-           $mol->t($t);
-           $mol->translate( -$mol->COM );
-       }
-       
-       #create array of CA atoms with full occupancy 
+use HackaMol;
+my $mol = HackaMol->new->pdbid_mol('1L2Y.pdb');
+# 1LY2 is an NMR structure of TRP-cage with multiple models
 
-       my @CAs = grep {
-                        $_->name    eq 'CA'  and
-                        $_->occ == 1 
-                      } $mol->all_atoms;
-      
-       #print out the pdb with CA for several models from the NMR 
-       HackaMol::Molecule->new( 
-                                atoms=>[@CAs] 
-                              )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
+#recenter all coordinates to center of mass
+foreach my $t ( 0 .. $mol->tmax) {
+    $mol->t($t);
+    $mol->translate( -$mol->COM );
+}
+
+#create array of CA atoms with full occupancy 
+
+my @CAs = grep {
+                 $_->name    eq 'CA'  and
+                 $_->occ == 1 
+               } $mol->all_atoms;
+
+#print out the pdb with CA for several models from the NMR 
+HackaMol::Molecule->new( 
+                         atoms=>[@CAs] 
+                       )-> print_pdb_ts([8,2,4,6,8,0], 'some.pdb');
 ``` 
 
 DESCRIPTION
@@ -92,8 +92,8 @@ HackaMol is too fun to not be experimental! Feedback and contributions welcome!
 
 HackaMol can also be installed with this one-liner:
 
-         prompt> curl -L cpanmin.us | perl - -n HackaMol
+    prompt> curl -L cpanmin.us | perl - -n HackaMol
 
 This will install HackaMol and its dependencies in a perl5 directory in your path.  You'll need to set the PERL5LIB variable in your shell to find the install directory.  Probably something like this (let me know if otherwise):
 
-        prompt> PERL5LIB=/home/path/perl5; export PERL5LIB 
+    prompt> PERL5LIB=/home/path/perl5; export PERL5LIB 

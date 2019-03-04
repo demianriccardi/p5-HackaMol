@@ -5,11 +5,11 @@ Object-oriented Perl 5, Moose library for molecular hacking on multiple scales.
 VERSION 0.046
 ============
        
-Please see [HackaMol on MetaCPAN](https://metacpan.org/release/HackaMol) for formatted documentation.  The [HackaMol publication] (http://pubs.acs.org/doi/abs/10.1021/ci500359e) has a more complete description of the library ([pdf available from researchgate](http://www.researchgate.net/profile/Demian_Riccardi/publication/273778191_HackaMol_an_object-oriented_Modern_Perl_library_for_molecular_hacking_on_multiple_scales/links/550ebec60cf27526109e6ade.pdf )). 
+Please see [HackaMol on MetaCPAN](https://metacpan.org/release/HackaMol) for formatted documentation.  The [HackaMol publication](http://pubs.acs.org/doi/abs/10.1021/ci500359e) has a more complete description of the library ([pdf available from researchgate](http://www.researchgate.net/profile/Demian_Riccardi/publication/273778191_HackaMol_an_object-oriented_Modern_Perl_library_for_molecular_hacking_on_multiple_scales/links/550ebec60cf27526109e6ade.pdf )). 
 
 Citation: J. Chem. Inf. Model., 2015, 55 (4), pp 721–726 
 
-[Link to Jupyter Notebooks with the IPerl Kernel] (https://github.com/demianriccardi/p5-IPerl-Notebooks/tree/master/HackaMol)
+[Link to Jupyter Notebooks with the IPerl Kernel](https://github.com/demianriccardi/p5-IPerl-Notebooks/tree/master/HackaMol)
        
 SYNOPSIS
 ========
@@ -60,7 +60,7 @@ To install HackaMol, I recommend using cpanminus and local::lib. This approach a
 (available on most systems; see Strawberry Perl for Windows). 
 I use *[Perlbrew](http://perlbrew.pl)* to manage local versions of Perl, but Perlbrew is overkill unless your system Perl is very old (if you do use Perlbrew, you won't need local::lib).
 
-Here is a quick summary of a *[step by step post on installing Perl modules] (http://perlmaven.com/install-perl-modules-without-root-rights-on-linux-ubuntu-13-10)*. Below, prompt> denotes your terminal prompt.  
+Here is a quick summary of a *[step by step post on installing Perl modules](http://perlmaven.com/install-perl-modules-without-root-rights-on-linux-ubuntu-13-10)*. Below, prompt> denotes your terminal prompt.  
 
   1. install cpanminus 
 

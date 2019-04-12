@@ -147,7 +147,7 @@ our %ATOMIC_MASSES = (
 our %ATOM_MULTIPLICITY = (
 
     # from jerry's thermo script
-    # see webelements.com .. thinking about term symbols and shit like that
+    # see webelements.com .. thinking about term symbols and stuff like that
     H  => 2,
     C  => 3,
     N  => 4,

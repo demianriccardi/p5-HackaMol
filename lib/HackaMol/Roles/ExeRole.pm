@@ -14,7 +14,7 @@ has 'exe'       => (
 
 
 #options after input filename... bleh
-# ie. dftd3 shit.xyz -func b3pw91 -bj              
+# ie. dftd3 stuff.xyz -func b3pw91 -bj              
 has 'exe_endops'       => (
                       is  => 'rw',
                       isa => 'Str',

@@ -10,7 +10,8 @@ use Data::Dumper;
 
 my $hack = HackaMol->new();
 
-my $pdbid = shift || '2cba';
+my $pdbid = shift || die "ARGS: pdbid rcut";
+my $rcut  = shift || 5;
 my $file  = "pdbs/$pdbid.pdb";
 
 # save the file if we haven't done it
@@ -30,15 +31,14 @@ print $latt_line . "\n";
 
 my ($a,$b,$c,$alpha,$beta,$gamma) = grep looks_like_number($_), split (/\s+/,$latt_line);
 # get the coordinate tranformation functions
-say 'shit';
 my ($fract_to_cart,$cart_to_fract) = fract_cart([$a,$b,$c],[$alpha,$beta,$gamma]);
-say 'shit';
 # create lattice vectors a, b, c
 my $av = $fract_to_cart->(V(1,0,0));
 my $bv = $fract_to_cart->(V(0,1,0));
 my $cv = $fract_to_cart->(V(0,0,1));
 
-say 'shit';
+recenter($cart_to_fract,$mol,$av,$bv,$cv);
+
 # bin up the symops
 my %sym_op = (); 
 foreach my $line ( @symop_lines ) {
@@ -46,140 +46,61 @@ foreach my $line ( @symop_lines ) {
     push @{$sym_op{$entries[3]}}, V(@entries[4,5,6,7]);
 }
 
-say 'shit';
-# build the p1 unit cell
-printf ("%8.3f %8.3f %8.3f\n", @{ $cart_to_fract->( $mol->COM )} );
-recenter($cart_to_fract,$mol,$av,$bv,$cv);
 
-my @kmeans = kmeans_mvr(map{$_->xyz} $mol->all_atoms);
-my $i = 0;
-my $cg_mol = HackaMol::Molecule->new(
-                atoms => [
-                          map{HackaMol::Atom->new(
-                          Z => '80',
-                          name => 'HG2',
-                          resname => 'HG2',
-                          resid => ++$i, 
-                          serial => $i,
-                          occ => 1.0,
-                          bfact => 20.0, 
-                          coords => [$_]
-                )} @kmeans]
-);
+my @atoms = $mol->all_atoms;
+my $tree      = Math::Vector::Real::kdTree->new(map {$_->xyz} @atoms);
 
-$cg_mol->print_pdb("$pdbid\_cg_mol.pdb");
+my @xtal;
+my $serial = $atoms[-1]->serial;
 
-my $xtal_mol = $hack->read_file_mol("$pdbid\_cg_mol.pdb");
+foreach my $atom (@atoms){
+    my $atom_xyz = $atom->xyz;
+    my ($x,$y,$z) = @{$atom_xyz};
+    my $resid = $atom->resid;
+    my $name = $atom->name;
+    my $record_name = $atom->record_name;
+    my $Z = $atom->Z;
+    my $resname = $atom->resname;
+    foreach my $symop (keys %sym_op){
+        my @mat_d = @{$sym_op{$symop}};
+        my $cx = V(map{$_->[0]} @mat_d);
+        my $cy = V(map{$_->[1]} @mat_d);
+        my $cz = V(map{$_->[2]} @mat_d);
+        my $dxyz = V(map{$_->[3]} @mat_d);
 
-$mol->print_pdb( "$pdbid\_asy.pdb" );
-printf ("%8.3f %8.3f %8.3f\n", @{ $cart_to_fract->( $mol->COM )} );
+        foreach my $na (-1,0,1){
+            foreach my $nb (-1,0,1){
+                foreach my $nc (-1,0,1){
+                    #skip self
+                    next if ($na == 0 && $nb == 0 && $nc == 0 && $symop == 1 );
 
-my $i_chain = 1;
-my $serial = $mol->count_atoms + 1;
-foreach my $symop (grep {$_ ne 1} keys %sym_op){
-    my @mat_d = @{$sym_op{$symop}};
-    my $cx = V(map{$_->[0]} @mat_d);
-    my $cy = V(map{$_->[1]} @mat_d);
-    my $cz = V(map{$_->[2]} @mat_d);
-    my $dxyz = V(map{$_->[3]} @mat_d);
+                    my $trans = $na*$av + $nb*$bv +$nc*$cv;
+                    my $xyz_new = $x*$cx + $y*$cy + $z*$cz + $dxyz + $trans;
 
-    my $lmol = $hack->read_file_mol("$pdbid\_asy.pdb"); 
-    foreach my $atom ($lmol->all_atoms){
-        my ($x,$y,$z) = @{$atom->xyz};
-        my $chain = chain_incr($atom->chain,$i_chain);
-        my $xyz_new = $x*$cx + $y*$cy + $z*$cz + $dxyz;  
-        #              + $da * $av + $db * $bv + $dc * $cv; # -$bv + $av ;
-        $atom->chain($chain);
-        $atom->set_coords(0,$xyz_new);
-        $atom->serial( ++$serial );
-        $mol->push_atoms($atom);
-    }
-    $i_chain++;
-    recenter($cart_to_fract,$lmol,$av,$bv,$cv);
-    foreach my $atom ($lmol->all_atoms){
-        if ( grep {$atom->distance( $_ ) <= 20} $cg_mol->all_atoms){
-            if (grep {$atom->distance($_) <= 7.0} $mol->select_group('protein')->all_atoms){
-                say "pushing atom!";
-                $atom->chain('Z');
-                $xtal_mol->push_atoms($atom);
+                    my @ix = $tree->find_in_ball($xyz_new, $rcut);
+                    next unless @ix;
+                    my $xtal_atom = HackaMol::Atom->new(
+                        Z => $Z,
+                        resid => $resid,
+                        name => $name,
+                        resname => $resname,
+                        chain   => 'X',
+                        coords => [$xyz_new],
+                        record_name => $record_name,
+                        serial => ++$serial,
+                    );
+                    $mol->push_atoms($xtal_atom);
+                }
             }
         }
     }
-    my $cent = $cart_to_fract->( $lmol->COM );
-    printf ("%8.3f %8.3f %8.3f\n", @{ $cart_to_fract->( $lmol->COM )} );
 }
 
-$mol->print_pdb("$pdbid\_p1.pdb"); 
-
-foreach my $na (-1,0,1){
-  foreach my $nb (-1,0,1){
-    foreach my $nc (-1,0,1){
-      next if (!$na and !$nb and !$nc); # dont repeat 0 0 0
-      my $lmol = $hack->read_file_mol("$pdbid\_p1.pdb"); 
-      print "translation $na av; $nb bv ; $nc cv\n";
-      my $dxyz = $na*$av + $nb*$bv +$nc*$cv;
-      foreach my $atom ($lmol->all_atoms){
-        my $xyz_new = $atom->xyz + $dxyz;
-        #$atom->push_coords($xyz_new);
-        $atom->set_coords(0,$xyz_new);
-        #$atom->serial( ++$serial );
-        if ( grep {$atom->distance( $_ ) <= 20} $cg_mol->all_atoms){
-            if (grep {$atom->distance($_) <= 7.0} $mol->select_group('protein')->all_atoms){
-                say "pushing atom!";
-                $atom->chain('Z');
-                $xtal_mol->push_atoms($atom);
-            }
-        }
-      }
-    }
-  }
-}
-
-#$xtal_mol->select_group('.not. Z 80')->print_pdb("$pdbid\_xtal.pdb");
-$xtal_mol->print_pdb("$pdbid\_xtal.pdb");
-my $asy = $hack->read_file_mol("$pdbid\_asy.pdb");
-$asy->push_atoms($xtal_mol->all_atoms);
-$asy->print_pdb("$pdbid\_asy_xtal.pdb");
-exit;
-foreach my $t (0 .. $mol->tmax) {
-    $mol->t($t);
-    printf ("%8.3f %8.3f %8.3f\n", @{ $cart_to_fract->( $mol->COM )} );
-    say "$pdbid\_$t.pdb";
-    my $label = $t =~  /\d\d/ ? $t : "0$t"; 
-    $mol->print_pdb("$pdbid\_$label.pdb");
-}
-
-sub kmeans_mvr{
-  my @mvr = @_;
-  
-  my $tree = Math::Vector::Real::kdTree->new(@mvr);
-
-  my @means;
-  my @dist;
-  my $ki = 20;
-  my $rcut = 7.5;
-
-  while ($ki){
-    @means = $tree->k_means_start($ki);
-    @means = $tree->k_means_loop(@means);
-    my @ineigh = Math::Vector::Real::Neighbors->neighbors(@means);
-    @dist = map {$means[$_]->dist($means[$ineigh[$_]]) } 0 .. $#ineigh;
-    if (grep {$_ < $rcut} @dist){
-      $ki--;
-      next;
-    }
-    else {
-      last;
-    }
-  }
-  
-  return @means;
-
-}
+$mol->print_pdb("$pdbid\_asy_xtal.pdb"); 
 
 sub recenter{
     my ($cart_to_frac,$lmol,$av,$bv,$cv) = @_;
-    
+
     my $cent = $cart_to_fract->( $lmol->COM );
     my $qav = V(1,0,0);
     my $qbv = V(0,1,0);
@@ -205,7 +126,7 @@ sub recenter{
       $lmol->translate(+$bv);
       $cent = $cart_to_fract->( $lmol->COM );
     }
-  
+
     # recenter c
     if( ($cent - $qcv)->abs <  $cent->abs ){
       $lmol->translate(-$cv);
@@ -217,22 +138,6 @@ sub recenter{
       $cent = $cart_to_fract->( $lmol->COM );
     }
 
-}
-
-sub chain_incr{
-  my $chain  = shift;
-  my $repeat = shift;
-  if ($repeat <= 0){
-    return $chain;
-  }
-  $repeat--;
-  if ($chain eq ' '){
-    chain_incr('A',$repeat);
-  }
-  elsif(lc($chain) eq 'z'){
-    chain_incr(1,$repeat);
-  }
-  chain_incr(++$chain,$repeat);
 }
 
 sub fract_cart {

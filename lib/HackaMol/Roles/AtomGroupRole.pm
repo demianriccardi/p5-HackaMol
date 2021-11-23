@@ -441,7 +441,7 @@ sub string_pdb {
     $string .= sprintf( "MODEL       %2i\n", $t + 1 ) unless $self->qcat_print;
 
     my $atform =
-      "%-6s%5i  %-3s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n";
+      "%-6s%5i  %-3s%1s%3s%2s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n";
 
     foreach my $at (@atoms) {
 
@@ -449,7 +449,7 @@ sub string_pdb {
         my $form = $atform;
         if ( length $at->name > 3 ) {
             $form =
-"%-6s%5i %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n";
+      "%-6s%5i %4s%1s%3s%2s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s\n";
         }
         $string .= sprintf(
             $form,

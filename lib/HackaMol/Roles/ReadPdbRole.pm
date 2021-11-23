@@ -86,13 +86,13 @@ sub read_pdb_atoms {
                 $resName,     $chainID, $resSeq,  $icod,
                 $x,           $y,       $z,       $occ,
                 $B,           $segID,   $element, $charge
-            ) = unpack "A6A5x1A4A1A3x1A1A4A1x3A8A8A8A6A6x6A4A2A2", $_ . (" " x 12); # padded out to accommodate truncated pdbs
+            ) = unpack "A6A5x1A4A1A3A2A4A1x3A8A8A8A6A6x6A4A2A2", $_ . (" " x 12); # padded out to accommodate truncated pdbs
 
             if   ( $charge =~ m/\d/ ) { $charge = _qstring_num($charge) }
             else                      { $charge = 0 }
 
             if   ( $chainID =~ m/\w/ ) { $chainID =  _trim($chainID) }
-            else                       { $chainID = ' ' }
+            else                       { $chainID = '  ' }
 
             $name    = _trim($name);
             $resName = _trim($resName);

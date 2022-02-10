@@ -63,6 +63,7 @@ sub _lsq_slope {
     # private function used for each coordinate 
     # translation of tcl function written by Justin Gullingsrud @ uiuc.edu 
     # algorithm reference: Bevington
+    # https://www.ks.uiuc.edu/Research/vmd/mailing_list/vmd-l/att-2279/fit_angle.tcl
     # Fit the points x to x = ai + b, i=0...N-1, and return the value of a 
     # a = 12/( (N(N^2 - 1)) ) sum[ (i-(N-1)/2) * xi]    
     my $xis = shift || die "expecting array_ref of cartesian coordinate [x y or z]";

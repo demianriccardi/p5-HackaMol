@@ -6,8 +6,9 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 use MooseX::StrictConstructor;
+
 #use MooseX::Storage;
-#with Storage( 'io' => 'StorableFile' ), 
+#with Storage( 'io' => 'StorableFile' ),
 with 'HackaMol::Roles::NameRole', 'HackaMol::Roles::AtomGroupRole';
 
 has $_ => (
@@ -57,7 +58,7 @@ sub bond_length {
 }
 
 sub bond_energy {
-    my $self = shift;
+    my $self   = shift;
     my $energy = &{ $self->bond_efunc }( $self, @_ );
     return ($energy);
 }

@@ -7,8 +7,9 @@ use namespace::autoclean;
 use Carp;
 use Math::Trig;
 use MooseX::StrictConstructor;
+
 #use MooseX::Storage;
-#with Storage( 'io' => 'StorableFile' ), 
+#with Storage( 'io' => 'StorableFile' ),
 with 'HackaMol::Roles::NameRole', 'HackaMol::Roles::AtomGroupRole';
 
 has $_ => (
@@ -67,13 +68,13 @@ sub _build_torsion_efunc {
 }
 
 sub torsion_energy {
-    my $self = shift;
+    my $self   = shift;
     my $energy = &{ $self->torsion_efunc }( $self, @_ );
     return ($energy);
 }
 
 sub improper_dihe_energy {
-    my $self = shift;
+    my $self   = shift;
     my $energy = &{ $self->improper_dihe_efunc }( $self, @_ );
     return ($energy);
 }

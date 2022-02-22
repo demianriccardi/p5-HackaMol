@@ -6,13 +6,14 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 use MooseX::StrictConstructor;
+
 #use MooseX::Storage;
 #with Storage('format' => 'JSON', 'io' => 'File');
 
-with  'HackaMol::Roles::NameRole', 
-      'HackaMol::Roles::PhysVecMVRRole',
-      'HackaMol::Roles::PdbRole',  
-      'HackaMol::Roles::QmAtomRole';
+with 'HackaMol::Roles::NameRole',
+  'HackaMol::Roles::PhysVecMVRRole',
+  'HackaMol::Roles::PdbRole',
+  'HackaMol::Roles::QmAtomRole';
 use HackaMol::PeriodicTable
   qw(@ELEMENTS %ELEMENTS %ATOMIC_MASSES @COVALENT_RADII @VDW_RADII %ATOM_MULTIPLICITY);
 
@@ -89,13 +90,13 @@ sub _build_vdw_radius {
 
 sub change_Z {
     my $self = shift;
-    my $Z = shift or croak "pass argument Z to change_Z method";
+    my $Z    = shift or croak "pass argument Z to change_Z method";
     $self->_clean_atom;
     $self->Z($Z);
 }
 
 sub change_symbol {
-    my $self = shift;
+    my $self   = shift;
     my $symbol = shift or croak "pass argument symbol to change_Z method";
     $self->_clean_atom;
     $self->symbol( _fix_symbol($symbol) );
@@ -104,11 +105,11 @@ sub change_symbol {
 sub charge {
     my $self = shift;
     carp "charge> takes no arguments. returns get_charges(t)" if (@_);
-    if ($self->has_charges){
-      return ( $self->get_charges( $self->t ) );
-    } 
+    if ( $self->has_charges ) {
+        return ( $self->get_charges( $self->t ) );
+    }
     else {
-      return 0;
+        return 0;
     }
 }
 

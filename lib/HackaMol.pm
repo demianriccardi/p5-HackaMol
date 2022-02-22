@@ -16,10 +16,10 @@ use Scalar::Util qw(refaddr);
 use Carp;
 
 has 'readline_func' => (
-    is      => 'rw',
-    isa     => 'CodeRef',
-	predicate => 'has_readline_func',
-	clearer   => 'clear_readline_func',
+    is        => 'rw',
+    isa       => 'CodeRef',
+    predicate => 'has_readline_func',
+    clearer   => 'clear_readline_func',
 );
 
 with
@@ -30,8 +30,6 @@ with
   'HackaMol::Roles::FileFetchRole',
   'HackaMol::Roles::NERFRole',
   'HackaMol::Roles::RcsbRole';
-
-
 
 sub pdbid_mol {
     my $self   = shift;
@@ -90,7 +88,7 @@ sub read_string_mol {
     my $format = shift or croak "must pass format: xyz, pdb, pdbqt, zmat, yaml";
 
     my @atoms = $self->read_string_atoms( $string, $format );
-    my $name = $format . ".mol";
+    my $name  = $format . ".mol";
     return ( HackaMol::Molecule->new( name => $name, atoms => [@atoms] ) );
 }
 
@@ -258,7 +256,7 @@ sub find_disulfide_bonds {
     my $self = shift;
 
     my @sulf = grep { $_->Z == 16 } @_;
-    my @ss = $self->find_bonds_brute(
+    my @ss   = $self->find_bonds_brute(
         bond_atoms => [@sulf],
         candidates => [@sulf],
         fudge      => 0.15,      # 0.45 is too large
@@ -333,7 +331,7 @@ sub group_rot {
         $iba => 1,
         $ibb => 1,
     };
-    my $root = $ibb;
+    my $root             = $ibb;
     my $rotation_indices = _qrotatable( $mol->atoms, $ibb, $init );
     delete( $rotation_indices->{$iba} );
     delete( $rotation_indices->{$ibb} );
@@ -553,9 +551,9 @@ sub _qrotatable {
 #Jacobi diagonalizer
 sub __diagonalize {
     my ( $onorm, $dnorm );
-    my ( $b, $dma, $q, $t, $c, $s );
+    my ( $b,     $dma,   $q, $t, $c, $s );
     my ( $atemp, $vtemp, $dtemp );
-    my ( $i, $j, $k, $l );
+    my ( $i,     $j,     $k, $l );
     my @a;
     my @v;
     my @d;
@@ -879,4 +877,31 @@ returns:
 * L<HackaMol::X::Vina>
 * L<Protein Data Bank|http://pdb.org>
 * L<VMD|http://www.ks.uiuc.edu/Research/vmd/>
+* L<Bio3D|http://thegrantlab.org/bio3d/>
+* L<MDAnalysis|https://www.mdanalysis.org/>
+* L<MDTraj|https://www.mdtraj.org/1.9.8.dev0/index.html>
 
+=head1 AUTHOR's PERSPECTIVE
+
+Over the years, I have found HackaMol most expeditious wrt testing out ideas 
+or whipping up setups and analyses for thousands of molecules each with 
+several thousand atoms. This is the realm of varied systems (lots of molecules
+often from the protein databank). For the analysis of MD simulations that hit 
+the next order of magnitude wrt numbers of atoms and frames, I use other tools (such as
+the python library, MDAnalysis). This is the realm where the system (molecular make-up)
+varies more slowly often with modeled solvent potentially with millions of simulated frames.  The future
+development of HackaMol will seek to remain in its lane and better serve that space.
+
+Perl is forever flexible and powerful; 
+HackaMol has the potential to be a broadly useful tool in this region of 
+molecular information, which is often dirty and not well-specified. Once 
+the object system is stable in the Perl core, I plan to rework HackaMol to 
+remove dependencies and improve performance. However, this tool will most
+likely never advance to the realm of analyzing molecular dynamics simulations. 
+For the analysis of MD simulations with explicit solvent, please look into 
+the python libraries MDAnalysis and MDTraj.  
+Bio3D, in R, is also very cool and able to nicely handle simulation data for 
+biological molecules stripped of solvent. In my view, Bio3D 
+seems to fill the space between HackaMol and MD simulations with explicit solvent. 
+These suggested tools are only the ones I am familiar with;
+I'm sure there are other very cool tools out there!  

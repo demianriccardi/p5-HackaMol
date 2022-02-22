@@ -1,4 +1,8 @@
 HackaMol-*
-examples/*/*pdb*
+examples/*/*pdb
+*.pdb
+*.vmd
+*.tga
+.vscode/*
 .build
 .ipynb_checkpoints

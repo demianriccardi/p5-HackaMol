@@ -30,15 +30,12 @@ print $latt_line . "\n";
 
 my ($a,$b,$c,$alpha,$beta,$gamma) = grep looks_like_number($_), split (/\s+/,$latt_line);
 # get the coordinate tranformation functions
-say 'shit';
 my ($fract_to_cart,$cart_to_fract) = fract_cart([$a,$b,$c],[$alpha,$beta,$gamma]);
-say 'shit';
 # create lattice vectors a, b, c
 my $av = $fract_to_cart->(V(1,0,0));
 my $bv = $fract_to_cart->(V(0,1,0));
 my $cv = $fract_to_cart->(V(0,0,1));
 
-say 'shit';
 # bin up the symops
 my %sym_op = (); 
 foreach my $line ( @symop_lines ) {
@@ -46,7 +43,6 @@ foreach my $line ( @symop_lines ) {
     push @{$sym_op{$entries[3]}}, V(@entries[4,5,6,7]);
 }
 
-say 'shit';
 # build the p1 unit cell
 printf ("%8.3f %8.3f %8.3f\n", @{ $cart_to_fract->( $mol->COM )} );
 recenter($cart_to_fract,$mol,$av,$bv,$cv);
